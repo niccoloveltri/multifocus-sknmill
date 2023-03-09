@@ -135,6 +135,10 @@
 \newcommand{\emb}{\mathsf{emb}}
 
 \newcommand{\At}{\mathsf{At}}
+\newcommand{\runL}{\mathsf{runL}}
+
+\setlength{\abovecaptionskip}{0pt}
+\setlength{\belowcaptionskip}{-15pt}
 
 \begin{document}
 
@@ -442,16 +446,16 @@ Proof search then progresses to the \emph{focusing} (or \emph{synchronous}) phas
 When no formula is under focus anymore, we \emph{unfocus} and continue proof search in inversion phase. In order to unfocus, formulae that where previously under focus, which are now blurred, must have switched their polarity, which is reflected in the side conditions of rule $\unfoc$: the stoup formula must be positive if it was under focus ($b=1$), while if the succedent formula was under focus ($b' = 1$) it must now be negative. Unfocusing also requires that at least one formula was previously under focus, henceforth the condition $b \vee b' = 1$.
 %The axiom rule is usable only if both stoup and succedent formulae were under focus.
 
-Notice that, for a sequent with atomic stoup and positive succedent $X \mid \Gamma \up P$ (or, dually, negative stoup and atomic succedent), one has the choice to focus on the stoup formula or not. If the sequent is derivable, both choices will lead to a valid proof. An analogous situation was also present in the multi-focused calculus for \MALL\ \cite{chaudhuri:canonical:2008}, where in a similar circumstances one was given the choice of focusing on negated atoms, e.g. there exist two distinct multi-focused proofs of $\vdash a^\bot,(a \rotatebox[origin=c]{180}{\&} \bot) \otimes \I$.
+For a sequent with atomic stoup and positive succedent $X \mid \Gamma \up P$ (or, dually, negative stoup and atomic succedent), one can wither focus on the stoup formula or not. If the sequent is derivable, both choices will lead to a valid proof. An analogous situation was also present in the multi-focused calculus for \MALL\ \cite{chaudhuri:canonical:2008}, where in a similar circumstances one was given the choice of focusing on negated atoms, e.g. there exist two distinct multi-focused proofs of $\vdash a^\bot,(a \rotatebox[origin=c]{180}{\&} \bot) \otimes \I$.
 %This form of non-determinism can be removed by forcing the focus on atomic formulae, which can be achieved by slighly modifying the side condition in the $\unfoc$ rule: if $b = 1$ then $S=P$ but also $A \not= X$ ($A$ not atomic), and if $b' = 1$ then $A = N$ but also $S \not= X$.
 
 A peculiarity of the sequent calculus in \Cref{fig:multi-focus}, when compared with other (multi-)focused calculi appearing in the literature, e.g. the one for \MALL\ in \cite{chaudhuri:canonical:2008}, is that during the application of non-invertible rules in the focusing phase, one of the premises always releases the focus. In rule $\otR$, the right premise releases the focus on the succedent formula, and similarly for the  first premise in rule $\lolliL$. Without the loss of focus in these premises, the multi-focused sequent calculus would not be complete wrt. the calculus in \Cref{fig:seqcalc}, e.g. the sequent $X \mid Y  \ot Z \up X \ot (Y \ot Z)$ would not admit a derivation. This behaviour was already present in the focused sequent calculi for the $\ot$- and $(\I,\ot)$-fragments of the sequent calculus, originally studied by Zeilberger et al. \cite{zeilberger:semiassociative:19,uustalu:sequent:2021}.
 
 
-Invertible rules and passivation are easily proved to be admissible in $\up$ phase (with a general formula as succedent), and similarly $\IR$ and  $\ax$.
+Invertible rules are easily proved to be admissible in $\up$ phase (with a general formula as succedent), and similarly $\IR$ and  $\ax$.
 \begin{proposition}
   The following rules are admissible:
-  \[
+  \begin{equation}\label{eq:inv}
   \small
   \begin{array}{c}
     \infer[\otL_\up]{A \ot B \mid \Gamma \up C}{A \mid  B , \Gamma \up C}
@@ -466,13 +470,13 @@ Invertible rules and passivation are easily proved to be admissible in $\up$ pha
     \qquad
     \infer[\ax_\up]{X \mid ~ \up X}{}    
   \end{array}
-\]  
+  \end{equation}
 \end{proposition}
 Rule $\otR$ is also admissible, but showing this requires more work. We prove the admissibility of a \emph{macro} inference rule corresponding to multiple application of $\otR$. To this end, given a formula $A$ and a list of formulae $\Gamma = B_1,\dots,B_n$, define $A \ot^* \Gamma = (((A \ot B_1) \ot B_2) \ot \dots) \ot B_n$, which is simply $A$ when $\Gamma$ is empty. If $\Gamma$ is non-empty, we write $A \ot^+ \Gamma$. Define also $\Gamma \lolli^* A = B_1 \lolli (B_2 \lolli (\dots \lolli (B_n \lolli A)))$ and similarly $\Gamma\lolli^+ A$ when $\Gamma$ is non-empty.
 \begin{proposition}\label{prop:otR}
   Let $\vec{\Delta} = \Delta_1,\dots,\Delta_n$ be a list of contexts and $\vec{B} = B_1,\dots,B_n$ a list of formulae, both non-empty.
   The following rule is admissible:
-  \[
+  \begin{equation}\label{eq:otR}  
   \small
   \begin{array}{c}
     \infer[\otR^+_\up]{S \mid \Gamma , \vec{\Delta} \up A \ot^+ \vec{B}}{
@@ -481,41 +485,64 @@ Rule $\otR$ is also admissible, but showing this requires more work. We prove th
       \{ - \mid \Delta_i \up B_i \}_{i}
     }
   \end{array}
-  \]
+  \end{equation}
   where $\{ - \mid \Delta_i \up B_i \}_{i}$ is a collection of premises $- \mid \Delta_i \up B_i$ for each $1 \le i \le n$.
 \end{proposition}
 \begin{proof}
-  The proof proceeds by inspecting the polarity of formula $A$ and then by induction on the structure of the derivation $f : S \mid \Gamma \up A$. When $A$ is negative, we need to strengthen the statement to make sure that the induction on $f$ succeeds. So we prove the admissibility of the more general rule:
-  \[\small
+  The proof proceeds by inspecting the polarity of formula $A$ and then by induction on the structure of the derivation $f : S \mid \Gamma \up A$. When $A$ is negative, we need to strengthen the statement for the induction on $f$ to succeed. So we prove the admissibility of the more general rule:
+  \begin{equation}
+    \label{eq:genotR}
+    \footnotesize
       \infer[\otR^+_{\up N}]{S \mid \Gamma_0 , \vec{\Delta} \up (\Gamma_1 \lolli^+ A) \ot^+ \vec{B}}{
       S \mid \Gamma_0,\Gamma_1 \up A
       &
       \{ - \mid \Delta_i \up B_i \}_{i}
       }
-\]
+  \end{equation}
   The context $\Gamma_1$ serves as an accumulator for dealing with the case $f = \lolliR(f')$:
-  \begin{equation}\label{eq:otRlolliR}
-  \footnotesize
+  \begin{equation*}\label{eq:otRlolliR}
+  \scriptsize
   \begin{array}{c}
 %    \proofbox{
-   \hspace{-3cm} \infer[\otR^+_{\up N}]{S \mid \Gamma_0 , \vec{\Delta} \up (\Gamma_1 \lolli^+ (A' \lolli B')) \ot^+ \vec{B}}{
-      \infer[\lolliR]{S \mid \Gamma_0,\Gamma_1\up A' \lolli B'}{
+%    \hspace{-3cm}
+    \proofbox{\infer[\otR^+_{\up N}]{S \mid \Gamma_0 , \vec{\Delta} \up (\Gamma_1 {\lolli}^+ (A' {\lolli} B')) \ot^+ \vec{B}}{
+      \infer[{\lolli}R]{S \mid \Gamma_0,\Gamma_1\up A' {\lolli} B'}{
         \deduce{S \mid \Gamma_0,\Gamma_1,A'\up B'}{f'}
         }
       &
       \{ - \mid \Delta_i \up B_i \}_{i}
-    }
-    \\
-   \hspace{3cm} =
+    }} =
+%    \\
+    %   \hspace{3cm}
     \proofbox{
-    \infer[\otR^+_{\up N}]{S \mid \Gamma_0 , \vec{\Delta} \up ((\Gamma_1,A') \lolli^+ B') \ot^+ \vec{B}}{
+    \infer[\otR^+_{\up N}]{S \mid \Gamma_0 , \vec{\Delta} \up ((\Gamma_1,A') {\lolli}^+ B') \ot^+ \vec{B}}{
       \deduce{S \mid \Gamma_0,\Gamma_1,A' \up B'}{f'}
       &
       \{ - \mid \Delta_i \up B_i \}_{i}
-    }}
+    }
+    }
   \end{array}
-  \end{equation}
+  \end{equation*}
   which makes sense since $\Gamma_1 \lolli^+ (A' \lolli B') = (\Gamma_1,A') \lolli^+ B'$.
+  Another representative case is $f = \foc(f')$, where we can immediately execute right-focusing:
+  \begin{equation}\label{eq:otR+foc}
+    \footnotesize
+    \proofbox{
+  \infer[\foc]{S \mid \Gamma_0 , \vec{\Delta} \up (\Gamma_1 \lolli^+ A) \ot^+ \vec{B}}{
+    \infer[\focR]{S \mid \Gamma_0 , \vec{\Delta} \dn (\Gamma_1 \lolli^+ A) \ot^+ \vec{B} }{
+      \infer[\otR^+]{S \mid \Gamma_0 , \vec{\Delta} \dn \fbox{$(\Gamma_1 \lolli^+ A)\ot^+\vec{B}$}}{
+        \infer[\blurR]{S \mid \Gamma_0 \dn \fbox{$\Gamma_1 \lolli^+ A$}}{
+          \infer[\unfoc]{S \mid \Gamma_0 \dn \dbox{$\Gamma_1 \lolli^+ A$}}{
+            \infer[\lolliR^+]{S \mid \Gamma_0 \up \Gamma_1 \lolli^+ A}{
+              \infer[\foc]{S \mid \Gamma_0 , \Gamma_1 \up A}{
+            \deduce{S \mid \Gamma_0 , \Gamma_1 \dn A}{f'}
+        }}}}
+      &
+        \{ - \mid \Delta_i \up B_i \}_{i}
+      }
+    }
+  }}
+  \end{equation}
 \end{proof}
 We now move to the admissibility of left-synchronous rules. To this end, we introduce an inductive ternary (proof-relevant) relation $\L(S\mid\Gamma;A)$ which holds when the antecedent $S\mid \Gamma$ is obtained by repeated applications of left-invertible rules on the antecedent $A \mid ~$, where $A$ is in the stoup and the context is empty:
 \begin{equation*}\small
@@ -527,10 +554,34 @@ We now move to the admissibility of left-synchronous rules. To this end, we intr
 %  \qquad
 %  \infer[\pass^{-1}]{\L(A' \mid\Gamma;A)}{\L(-\mid A',\Gamma;A)}
 \end{equation*}
-Given a proof $\ell : \L(S\mid\Gamma;A)$, we can turn a derivation of $S \mid \Gamma,\Delta \up C$ into a derivation of $A \mid \Delta \up C$.
+Given a proof $\ell : \L(S\mid\Gamma;A)$, we can turn a derivation $f : S \mid \Gamma,\Delta \up C$ into a derivation $\runL(f,\ell) : A \mid \Delta \up C$:
+ \begin{equation}\label{eq:runL}
+  \footnotesize
+%  \arraycolsep=.7cm%\def\arraystretch{3}
+%%  \begin{array}{cc}
+  %    (j = 0) \;\;
+  \runL(f,\ell) = \quad
+  \proofbox{
+    \infer*[\;\; (\text{left rules obtained by inverting } \ell)]{A \mid \Delta \up C}{
+      \deduce{S \mid \Gamma,\Delta \up C}{f}
+    }
+    }
+%%  &
+%%  (j >0) \;\;
+%%  \proofbox{
+%%     \infer*[\text{run } \ell_1]{D_1 \mid D_2,\dots,D_n ,B,\Delta_1 \up C}{
+%%       \infer[\pass]{- \mid D_2,\dots,D_n ,B,\Delta_1 \up C}{
+%%         \infer*[\text{run } \ell_2,\dots,\ell_n]{D_2 \mid \dots,D_n ,B,\Delta_1 \up C}{
+%%%           \infer*[\text{run } \ell_n]{D_n \mid B,\Delta_1 \up C}{
+%%             \infer[\pass]{- \mid B,\Delta_1 \up C}{
+%%               \infer*[\text{run } \ell]{B \mid \Delta_1 \up C}{
+%%                 \deduce{S \mid \Delta_0,\Delta_1 \up C}{g}
+%%               }}}}}}
+%%  \end{array}
+ \end{equation}
 \begin{proposition}\label{prop:lolliL}
   The following rules are admissible:
-  \[
+  \begin{equation}\label{eq:passlolliL}
   \small
   \begin{array}{c}
     \infer[\pass_\up]{- \mid A,\Gamma \up C}{
@@ -542,11 +593,11 @@ Given a proof $\ell : \L(S\mid\Gamma;A)$, we can turn a derivation of $S \mid \G
       B \mid \Delta \up C
     }
   \end{array}
-  \]
-  where, in the second rule, $\vec{\Gamma} = \Gamma_1,\dots,\Gamma_n$ is a list of contexts and $\vec{A} = A_1,\dots,A_n$ is a list of formulae, both non-empty.
+  \end{equation}
+%  where, in the second rule, $\vec{\Gamma}$ and $\vec{A}$ have both length $n>0$.
 \end{proposition}
 \begin{proof}
-  Proving the admissibility of the second rule proceeds by inspecting the polarity of formula $B$ and then by induction on the structure of the derivation $g : B \mid \Delta \up C$. When $B$ is positive, we need to strengthen the statement for the induction to succeed. So we prove the admissibility of the more general rule:
+  We only discuss $\lolliL^+$. Proving its admissibility proceeds by inspecting the polarity of formula $B$ and then by induction on the structure of the derivation $g : B \mid \Delta \up C$. When $B$ is positive, we need to strengthen the statement for the induction to succeed. We prove the admissibility of the more general rule:
   \[
   \small
   \begin{array}{c}
@@ -560,33 +611,12 @@ Given a proof $\ell : \L(S\mid\Gamma;A)$, we can turn a derivation of $S \mid \G
   \end{array}
   \]
 %  Here $\vec{D}$ is a possibly empty list of formulae, and $\mathsf{hd}$ and $\mathsf{tl}$ are the head and tail operations on non-empty lists.
-  The additional assumption $\ell : \L(S\mid \Delta_0;B)$ %serve as accumulators for dealing with the case in which $g$ is a left-invertible rule or passivation. These assumptions
-  allows to state that the proof of the second premise $g$ is a subderivation of sequent $B \mid \Delta_1 \vdash C$ obtained by repeated applications of left-invertible rules and passivation. More explicitly:
+  The additional assumption $\ell$ serves as an accumulator for dealing with the cases when $g$ is a left-invertible rule
+  %: \L(S\mid \Delta_0;B)$ %serve as accumulators for dealing with the case in which $g$ is a left-invertible rule or passivation. These assumptions
+  and it allows to state that the proof of the second premise is a subderivation of sequent $B \mid \Delta_1 \vdash C$ as depicted in (\ref{eq:runL}). A representative case is $g = \foc(g)$, where we can immediately execute left-focusing, obtaining a derivation dual to the one in (\ref{eq:otR+foc}).
+  %obtained by repeated applications of left-invertible rules and passivation. More explicitly:
   %if $j = 0$, so $\vec{D}$ is empty, then $g$ is the subderivation on the left; if $j>0$ it is the subderivation on the right:
-  \[
-  \footnotesize
-%  \arraycolsep=.7cm%\def\arraystretch{3}
-%%  \begin{array}{cc}
-%    (j = 0) \;\;
-%  \proofbox{
-    \infer*[\text{run } \ell]{B \mid \Delta_1 \up C}{
-      \deduce{S \mid \Delta_0,\Delta_1 \up C}{g}
-    }
-%    }
-%%  &
-%%  (j >0) \;\;
-%%  \proofbox{
-%%     \infer*[\text{run } \ell_1]{D_1 \mid D_2,\dots,D_n ,B,\Delta_1 \up C}{
-%%       \infer[\pass]{- \mid D_2,\dots,D_n ,B,\Delta_1 \up C}{
-%%         \infer*[\text{run } \ell_2,\dots,\ell_n]{D_2 \mid \dots,D_n ,B,\Delta_1 \up C}{
-%%%           \infer*[\text{run } \ell_n]{D_n \mid B,\Delta_1 \up C}{
-%%             \infer[\pass]{- \mid B,\Delta_1 \up C}{
-%%               \infer*[\text{run } \ell]{B \mid \Delta_1 \up C}{
-%%                 \deduce{S \mid \Delta_0,\Delta_1 \up C}{g}
-%%               }}}}}}
-%%  \end{array}
-  \]
-  Assumption $\ell$ serves as an accumulator for dealing with the cases when $g$ is a left-invertible rule. Its employment is similar to the one of the additional context $\Gamma_1$ in (\ref{eq:otRlolliR}).
+  %Assumption $\ell$ serves as an accumulator for dealing with the cases when $g$ is a left-invertible rule. Its employment is similar to the one of the additional context $\Gamma_1$ in (\ref{eq:otRlolliR}).
 %  Assuming proofs $f : S \mid \Delta_0,\Delta_1 \up C$ and $\ell : \L(S\mid \Delta_0;B)$ entails the existence of a proof of $B \mid \Delta_1 \up C$.
 \end{proof}
 The multi-focused sequent calculus in \Cref{fig:multi-focus} is sound and complete wrt. the sequent calculus in \Cref{fig:seqcalc}.
@@ -635,8 +665,16 @@ The calculus of maximally multi-focused derivations introduced in the next secti
 In order to design a calculus of permutative-canonical derivations, we have to answer the following question: in which situation does a right-focusing phase \emph{need} to be performed strictly before a left-focusing phase? And dually, when does left-focusing must be done before right-focusing? 
 Consider the sequent $X \lolli Y \mid Z \dn (X \lolli Y) \ot Z$. Attempting to focus on the stoup formula would fail, becuase no splitting of the context, consisting of the singleton formula $Z$, would lead to a valid derivation. We would be able to appropriately split the context only after performing right-focusing first, specifically after an application of $\otR$, and a subsequent application of $\lolliR$. This is because the formula  $X$, that we would like to send to the first premise during left-focusing, is not initially in context, it becomes available only after right-focusing. Another simple example is given by the sequent $- \mid X \ot Y \dn X \ot Y$. Again left-focusing, specifically $\pass$, must happen before right-focusing, since the formula $Y$ is not in context and cannot otherwise be sent to the second premise during right-focusing.
 
-Dually, consider the sequent $X \lolli (Y \ot Z) \mid X \dn Y \ot Z$. It is not hard to see that any attempt to focus on the succedent formula would fail. But after left-focusing and an application of $\otL$, right-focusing becomes possible and leads to a valid proof. This is because the formula $Z$, which should be sent to the second premise during right-focusing, appears in context only if we perfom left-focusing first.
+Dually, consider the sequent $X \lolli (Y \ot Z) \mid X \dn Y \ot Z$. It is not hard to see that any attempt to focus on the succedent formula would fail. But after left-focusing and an application of $\otL$, right-focusing becomes possible and leads to a valid proof since the formula $Z$, which should be sent to the second premise during right-focusing, appears in context only if we perfom left-focusing first.
 
+What we need is a mechanism for keeping track of \emph{new} formulae appearing in context from application of invertible rules $\otL$ and $\lolliR$. And in proof search, when we choose to perfom left-focusing but we decide to postpone right-focusing, after releasing the focus we have to justify this decision by showing that the subsequent right-focusing phase splits the context in-between new formulae that appeared in context only after the termination of the left-focusing phase. And dually if right-focusing stricly precedes left-focusing.
+
+The mechanism that we employ comes from the recent work of Uustalu et al. \cite{UVW:protsn} which was inspired by Scherer's saturation for intuitionistic logic \cite{scherer:simple:2015}. Formulae appearing in a sequent will now be decorated with a Boolean value, which we call a \emph{tag}. Visually, we use colors to represent tags: green $\green{A}$ if the tag is $0$, red $\red{A}$ if the tag is $1$.
+%The mnemonic is that a red tag denotes a formula or a stoup that we should pay attention to. 
+Stoups are also tagged: $\green{S}$ or $\red{S}$. Tagged contexts consist of tagged formulae. If we do not specify the color of a formula (or stoup or context) we simply write it in black color $A$ (or $S$ or $\Gamma$). Sequents in the maximally multi-focused sequent calculus $S \mid \Gamma \up A$ and $S \mid \Gamma \dn A$ are triples of a tagged stoup $S$, a tagged context $\Gamma$ and a tagged formula $A$. Tags serve two purpouses:
+\begin{enumerate}
+\item They are used to remember which (if any) among left- or right-focusing was \emph{not} performed during the preceding focusing phase. Is the stoup is red $S$, only right-focusing was previously executed. Dually, if the succedent formula is red $A$, only left-focusing took place. \item In case one (and only one) among the stoup and the succedent is red, new formulae moved to context via the application of invertible rules become red. So tags are also used to remember which formulae in context are new.
+\end{enumerate}
 \begin{figure}[t]
   \[
   \small
@@ -662,10 +700,10 @@ Dually, consider the sequent $X \lolli (Y \ot Z) \mid X \dn Y \ot Z$. It is not 
       \dbox{$S$}_{\, b} \mid \Gamma \dn \fbox{$Q$}
     }
     \qquad
-        \infer[\ax]{\dbox{$X$} \mid ~ \dn \dbox{$X$}}{}
+        \infer[\ax]{\dbox{$\green{X}$} \mid ~ \dn \dbox{$\green{X}$}}{}
     \\[6pt]
-    \infer[\unfoc]{\dbox{$S$}_{\,b} \mid \Gamma \dn \dbox{$A$}_{\,b'}}{
-      S^{c(b)} \mid \green{\Gamma} \up A^{c(b')}
+    \infer[\unfoc]{\dbox{$\green{S}$}_{\,b} \mid \Gamma \dn \dbox{$\green{A}$}_{\,b'}}{
+      S^{\neg b} \mid \green{\Gamma} \up A^{\neg b'}
       &
       (b = 1 \supset S = P)
       &
@@ -726,6 +764,109 @@ Dually, consider the sequent $X \lolli (Y \ot Z) \mid X \dn Y \ot Z$. It is not 
   \caption{Maximally Multi-focused sequent calculus for \SkNMILL.} 
   \label{fig:max-multi-focus}
 \end{figure}
+
+Inference rules for the maximally multi-focused sequent calculus are displayed in \Cref{fig:max-multi-focus}. In rule $\lolliR$, the blue color for the stoup $\blue{S}$ and the formula $\blue{A}$ indicates that they must have the same color, both green or both red. So if the stoup is red, meaning that left-focusing did not happen in the previous synchronous phase, we keep track of the new formula moving to the right-most end of the context by making it also red.
+Similarly for blue formulae $\blue{A}$ and $\blue{Q}$ in rule $\otL$.
+
+In this calculus, proof search starts again in inversion phase and the sequent is all green $\green{S} \mid \green{\Gamma} \up \green{A}$. At this point this phase is analogous to the one in the multi-focused calculus of \Cref{fig:multi-focus}. Red color may start to appear with an application of $\unfoc$. If left-focusing was not performed, so $b = 0$, then the stoup is turned red, which in the rule is denoted $S^{\neg b}$ (remember that 0 is green and 1 is red). If right-focusing was not executed, so $b' = 0$, then the succedent becomes red $A^{\neg b'}$. If one of stoup or succedent is red, new formulae moved to the context by $\lolliR$ and $\otL$ are also assigned red tag.
+
+During the \emph{red} left-focusing phase (when we initiate left-focusing with a red stoup), we are required to use red formulae in context in a meaningful way: either by passivating a red formula via the rule $\red{\pass}$ or sending a red formula $\red{D}$ to the first premise via the rule $\red{\lolliL}$. When this happens, we have successfully motivated why left-focusing was not executable simultaneously with right-focusing in the preceding synchronous phase, and we can then turn the stoup green, meaning that we can stop caring about tracking red formulae in left-focusing phase. Notice that during red left-focusing we are forced to apply either red rules $\red{\pass}$ or $\red{\lolliL}$, since blurring the left focus now requires the stoup to be green. In the first premise of $\lolliL$ and $\red{\lolliL}$ the whole sequent is turned green.
+
+Dually, in red right-focusing phase (when right-focusing starts with red succedent), we must  either send a red formula $\red{D}$ to the second premise via the rule $\red{\otR}$ or close the derivation using $\IR$. Again, this appropriately motivates why right-focusing was previously not performable simultaneously with left-focusing. 
+
+Notice that when releasing the focus via $\unfoc$, stoup and succedent must be green, meaning that all the reasons for ``not maximally focus'' in the previous focusing phase must have been justified. Apart from tags, there are a few more differences with the multi-focused system in \Cref{fig:multi-focus}. First, we remove non-determinism in the choice of left- or right-focusing when we want to perform both by fixing an order between the two. We decided to always left-focus first, then right-focus. In \Cref{fig:max-multi-focus} this can be observed in sequents in left-focusing phase, whose succedent cannot be blurred, so right-focusing could not have happened immediately before. Another difference lays in the treatment of atomic formulae. First, notice that the axiom rule requires $\green{X}$ to be green and blurred in both positions. More generally, whenever an atomic formula appears in stoup or succedent position, we are required to focus on it.
+\begin{proposition}
+Each derivation of $S \mid \Gamma \dn X$ necessarily right-focuses and each derivation of $X \mid \Gamma \dn A$ necessarily left-focuses.
+\end{proposition}
+\begin{proof}
+If $f : S \mid \Gamma \dn X$ does not right-focus, then it must exclusively left-focus and successively release the focus. It cannot be an axiom, since this requires right-focusing. Then $X$ is turned red, meaning that in a future right-focusing phase either $\red{\otR}$ or $\IR$ must be employed, which is impossible since the succedent is atomic. An analogous motivation can be given to show that each derivation $X \mid \Gamma \dn A$ must left-focus.
+\end{proof}
+
+Rules $\IL_\up$, $\otR_\up$, $\IR_\up$ and $\ax_\up$ as in (\ref{eq:inv}), with all-green sequents, are easily shown admissible in the maximally multi-focused calculus. The same is true for synchronous rules.
+\begin{proposition}\label{prop:otR}
+  Rules $\otR^+_\up$, $\pass_\up$ and $\lolliL^+_\up$ as in (\ref{eq:otR}) and (\ref{eq:passlolliL}), with all-green sequents, are admissible in the maximally multi-focused sequent calculus.
+\end{proposition}
+\begin{proof}
+We only discuss $\otR^+_{\up}$.  Similarly to \Cref{prop:otR}, the proof proceeds by inspecting the polarity of formula $A$ and, in case it is negative, we have to prove the more general form in (\ref{eq:genotR}) for strengthening the induction hypothesis. When $f = \foc(f') : \green{S} \mid \green{\Gamma_0} , \green{\Gamma_1} \up \green{A}$ we further check whether $f'$ left-focuses or not. In case $f' = \focL(f'')$, we inspect if formulae from $\green{\Gamma_1}$ are meaningfully employed during the left-focusing phase. Is the head formula of $\green{\Gamma_1}$ activated using $\pass$? Is a formula $\green{D} \in \green{\Gamma_1}$ moved to the first premise by an application of $\lolliL$? Two cases:
+  \begin{enumerate}
+  \item If this happens, we are required to perform right-focusing first, release the focus and only then successfully left-focus. As a representative example, consider the case $f'' = \lolliL^+(\{f_j\}_j,\blurL(\unfoc(h)))$ with $f_j : \green{-} \mid \green{\Lambda_j} \up \green{C_j}$ for $1 \le j \le m$ and $h : \green{P} \mid \green{\Omega} \up \red{A}$, where $\green{\Gamma_0,\Gamma_1} = \green{\vec{\Lambda}},\green{\Omega}$ and moreover the intersection of $\green{\Gamma_1}$ with some $\green{\Lambda_{j^*}}$ is non-empty, for some index $j^*$. This means that $\green{\Lambda_{j^*}} = \green{\Lambda_{j^*_0}},\green{\Lambda_{j^*_1}}$ with non-empty $\green{\Lambda_{j^*_1}}$ and $\Gamma_1 = \green{\Lambda_{j^*_1}},\green{\Lambda_{j^*+1}},\dots,\green{\Lambda_{m}},\green{\Omega}$. We return:
+  \begin{equation*}\label{eq:otR+focL}
+    \scriptsize
+    \proofbox{
+      \infer[\foc]{\green{\vec{C} \lolli^+ P} \mid \green{\Gamma_0} , \green{\vec{\Delta}} \up (\green{\Gamma_1 \lolli^+ A}) \green{\ot^+ \vec{B}}}{
+        \infer[\focR]{\green{\vec{C} \lolli^+ P} \mid \green{\Gamma_0} , \green{\vec{\Delta}} \dn (\green{\Gamma_1 \lolli^+ A}) \green{\ot^+ \vec{B}}}{
+          \infer[\otR+]{\green{\vec{C} \lolli^+ P} \mid \green{\Gamma_0} , \green{\vec{\Delta}} \dn \fbox{$(\green{\Gamma_1 \lolli^+ A}) \green{\ot^+ \vec{B}}$}}{
+            \infer[\blurR]{\green{\vec{C} \lolli^+ P} \mid \green{\Gamma_0} \dn \fbox{$\green{\Gamma_1 \lolli^+ A}$}}{
+              \infer[\unfoc]{\green{\vec{C} \lolli^+ P} \mid \green{\Gamma_0} \dn \dbox{$\green{\Gamma_1 \lolli^+ A}$}}{
+                \infer[\lolliR^+]{\red{\vec{C} \lolli^+ P} \mid \green{\Gamma_0} \up \green{\Gamma_1 \lolli^+ A}}{
+                  \infer[\foc]{\red{\vec{C} \lolli^+ P} \mid \green{\Gamma_0},\red{\Gamma_1} \up \green{A}}{
+                    \infer[\focL]{\red{\vec{C} \lolli^+ P} \mid \green{\Gamma_0},\red{\Gamma_1} \up \green{A}}{
+                      \infer={\fbox{$\red{\vec{C} \lolli^+ P}$} \mid \green{\Gamma_0},\red{\Gamma_1} \dn \green{A}}{
+                        \infer[\lolliL^+/\red{\lolliL}]{\fbox{$\red{\vec{C} \lolli^+ P}$} \mid \green{\Lambda_1},\dots,\green{\Lambda_{j^*_0}},\red{\Lambda_{j^*_1}},\dots,\red{\Lambda_m},\red{\Omega} \dn \green{A}}{
+                          \{\green{-} \mid \green{\Lambda_j} \up \green{C_j} \}_j
+                          &
+                          \infer[\blurL]{\fbox{$\green{P}$} \mid \red{\Omega} \dn \green{A}}{
+                            \infer[\unfoc]{\dbox{$\green{P}$} \mid \red{\Omega} \dn \green{A}}{
+                              \deduce{\green{P} \mid \green{\Omega} \up \red{A}}{h}{
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+            &
+            \{\green{-} \mid \green{\Delta_i} \up \green{B_i}\}_i
+          }
+        }
+      }
+    }
+  \end{equation*}
+  where the double-line rule is the equality rule (we simply rewrite the contexts) and $\lolliL^+/\red{\lolliL}$ indicate the application of left $\lolli$-rules where one of them is red.
+  \item If this does not happen, then we can focus on both foci. As an example, consider again $f'' = \lolliL^+(\{f_j\}_j,\blurL(\unfoc(h)))$  but now the intersection of $\green{\Gamma_1}$ with $\green{\vec{\Lambda}}$ is empty. This means that $\green{\Gamma_0} = \green{\vec{\Lambda}},\green{\Gamma'_{0}}$ for some list of formulae $\green{\Gamma'_{0}}$. We return:
+  \begin{equation*}\label{eq:otR+focL2}
+    \scriptsize
+    \proofbox{
+      \infer[\foc]{\green{\vec{C} \lolli^+ P} \mid \green{\Gamma_0} , \green{\vec{\Delta}} \up (\green{\Gamma_1 \lolli^+ A}) \green{\ot^+ \vec{B}}}{
+        \infer[\focL]{\green{\vec{C} \lolli^+ P} \mid \green{\Gamma_0} , \green{\vec{\Delta}} \dn (\green{\Gamma_1 \lolli^+ A}) \green{\ot^+ \vec{B}}}{
+          \infer={\fbox{$\green{\vec{C} \lolli^+ P}$} \mid \green{\Gamma_0} , \green{\vec{\Delta}} \dn (\green{\Gamma_1 \lolli^+ A}) \green{\ot^+ \vec{B}}}{
+            \infer[\lolliL^+]{\fbox{$\green{\vec{C} \lolli^+ P}$} \mid \green{\vec{\Lambda}},\green{\Gamma'_0} , \green{\vec{\Delta}} \dn (\green{\Gamma_1 \lolli^+ A}) \green{\ot^+ \vec{B}}}{
+              \{\green{-} \mid \green{\Lambda_j} \up \green{C_j} \}_j
+              &
+              \infer[\blurL]{\fbox{$\green{P}$} \mid \green{\Gamma'_{0}} , \green{\vec{\Delta}} \dn (\green{\Gamma_1 \lolli^+ A}) \green{\ot^+ \vec{B}}}{
+                \infer[\focR]{\dbox{$\green{P}$} \mid \green{\Gamma'_{0}} , \green{\vec{\Delta}} \dn (\green{\Gamma_1 \lolli^+ A}) \green{\ot^+ \vec{B}}}{
+                  \infer[\otR^+]{\dbox{$\green{P}$} \mid \green{\Gamma'_{0}} , \green{\vec{\Delta}} \dn \fbox{$(\green{\Gamma_1 \lolli^+ A}) \green{\ot^+ \vec{B}}$}}{
+                    \infer[\blurR]{\dbox{$\green{P}$} \mid \green{\Gamma'_{0}} \dn \fbox{$\green{\Gamma_1 \lolli^+ A}$}}{
+                      \infer[\unfoc]{\dbox{$\green{P}$} \mid \green{\Gamma'_{0}} \dn \dbox{$\green{\Gamma_1 \lolli^+ A}$}}{
+                        \infer[\lolliR^+]{\green{P} \mid \green{\Gamma'_{0}} \up \green{\Gamma_1 \lolli^+ A}}{
+                          \infer={\green{P} \mid \green{\Gamma'_{0}},\green{\Gamma_1} \up \green{A}}{
+                            \deduce{\green{P} \mid \green{\Omega} \up \green{A}}{h'}
+                          }
+                        }
+                      }
+                    }
+                    &
+                    \{\green{-} \mid \green{\Delta_i} \up \green{B_i}\}_i
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  \end{equation*}
+  where $h' : \green{P} \mid \green{\Omega} \up \green{A}$ is obtained from $h : \green{P} \mid \green{\Omega} \up \red{A}$ by turning applications of red rules ($\red{\otR}$) black ($\otR$). 
+\end{enumerate}
+\end{proof}
+From the admissibility of all inference rules, we obtain a normalization procedure turning derivations in the sequent calculus into maximally multi-focused derivations. Moreover it is possible to prove that proofs in the maximally-multifocused calculus are canonical wrt. the equational theory in \Cref{fig:circeq}.
+\begin{theorem}
+  There exist functions $\focus : S \mid \Gamma \vdash A \to \green{S} \mid \green{\Gamma} \up \green{A}$  and $\emb: \green{S} \mid \green{\Gamma} \up \green{A} \to S \mid \Gamma \vdash A$, turning sequent calculus derivations into multi-focused derivations, and vice versa. Moreover, these functions underlie an isomorphism between the set of proofs of a sequent $S \mid \Gamma \vdash A$ quotiented by the equivalence relation $\circeq$ and the set of proofs of $\green{S} \mid \green{\Gamma} \up \green{A}$ in the maximally multi-focused calculus.
+\end{theorem}
+
 
 %%%  Four proof search phases:
 %%%  \[
