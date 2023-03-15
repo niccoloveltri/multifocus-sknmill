@@ -163,7 +163,7 @@ data [_,_]_∣_⇓_ where
            [ b , ∘ ] S ∣ Γ ⇓ (r , C)
 
   unfoc : {b b' l r : Tag} {S : Stp} {Γ : TCxt} {C : Fma}
-          (ok : MF.unfoc-ok b b' S C)
+          (ok : MF.UT b b' S C)
           (f : (not b , S) ∣ ∘tcxt Γ ⇑ (not b' , C)) →
       ------------------------------------
           [ b , b' ] (l , S) ∣ Γ ⇓ (r , C)

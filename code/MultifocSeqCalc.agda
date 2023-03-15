@@ -23,13 +23,13 @@ open import SeqCalc
 -- -- if only right-focusing happened, succedent formula should be negative;
 -- -- if both left- and right-focusing happened, either stoup formula
 -- -- is positive or succedent formula is negative.
-unfoc-ok : Bool → Bool → Stp → Fma → Set
-unfoc-ok ∘ ∘ _ _ = ⊥
-unfoc-ok ∙ ∘ (just A) C = isPos A 
-unfoc-ok ∙ ∘ ─ C = ⊥
-unfoc-ok ∘ ∙ S C = isNeg C 
-unfoc-ok ∙ ∙ (just A) C = isPos A ⊎ isNeg C
-unfoc-ok ∙ ∙ ─ C = ⊥
+UT : Bool → Bool → Stp → Fma → Set
+UT ∘ ∘ _ _ = ⊥
+UT ∙ ∘ (just A) C = isPos A 
+UT ∙ ∘ ─ C = ⊥
+UT ∘ ∙ S C = isNeg C 
+UT ∙ ∙ (just A) C = isPos A ⊎ isNeg C
+UT ∙ ∙ ─ C = ⊥
 
 -- A predicate lifting employed in the focR rule
 end-rf? : (P : Stp → Cxt → Fma → Set) → Stp → Cxt → Maybe (Σ Fma isNegAt) → Set
@@ -99,7 +99,7 @@ data [_,_]_∣_⇓_ where
            [ b , ∘ ] S ∣ Γ ⇓ C
 
   unfoc : {b b' : Bool} {S : Stp} {Γ : Cxt} {C : Fma}
-          (ok : unfoc-ok b b' S C)
+          (ok : UT b b' S C)
           (f : S ∣ Γ ⇑ C) →
       ------------------------------------
           [ b , b' ] S ∣ Γ ⇓ C

@@ -106,9 +106,10 @@
 \usepackage[dvipsnames]{xcolor}
 
 \newcommand{\red}[1]{{\color{Red}#1}}
-\newcommand{\blue}[1]{{\color{blue}#1}}
+\newcommand{\blue}[1]{{\color{Cerulean}#1}}
 \newcommand{\green}[1]{{\color{Green}#1}}
 
+\newcommand{\UT}{\mathsf{UT}}
 
 \newcommand\rfbox{\fcolorbox{red}{white}}
 
@@ -142,8 +143,9 @@
 \newcommand{\At}{\mathsf{At}}
 \newcommand{\runL}{\mathsf{runL}}
 
-\setlength{\abovecaptionskip}{0pt}
-\setlength{\belowcaptionskip}{-15pt}
+%% Commands for changing vertical space before and after caption in a figure
+%\setlength{\abovecaptionskip}{0pt}
+%\setlength{\belowcaptionskip}{-15pt}
 
 \begin{document}
 
@@ -492,11 +494,12 @@ We now present a multi-focused sequent calculus for \SkNMILL, which draws  inspi
     \infer[\unfoc]{\dbox{$S$}_{\,b} \mid \Gamma \dn \dbox{$A$}_{\,c}}{
       S \mid \Gamma \up A
       &
-      b = 1 \supset S = P
-      &
-      c = 1 \supset A = N
-      &
-      b \vee c = 1
+      \UT(b,c,S,A)
+%%       b = 1 \supset S = P
+%%       &
+%%       c = 1 \supset A = N
+%%       &
+%%       b \vee c = 1
     }
     \\[4pt]
     \multicolumn{1}{l}{\text{\textsc{Left-Focusing Phase}}} \\[4pt]
@@ -535,12 +538,25 @@ Proof search then progresses to the \emph{focusing} (or \emph{synchronous}) phas
 %Formulae on focus are surrounded by a \emph{solid} box {\small{\fbox{$A$}}}, similarly for stoups on focus. We use notation {\small{$\fbox{$A$}_{\,b}$}}, with $b$ a Boolean value, to denote a formula which is possibly under focus: {\small{$\fbox{$A$}_{\,1} = \fbox{$A$}$}} and {\small{$\fbox{$A$}_{\,0} = A$}}.
 The irreducible stoup $T$ is brought under focus with an application of rule $\focL$. At this point the context is split into two parts $\Gamma$ and $\Delta$ and left focusing phase is initiated in the first premise. A proof of $Q \lf T ; \Gamma$ consists of repeated application of left synchronous rules $\pass$ and $\lolliL$ on stoup $T$ and context $\Gamma$, until the stoup formula becomes the positive or atomic formula $Q$, at which point the left focus is \emph{blurred} by the rule $\blurL$. In synchronous phase, blurred formulae are surrounded by a \emph{dashed} box ${\small{\dbox{$A$}}}$. We use notation {\small{$\dbox{$A$}_{\,b}$}}, with $b$ a Boolean value, to denote a formula which is possibly blurred: {\small{$\dbox{$A$}_{\,1} = \dbox{$A$}$}} and {\small{$\dbox{$A$}_{\,0} = A$}}.
 
-Proof search can also proceed by bringing the succedent formula $Q$ under focus with an application of rule $\focR$. The context is split into two parts $\Gamma$ and $\Delta$ and right focusing phase is initiated in the second premise. The right focusing phase consists of repeated applications of the right synchronous rule $\otR$. The optional formula $T$ in sequent $T \lf \Delta ; Q$ indicates whether the right focusing phase terminates when the succedent formula becomes negative or atomic (in which case $T = M$) or it terminates with an application of $\IR$ (in which case $T = -$). In the first case, the succedent formula $M$ is blurred by the rule $\blurR$. The notation $\small\dbox{$S$}_{\, b} \mid \Gamma \dn \dbox{$T$}$ is an abbreviation for: $\dbox{$S$}_{\, b} \mid \Gamma \dn \dbox{$M$}$, when $T = M$ and its the singleton set if $T = -$. In other words, $\focR$ does not have a first premise in case the proof of the second premise ends with $\IR$.
+Proof search can also proceed by bringing the succedent formula $Q$ under focus with an application of rule $\focR$. The context is split into two parts $\Gamma$ and $\Delta$ and right focusing phase is initiated in the second premise. The right focusing phase consists of repeated applications of the right synchronous rule $\otR$. The optional formula $T$ in sequent $T \lf \Delta ; Q$ indicates whether the right focusing phase terminates when the succedent formula becomes negative or atomic (in which case $T = M$) or it terminates with an application of $\IR$ (in which case $T = -$). In the first case, the succedent formula $M$ is blurred by the rule $\blurR$. The notation $\small\dbox{$S$}_{\, b} \mid \Gamma \dn \dbox{$T$}$ is an abbreviation for: $\small\dbox{$S$}_{\, b} \mid \Gamma \dn \dbox{$M$}$, when $T = M$ and its the singleton set if $T = -$. In other words, $\focR$ does not have a first premise in case the proof of the second premise ends with $\IR$.
 
 A couple of observations left- and right-focusing. The design of rule $\focL$, with a whole left-focusing phase compressed in a proof of $Q \lf T ; \Gamma$, is chosen specifically for the purpose of maximal multi-focusing, where we will be interested in whether a certain left-focusing phase has happened rather than the specific left synchronous rules that have been applied. Notice also that when in the first premise $Q \lf T ; \Gamma$ of $\focL$ there is no need to keep track of the succedent formula $A$ since it is not affected by left synchronous rules, and similarly for the context $\Delta$ of the second premise. Similar observations apply to $\focR$.
 
 
-When the (left-) right-focusing phase terminates, one can subsequently choose to focus on the (succedent) stoup formula. If both left- and right-focusing lead to valid derivations, they can be performed in any order, first left then right, or vice versa. When no formula is under focus anymore, we \emph{unfocus} and continue proof search in asynchronous phase. In order to unfocus, formulae that where previously under focus, which are now blurred, must have switched their polarity, which is reflected in the side conditions of rule $\unfoc$: the stoup formula must be positive if it was under focus ($b=1$), while if the succedent formula was under focus ($c = 1$) it must now be negative. Unfocusing also requires that at least one formula was previously under focus, henceforth the condition $b \vee c = 1$.
+When the (left-) right-focusing phase terminates, one can subsequently choose to focus on the (succedent) stoup formula. If both left- and right-focusing lead to valid derivations, they can be performed in any order, first left then right, or vice versa. When no formula is under focus anymore, we \emph{unfocus} and continue proof search in asynchronous phase. In order to unfocus, formulae that where previously under focus, which are now blurred, must have switched their polarity, which is reflected in the side condition $\UT(b,c,S,A)$ of rule $\unfoc$ ($\UT$ stands for ``unfocusing table''):
+\[\small
+\begin{array}{|@{\;}c@{\;}|@{\;}c@{\;}|@{\;}c@{\;}|}
+  \hline
+b & c & \UT(b,c,S,A) \\
+\hline
+0 & 0 & 0 \\
+0 & 1 & A = N \\
+1 & 0 & S = P \\
+1 & 1 & S = P \vee A = N\\
+  \hline
+\end{array}
+\]
+The stoup formula must be positive if it was under focus ($b=1$) but the succedent was not ($c=0$). Dually, the succedent formula must be negative is it was under focus ($c = 1$) and the stoup was not ($b = 0$). If both formulae were under focus ($b = 1 \wedge c = 1$), one of them must have changed its polarity. Unfocusing also requires that at least one formula was previously under focus, henceforth the condition $b \vee c$ must be true.
 %The axiom rule is usable only if both stoup and succedent formulae were under focus.
 
 For a sequent with atomic stoup and positive succedent $X \mid \Gamma \up P$ (or, dually, negative stoup and atomic succedent), one can wither focus on the stoup formula or not. If the sequent is derivable, both choices will lead to a valid proof. An analogous situation was also present in the multi-focused calculus for classical linear logic \cite{chaudhuri:canonical:2008}, where in a similar circumstances one was given the choice of focusing on negated atoms.
@@ -843,21 +859,22 @@ Stoups are also tagged: $\green{S}$ or $\red{S}$. Tagged contexts consist of tag
     }
     \;\;
     \infer[\focR]{\dbox{$S$}_{\, b} \mid \Gamma,\Delta \dn \green{Q}}{
-      \dbox{S}_{\, b} \mid \Gamma \dn \dbox{$\green{T}$}
+      \dbox{$S$}_{\, b} \mid \Gamma \dn \dbox{$\green{T}$}
       &
       \green{T} \rf \green{\Delta} ; \green{Q}
     }
     \\[4pt]
         \infer[\ax]{\dbox{$\green{X}$} \mid ~ \dn \dbox{$\green{X}$}}{}
-    \quad
+    \qquad
     \infer[\unfoc]{\dbox{$\green{S}$}_{\,b} \mid \Gamma \dn \dbox{$\green{A}$}_{\,c}}{
       S^{\neg b} \mid \green{\Gamma} \up A^{\neg c}
       &
-      b = 1 \supset S = P
-      &
-      c = 1 \supset A = N
-      &
-      b \vee c = 1
+      \UT(b,c,S,A)
+%%       b = 1 \supset S = P
+%%       &
+%%       c = 1 \supset A = N
+%%       &
+%%       b \vee c = 1
     }
 %     \multicolumn{1}{l}{\text{\textsc{Synchronous Phase}}} \\[4pt]
 %         \infer[\focL]{T \mid \Gamma \dn A}{
@@ -929,7 +946,7 @@ Stoups are also tagged: $\green{S}$ or $\red{S}$. Tagged contexts consist of tag
 %     }
     \end{array}
   \]
-  \caption{Maximally Multi-focused sequent calculus for \SkNMILL.} 
+  \caption{Maximally multi-focused sequent calculus for \SkNMILL.} 
   \label{fig:max-multi-focus}
 \end{figure}
 
@@ -1855,7 +1872,7 @@ It is also possible to show that proofs in the maximally multi-focused calculus 
 
 %\section{Comparison with Other Normal Forms}\label{sec:compare}
 
-\vspace{-.5cm}
+%\vspace{-.5cm}
 \section{Conclusions}\label{sec:conclusions}
 
 \SkNMILL\ is a relatively weak logic, low in the substructural hierarchy and with a restricted selection of logical connectives. Nevertheless, its simplicity allows to properly investigate complex proof-theoretic procedure such as maximal multi-focusing, which can be subsequently extended to sequent calculi for richer logics. Porting the technique to extensions of \SkNMILL\ with other structural laws, such as full associativity/unitality (recovering the Lambek calculus without left residual) or exchange (as in the sequent calculus of symmetric skew monoidal categories \cite{veltri:coherence:2021}), should be relatively straightforward. Extensions with additive connectives will make things more complicated. To this end, it would be interesting to study semantic approaches to maximal multi-focusing, akin to normalization-by-evaluation \cite{ADHS:noretl,NbELambek} or (proof-relevant) semantic cut elimination \cite{Okada99}.
