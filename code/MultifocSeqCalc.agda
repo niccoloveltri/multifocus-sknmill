@@ -186,9 +186,10 @@ embs⇑ (f ∷ fs) = emb⇑ f ∷ embs⇑ fs
        (gs : All (λ ΔB → ─ ∣ proj₁ ΔB ⇑ proj₂ ΔB) ((Δ₀ , B₀) ∷ Ξ)) →
        s ⇛rf Γ ++ Δ₀ ++ concat (cxts Ξ) ； C ⊗⋆ (B₀ ∷ fmas Ξ)
 ++rf Δ₀ Ξ .─ Ir gs = ⊗r+ Δ₀ Ξ tt Ir gs refl
-++rf Δ₀ Ξ s (⊗r+ {Γ} Δ₁ Ξ₁ m rf gs₁ refl) gs =
+++rf Δ₀ Ξ s (⊗r+ {Γ} Δ₁ Ξ₁ m rf gs₁ eq) gs = 
   ⊗r+ Δ₁ (Ξ₁ ++ (Δ₀ , _) ∷ Ξ) m rf (gs₁ ++All gs)
-      (cong (λ x → Γ ++ Δ₁ ++ x) (sym (concat++ (cxts Ξ₁) (_ ∷ cxts Ξ))))
+      (trans (cong (_++ Δ₀ ++ concat (cxts Ξ)) eq)
+             (cong (λ x → Γ ++ Δ₁ ++ x) (sym (concat++ (cxts Ξ₁) (_ ∷ cxts Ξ))))) 
 ++rf Δ₀ Ξ (just (_ , m)) blurr gs = ⊗r+ Δ₀ Ξ (negat→isn't⊗ m) blurr gs refl
 
 -- ==========================================
@@ -227,6 +228,12 @@ data L : Stp → Cxt → Fma → Set where
   done : ∀{A} → L (just A) [] A
   Il-1 : ∀{Γ C} → L (just I) Γ C → L nothing Γ C
   ⊗l-1 : ∀{Γ A B C} → L (just (A ⊗ B)) Γ C → L (just A) (B ∷ Γ) C
+
+runLQ : ∀ {S Γ Δ A Q} (q : isPosAt Q) → L S Γ A
+  → S ∣ Γ ++ Δ ⇑ Q → just A ∣ Δ ⇑ Q
+runLQ q done f = f
+runLQ q (Il-1 ℓ) f = runLQ q ℓ (Il q f)
+runLQ q (⊗l-1 ℓ) f = runLQ q ℓ (⊗l q f)
 
 runL : ∀ {S Γ Δ A C} → L S Γ A
   → S ∣ Γ ++ Δ ⇑ C → just A ∣ Δ ⇑ C
@@ -287,8 +294,10 @@ pass⇓ {∙} (unfoc ok f) = unfoc ok (pass⇑ f)
 ⊗r+⇑Q Δ₀ p Ξ (foc s q f) gs = foc s (isPosAt⊗⋆ tt (fmas Ξ)) (⊗r+⇓Q Δ₀ p Ξ f gs)
 
 ⊗r+⇓Q Δ₀ p Ξ ax gs = focr (just _) (⊗r+ Δ₀ Ξ tt blurr gs refl) ax refl
-⊗r+⇓Q Δ₀ p Ξ (focl q lf f refl) gs = focl q lf (⊗r+⇓Q Δ₀ p Ξ f gs) refl
-⊗r+⇓Q Δ₀ p Ξ (focr s rf f refl) gs = focr s (++rf Δ₀ Ξ s rf gs) f refl
+⊗r+⇓Q Δ₀ p Ξ (focl q lf f eq) gs =
+  focl q lf (⊗r+⇓Q Δ₀ p Ξ f gs) (cong (_++ Δ₀ ++ concat (cxts Ξ)) eq)
+⊗r+⇓Q Δ₀ p Ξ (focr s rf f eq) gs =
+  focr s (++rf Δ₀ Ξ s rf gs) f (cong (_++ Δ₀ ++ concat (cxts Ξ)) eq)
 ⊗r+⇓Q {∙} {just P} Δ₀ q Ξ (unfoc ok f) gs = unfoc ok (⊗r+⇑Q Δ₀ q Ξ f gs)
 
 ⊗r+⇑N : {S : Stp} {Γ₀ Γ : Cxt} (Γ₁ Δ₀ : Cxt) {A B₀ : Fma}
@@ -338,7 +347,7 @@ pass⇓ {∙} (unfoc ok f) = unfoc ok (pass⇑ f)
 ⊸l+⇑P Γ₀ Δ₀ Δ₁ p Ξ fs (Il q f) eq ℓ = ⊸l+⇑P Γ₀ Δ₀ Δ₁ p Ξ fs f eq (Il-1 ℓ)
 ⊸l+⇑P Γ₀ Δ₀ Δ₁ p Ξ fs (⊗l q f) refl ℓ = ⊸l+⇑P Γ₀ (_ ∷ Δ₀) Δ₁ p Ξ fs f refl (⊗l-1 ℓ)
 ⊸l+⇑P Γ₀ Δ₀ Δ₁ {C = C} p Ξ fs (foc s q f) refl ℓ = 
-  foc tt q (focl (pos→posat p) (⊸l+ Γ₀ Ξ (pos→posat p) fs blurl refl) (unfoc p (runL {Δ = Δ₁} ℓ (foc s q f))) refl)
+  foc tt q (focl (pos→posat p) (⊸l+ Γ₀ Ξ (pos→posat p) fs blurl refl) (unfoc p (runLQ {Δ = Δ₁} q ℓ (foc s q f))) refl)
 
 ++lf : (Γ₀ : Cxt) {Γ : Cxt} {Q A₀ M : Fma} (Ξ : List (Cxt × Fma))
        (q : isPosAt Q)

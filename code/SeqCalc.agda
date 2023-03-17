@@ -91,7 +91,7 @@ ccut Δ₀ f (⊗l {B = B} g) r = ⊗l (ccut (B ∷ Δ₀) f g (cong (_∷_ B) r
 
 infixl 15 _∙_
 
-data _≗_ : {S  : Stp}{Γ : Cxt}{A : Fma} → S ∣ Γ ⊢ A → S ∣ Γ ⊢ A → Set where
+data _≗_ : {S : Stp}{Γ : Cxt}{A : Fma} → S ∣ Γ ⊢ A → S ∣ Γ ⊢ A → Set where
 
 -- -- equivalence relation
   refl : ∀{S Γ A} {f : S ∣ Γ ⊢ A} → f ≗ f

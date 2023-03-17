@@ -261,6 +261,13 @@ Il⇑ (foc s q f) = Il q (foc s q f)
 ⊗l⇑ (⊗l q f) = ⊗l q (⊗l⇑ f)
 ⊗l⇑ (foc s q f) = ⊗l q (foc s q f)
 
+runLQ : ∀ {r S Γ Δ A Q} (q : isPosAt Q) → MF.L S Γ A
+  → (∘ , S) ∣ tag-cxt r Γ ++ Δ ⇑ (r , Q)
+  → (∘ , just A) ∣ Δ ⇑ (r , Q)
+runLQ q MF.done f = f
+runLQ q (MF.Il-1 ℓ) f = runLQ q ℓ (Il q f)
+runLQ q (MF.⊗l-1 ℓ) f = runLQ q ℓ (⊗l q f)
+
 runL : ∀ {r S Γ Δ A C} → MF.L S Γ A
   → (∘ , S) ∣ tag-cxt r Γ ++ Δ ⇑ (r , C)
   → (∘ , just A) ∣ Δ ⇑ (r , C)
@@ -389,12 +396,12 @@ only-lf⇑P Δ₁ s p lf (foc s' q₁ f) eq ℓ = foc s q₁ (only-lf-fP Δ₁ s
 only-lf-fP {Δ₀ = Δ₀} Δ₁ {Γ} s' p q lf (focl {Γ₀ = Γ₀} {Γ₁} q₂ lf₁ (focr (just (.(` _) , snd)) rf ax refl refl ξ) refl refl ξ') eq ℓ with ++?-alt (∘cxt Γ) Γ₀ Δ₁ Γ₁ eq
 ... | inj₁ (Ω , refl , refl) =
   focl {Γ₀ = ∘cxt Δ₀}{Δ₁} (pos→posat p) lf
-       (focr {Γ₀ = Ω} {Γ₁} (just _) rf (unfoc (inj₁ p) (runL {Δ = ∘tcxt Ω} ℓ (foc s' tt (focl {Γ₁ = []} tt lf₁ (focr (just _) blurr ax refl refl tt) refl refl tt)))) refl refl tt)
+       (focr {Γ₀ = Ω} {Γ₁} (just _) rf (unfoc (inj₁ p) (runLQ {Δ = ∘tcxt Ω} tt ℓ (foc s' tt (focl {Γ₁ = []} tt lf₁ (focr (just _) blurr ax refl refl tt) refl refl tt)))) refl refl tt)
        refl refl tt
 ... | inj₂ (A , Ω , eq' , refl) with split-map ∘fma Γ Γ₀ (A ∷ Ω) eq'
 ... | (Γ₀' , _ ∷ Ω' , refl , refl , refl) =
   focl (pos→posat p) lf
-       (unfoc p (runL {Δ = ∘tcxt Δ₁} ℓ (foc s' q (focl {Γ₀ = ∙cxt Γ₀'} {_ ∷ ∙cxt Ω' ++ ∘tcxt Δ₁} tt lf₁ (focr {Γ₀ = []} _ rf ax refl refl tt) refl refl tt))))
+       (unfoc p (runLQ {Δ = ∘tcxt Δ₁} q ℓ (foc s' q (focl {Γ₀ = ∙cxt Γ₀'} {_ ∷ ∙cxt Ω' ++ ∘tcxt Δ₁} tt lf₁ (focr {Γ₀ = []} _ rf ax refl refl tt) refl refl tt))))
        refl refl tt
 only-lf-fP {Δ₀ = Δ₀} Δ₁ {Γ} s' p q lf (focl {Γ₀ = Γ₂} q₂ lf₁ (focr {Γ₀ = Γ₀} {Γ₁} (just (M , m)) rf (unfoc ok f) refl refl ξ) refl refl ξ') eq ℓ with ++?-alt (∘cxt Γ) (Γ₂ ++ Γ₀) Δ₁ Γ₁ eq
 ... | inj₁ (Ω , eq' , refl) with ++?-alt (∘cxt Γ) Γ₂ Ω Γ₀ eq'
@@ -412,23 +419,23 @@ only-lf-fP {Δ₀ = Δ₀} Δ₁ {Γ} s' p q lf (focl {Γ₀ = Γ₂} q₂ lf₁
 ... | (Γ₂' , Λ , refl , eq'' , refl) with split-map ∘fma Λ Γ₀ (_ ∷ Ω) eq''
 ... | (Γ₀' , _ ∷ Ω' , refl , refl , refl) =
   focl {Γ₀ = ∘cxt Δ₀} {Δ₁} (pos→posat p) lf
-       (unfoc p (runL {Δ = ∘tcxt Δ₁} ℓ
+       (unfoc p (runLQ {Δ = ∘tcxt Δ₁} q ℓ
               (foc s' q (focl {Γ₀ = ∙cxt Γ₂'} {∙cxt Γ₀' ++ _ ∷ ∙cxt Ω' ++ ∘tcxt Δ₁} q₂ lf₁ (focr {Γ₀ = ∙cxt Γ₀'} {_ ∷ ∙cxt Ω' ++ ∘tcxt Δ₁} _ rf (unfoc ok f) refl refl tt) refl refl tt))))
        refl refl tt
 only-lf-fP {Δ₀ = Δ₀} Δ₁ {Γ} s' p q lf (focl {Γ₀ = Γ₀} {Γ₁} q₂ lf₁ (unfoc ok f) refl refl ξ) eq ℓ with ++?-alt (∘cxt Γ) Γ₀ Δ₁ Γ₁ eq
 ... | inj₁ (Ω , refl , refl) =
-  focl {Γ₀ = ∘cxt Δ₀} {Δ₁} (pos→posat p) lf (unfoc p (runL {Δ = ∘tcxt Δ₁} ℓ (foc s' q (focl {Γ₀ = ∙cxt Γ ++ ∘tcxt Ω} {∘tcxt Γ₁} q₂ lf₁ (unfoc ok f) refl refl tt)))) refl refl tt
+  focl {Γ₀ = ∘cxt Δ₀} {Δ₁} (pos→posat p) lf (unfoc p (runLQ {Δ = ∘tcxt Δ₁} q ℓ (foc s' q (focl {Γ₀ = ∙cxt Γ ++ ∘tcxt Ω} {∘tcxt Γ₁} q₂ lf₁ (unfoc ok f) refl refl tt)))) refl refl tt
 ... | inj₂ (A , Ω , eq' , refl) with split-map ∘fma Γ Γ₀ (A ∷ Ω) eq'
 ... | (Γ₀' , _ ∷ Ω' , refl , refl , refl) =
-  focl {Γ₀ = ∘cxt Δ₀} {Δ₁} (pos→posat p) lf (unfoc p (runL {Δ = ∘tcxt Δ₁} ℓ (foc s' q (focl {Γ₀ = ∙cxt Γ₀'} {_ ∷ ∙cxt Ω' ++ ∘tcxt Δ₁} q₂ lf₁ (unfoc ok f) refl refl tt)))) refl refl tt
+  focl {Γ₀ = ∘cxt Δ₀} {Δ₁} (pos→posat p) lf (unfoc p (runLQ {Δ = ∘tcxt Δ₁} q ℓ (foc s' q (focl {Γ₀ = ∙cxt Γ₀'} {_ ∷ ∙cxt Ω' ++ ∘tcxt Δ₁} q₂ lf₁ (unfoc ok f) refl refl tt)))) refl refl tt
 only-lf-fP {Δ₀ = Δ₀} Δ₁ {Γ} s' p q lf (focr {Γ₀ = Γ₀} {Γ₁} (just (M , m)) rf (unfoc ok f) refl refl ξ) eq ℓ with ++?-alt (∘cxt Γ) Γ₀ Δ₁ Γ₁ eq
 ... | inj₁ (Ω , refl , refl) =
   focl {Γ₀ = ∘cxt Δ₀} {Ω ++ Γ₁} (pos→posat p) lf (focr {Γ₀ = Ω} {Γ₁} (just (M , m)) rf (unfoc (inj₁ p) (runL {Δ = ∘tcxt Ω} ℓ (l∙→∘⇑ {Γ = ∘cxt Γ ++ ∘tcxt Ω} f))) refl refl ξ) refl refl tt
 ... | inj₂ (A , Ω , eq' , refl) with split-map ∘fma Γ Γ₀ (A ∷ Ω) eq'
 ... | (Γ₀' , _ ∷ Ω' , refl , refl , refl) =
-  focl {Γ₀ = ∘cxt Δ₀} {Δ₁} (pos→posat p) lf (unfoc p (runL {Δ = ∘tcxt Δ₁} ℓ (foc s' q (focr {Γ₀ = ∙cxt Γ₀'} {_ ∷ ∙cxt Ω' ++ ∘tcxt Δ₁} (just (M , m)) rf (unfoc ok f) refl refl ξ)))) refl refl tt
+  focl {Γ₀ = ∘cxt Δ₀} {Δ₁} (pos→posat p) lf (unfoc p (runLQ {Δ = ∘tcxt Δ₁} q ℓ (foc s' q (focr {Γ₀ = ∙cxt Γ₀'} {_ ∷ ∙cxt Ω' ++ ∘tcxt Δ₁} (just (M , m)) rf (unfoc ok f) refl refl ξ)))) refl refl tt
 only-lf-fP {Δ₀ = Δ₀} Δ₁ {Γ} s' p q lf (focr ─ rf (refl , refl) refl refl ξ) refl ℓ =
-  focl {Γ₀ = ∘cxt Δ₀} {Δ₁} (pos→posat p) lf (unfoc p (runL {Δ = ∘tcxt Δ₁} ℓ (foc tt q (focr {Γ₀ = []}{∙cxt Γ ++ ∘tcxt Δ₁} nothing rf (refl , refl) refl refl tt)))) refl refl tt
+  focl {Γ₀ = ∘cxt Δ₀} {Δ₁} (pos→posat p) lf (unfoc p (runLQ {Δ = ∘tcxt Δ₁} q ℓ (foc tt q (focr {Γ₀ = []}{∙cxt Γ ++ ∘tcxt Δ₁} nothing rf (refl , refl) refl refl tt)))) refl refl tt
 
 -- Admissibility of right-focusing with both premise and conclusion in
 -- invertible phase.
