@@ -80,7 +80,8 @@ data _∣_⇑_ where
 
 data [_,_]_∣_⇓_ where
 
-  ax : {b b' : Bool} {X : At} → [ b , b' ] just (` X) ∣ [] ⇓ ` X
+  ax : {X : At} → [ ∙ , ∙ ] just (` X) ∣ [] ⇓ ` X
+  -- {b b' : Bool} {X : At} → [ b , b' ] just (` X) ∣ [] ⇓ ` X
 
   focl : {b : Bool} {S : Stp} {Γ Γ₀ Γ₁ : Cxt} {C Q : Fma}
          (q : isPosAt Q)
@@ -137,6 +138,9 @@ data _⇛rf_；_ where
 
   blurr : {M : Fma} {m : isNegAt M} → 
          just (M , m) ⇛rf [] ； M
+
+subst⇑ : ∀ {S Γ Δ A} (f : S ∣ Γ ⇑ A) (eq : Γ ≡ Δ) → S ∣ Δ ⇑ A
+subst⇑ f refl = f
 
 -- =========================================
 
@@ -249,7 +253,10 @@ Ir⇑ = foc tt tt (focr nothing Ir (refl , refl) refl)
 -- -- Axiom
 
 ax⇑ : ∀ {X} → just (` X) ∣ [] ⇑ ` X
-ax⇑ = foc tt tt ax
+ax⇑ = foc tt tt (focl tt blurl (focr _ blurr ax refl) refl)
+
+-- ax⇑ : ∀ {X} → just (` X) ∣ [] ⇑ ` X
+-- ax⇑ = foc tt tt ax
 
 -- -- Passivation
 
@@ -266,7 +273,6 @@ pass⇑ (Il q f) = foc tt q (focl tt (pass blurl) (unfoc tt (Il q f)) refl)
 pass⇑ (⊗l q f) = foc tt q (focl tt (pass blurl) (unfoc tt (⊗l q f)) refl)
 pass⇑ (foc s q f) = foc tt q (pass⇓ f)
 
-pass⇓ ax = focl tt (pass blurl) ax refl
 pass⇓ (focl q lf f eq) = focl q (pass lf) f (cong (_ ∷_) eq)
 pass⇓ (focr (just (M , m)) rf f eq) = focr (just (M , m)) rf (pass⇓ f) (cong (_ ∷_) eq)
 pass⇓ {∙} (unfoc ok f) = unfoc ok (pass⇑ f)
@@ -293,7 +299,6 @@ pass⇓ {∙} (unfoc ok f) = unfoc ok (pass⇑ f)
 ⊗r+⇑Q Δ₀ p Ξ (⊗l q f) gs = ⊗l (isPosAt⊗⋆ tt (fmas Ξ)) (⊗r+⇑Q Δ₀ p Ξ f gs)
 ⊗r+⇑Q Δ₀ p Ξ (foc s q f) gs = foc s (isPosAt⊗⋆ tt (fmas Ξ)) (⊗r+⇓Q Δ₀ p Ξ f gs)
 
-⊗r+⇓Q Δ₀ p Ξ ax gs = focr (just _) (⊗r+ Δ₀ Ξ tt blurr gs refl) ax refl
 ⊗r+⇓Q Δ₀ p Ξ (focl q lf f eq) gs =
   focl q lf (⊗r+⇓Q Δ₀ p Ξ f gs) (cong (_++ Δ₀ ++ concat (cxts Ξ)) eq)
 ⊗r+⇓Q Δ₀ p Ξ (focr s rf f eq) gs =
@@ -376,7 +381,6 @@ pass⇓ {∙} (unfoc ok f) = unfoc ok (pass⇑ f)
 ⊸l+⇑M Γ₀ m Ξ fs (⊸r f) = ⊸r (⊸l+⇑M Γ₀ m Ξ fs f)
 ⊸l+⇑M Γ₀ m Ξ fs (foc s q f) = foc tt q (⊸l+⇓M Γ₀ m Ξ fs f)
 
-⊸l+⇓M Γ₀ m Ξ fs ax = focl tt (⊸l+ Γ₀ Ξ tt fs blurl refl) ax refl
 ⊸l+⇓M Γ₀ m Ξ fs (focl q lf f refl) = focl q (++lf Γ₀ Ξ q lf fs) f refl
 ⊸l+⇓M Γ₀ m Ξ fs (focr (just (M , m')) rf f refl) = focr (just (M , m')) rf (⊸l+⇓M Γ₀ m Ξ fs f) refl
 ⊸l+⇓M {∙} Γ₀ m Ξ fs (unfoc ok f) = unfoc ok (⊸l+⇑M Γ₀ m Ξ fs f)

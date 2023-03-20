@@ -552,13 +552,13 @@ max (MF.⊗l q f) = ⊗l q (max f)
 -- easy cases:
 
 -- -- ax
-max (MF.foc s q MF.ax) = foc tt tt (focl tt blurl (focr (just _) blurr ax refl refl tt) refl refl tt)
+--max (MF.foc s q MF.ax) = foc tt tt (focl tt blurl (focr (just _) blurr ax refl refl tt) refl refl tt)
 -- -- focL + ax
-max (MF.foc s q (MF.focl {Γ₀ = Γ₀} {.[]} q₁ lf MF.ax refl)) =
-  foc s tt (only-lf-f-at [] s tt (max-lf lf) (focl tt blurl (focr (just _) blurr ax refl refl tt) refl refl tt))
+--max (MF.foc s q (MF.focl {Γ₀ = Γ₀} {.[]} q₁ lf MF.ax refl)) =
+--  foc s tt (only-lf-f-at [] s tt (max-lf lf) (focl tt blurl (focr (just _) blurr ax refl refl tt) refl refl tt))
 -- -- focR + ax  
-max (MF.foc s q (MF.focr {Γ₁ = Γ} (just (.(` _) , snd)) rf MF.ax refl)) =
-  foc s q (focl {Γ₁ = ∘cxt Γ} tt blurl (focr {Γ₁ = ∘cxt Γ} (just _) (max-rf rf) ax refl refl tt) refl refl tt)
+--max (MF.foc s q (MF.focr {Γ₁ = Γ} (just (.(` _) , snd)) rf MF.ax refl)) =
+--  foc s q (focl {Γ₁ = ∘cxt Γ} tt blurl (focr {Γ₁ = ∘cxt Γ} (just _) (max-rf rf) ax refl refl tt) refl refl tt)
 
 -- -- focL + focR + ax
 max (MF.foc s q (MF.focl {Γ₀ = Γ₀} {Γ₁} q₁ lf (MF.focr (just (` X , m)) rf MF.ax refl) refl)) =
