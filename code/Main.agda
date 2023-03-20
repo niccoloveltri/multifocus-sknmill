@@ -20,3 +20,9 @@ import MultifocSeqCalc
 
 -- Maximally multi-focused sequent calculus
 import MaxMultifocSeqCalc
+
+-- -- WIP
+
+-- Correctness of multi-focusing
+-- -- Equational completeness
+import correct.multifocus.EqComplete

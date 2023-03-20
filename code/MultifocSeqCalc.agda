@@ -5,8 +5,8 @@ module MultifocSeqCalc where
 open import Data.List 
 open import Data.List.Relation.Unary.All hiding (map)
 open import Data.Maybe hiding (map)
-open import Data.Sum hiding (map)
-open import Data.Product renaming (map to map×)
+open import Data.Sum hiding (map; swap)
+open import Data.Product renaming (map to map×) hiding (swap)
 open import Data.Unit
 open import Data.Empty
 open import Data.Bool renaming (true to ∙; false to ∘)
@@ -381,8 +381,8 @@ pass⇓ {∙} (unfoc ok f) = unfoc ok (pass⇑ f)
 ⊸l+⇑M Γ₀ m Ξ fs (⊸r f) = ⊸r (⊸l+⇑M Γ₀ m Ξ fs f)
 ⊸l+⇑M Γ₀ m Ξ fs (foc s q f) = foc tt q (⊸l+⇓M Γ₀ m Ξ fs f)
 
-⊸l+⇓M Γ₀ m Ξ fs (focl q lf f refl) = focl q (++lf Γ₀ Ξ q lf fs) f refl
-⊸l+⇓M Γ₀ m Ξ fs (focr (just (M , m')) rf f refl) = focr (just (M , m')) rf (⊸l+⇓M Γ₀ m Ξ fs f) refl
+⊸l+⇓M Γ₀ m Ξ fs (focl q lf f eq) = focl q (++lf Γ₀ Ξ q lf fs) f (cong (λ x → Γ₀ ++ concat (cxts Ξ) ++ x) eq)
+⊸l+⇓M Γ₀ m Ξ fs (focr (just (M , m')) rf f eq) = focr (just (M , m')) rf (⊸l+⇓M Γ₀ m Ξ fs f) (cong (λ x → Γ₀ ++ concat (cxts Ξ) ++ x) eq)
 ⊸l+⇓M {∙} Γ₀ m Ξ fs (unfoc ok f) = unfoc ok (⊸l+⇑M Γ₀ m Ξ fs f)
 
 ⊸l+⇑ : (Γ₀ : Cxt) {Δ : Cxt} {A₀ B C : Fma}
@@ -424,89 +424,154 @@ focuss (f ∷ fs) = focus f ∷ focuss fs
 
 
 
+-- =================================
+
+-- Equivalence of multi-focused derivations
+
+infixl 15 _•_
+
+data _≗⇑_ : {S : Stp}{Γ : Cxt}{A : Fma} (f g : S ∣ Γ ⇑ A) → Set
+data _≗⇓_ : {b c : Bool} {S : Stp}{Γ : Cxt}{A : Fma} (f g : [ b , c ] S ∣ Γ ⇓ A) → Set
+data _≗lf_ {Q : Fma}{q : isPosAt Q} : {S : Stp}{Γ : Cxt} (f g : q ⇛lf S ； Γ) → Set
+data _≗rf_ : {s : Maybe (Σ Fma isNegAt)}{Γ : Cxt}{C : Fma} (f g : s ⇛rf Γ ； C) → Set
+data _≗s⇑_ : ∀ {Ξ} (fs gs : All (λ ΔB → ─ ∣ proj₁ ΔB ⇑ proj₂ ΔB) Ξ) → Set 
+
+data _≗⇑_ where
+
+-- -- equivalence relation
+  refl : ∀{S Γ A} {f : S ∣ Γ ⇑ A} → f ≗⇑ f
+  ~_ : ∀{S Γ A} {f g : S ∣ Γ ⇑ A} → f ≗⇑ g → g ≗⇑ f
+  _•_ : ∀{S Γ A} {f g h : S ∣ Γ ⇑ A} → f ≗⇑ g → g ≗⇑ h → f ≗⇑ h
+
+-- -- congruence
+  ⊸r : ∀{S Γ A C} {f g : S ∣ Γ ∷ʳ A ⇑ C} → f ≗⇑ g → ⊸r f ≗⇑ ⊸r g
+  Il : ∀{Γ Q q q'} {f g : ─ ∣ Γ ⇑ Q} → f ≗⇑ g → Il q f ≗⇑ Il q' g
+  ⊗l : ∀{Γ A B Q q q'} {f g : just A ∣ B ∷ Γ ⇑ Q} → f ≗⇑ g → ⊗l q f ≗⇑ ⊗l q' g
+  foc : ∀{S Γ Q s s' q q'} {f g : [ ∘ , ∘ ] S ∣ Γ ⇓ Q} (eq : f ≗⇓ g) → foc s q f ≗⇑ foc s' q' g
+
+-- -- multifocusing
+
+
+data _≗⇓_ where
+
+  refl : ∀{b c S Γ A} {f : [ b , c ] S ∣ Γ ⇓ A} → f ≗⇓ f
+  ~_ : ∀{b c S Γ A} {f g : [ b , c ] S ∣ Γ ⇓ A} → f ≗⇓ g → g ≗⇓ f
+  _•_ : ∀{b c S Γ A} {f g h : [ b , c ] S ∣ Γ ⇓ A} → f ≗⇓ g → g ≗⇓ h → f ≗⇓ h
+
+  focl : ∀ {b S Γ Γ₀ Γ₁ C Q q}
+         {h k : q ⇛lf S ； Γ₀} → 
+         h ≗lf k → 
+         {f g : [ ∙ , b ] just Q ∣ Γ₁ ⇓ C}
+         {eq eq' : Γ ≡ Γ₀ ++ Γ₁} →
+         f ≗⇓ g →
+         focl _ h f eq ≗⇓ focl _ k g eq'
+
+  focr : ∀ {b S Γ Γ₀ Γ₁ C M m}
+         {h k : just (M , m) ⇛rf Γ₁ ； C} →
+         h ≗rf k → 
+         {f g : [ b , ∙ ] S ∣ Γ₀ ⇓ M} → 
+         {eq eq' : Γ ≡ Γ₀ ++ Γ₁} → 
+         f ≗⇓ g →
+         focr _ h f eq ≗⇓ focr _ k g eq'
+
+  focrn : ∀ {b S Γ Γ₀ Γ₁ C}
+         {h k : nothing ⇛rf Γ₁ ； C} →
+         h ≗rf k →
+         {f g : S ≡ nothing × Γ₀ ≡ []}
+         {eq eq' : Γ ≡ Γ₀ ++ Γ₁} → 
+         focr {b} nothing h f eq ≗⇓ focr nothing k g eq'
+
+  unfoc : ∀ {b c S Γ C}
+          {ok : UT b c S C}
+          {f g : S ∣ Γ ⇑ C} →
+          (eq : f ≗⇑ g) → 
+          unfoc {b}{c} ok f ≗⇓ unfoc ok g
+
+  swap : ∀ {S Γ₀ Γ₁ Γ₂ C M Q q m}
+         {lf : q ⇛lf S ； Γ₀} {rf : just (M , m) ⇛rf Γ₂ ； C}
+         {f : [ ∙ , ∙ ] just Q ∣ Γ₁ ⇓ M} →
+         focl q lf (focr _ rf f refl) refl ≗⇓ focr _ rf (focl q lf f refl) refl
+
+  early-lf : ∀ {S Γ Γ₀ Γ₁} Δ {Q R} {s : isIrr S} {n : isNeg (Δ ⊸⋆ R)} {q : isPos Q} (r : isPosAt R)
+            {lf : pos→posat q ⇛lf S ； Γ₀} 
+            {f : just Q ∣ Γ₁ ++ Δ ⇑ R} {eq : Γ ≡ Γ₀ ++ Γ₁} {eq' : Γ ++ Δ ≡ Γ₀ ++ Γ₁ ++ Δ} →
+            unfoc {∘}{∙} n (⊸r⋆⇑ Δ (foc s r (focl {∘} (pos→posat q) lf (unfoc {∙}{∘} q f) eq')))
+              ≗⇓ focl {∙} _ lf (unfoc {∙}{∙} (inj₁ q) (⊸r⋆⇑ Δ f)) eq
+
+  early-lf-at : ∀ {S Γ Γ₀ Γ₁} Δ {X R} {s : isIrr S} {n : isNeg (Δ ⊸⋆ R)} {x : isAt X} (r : isPosAt R)
+              {lf : at→posat x ⇛lf S ； Γ₀} 
+              {f : [ ∙ , ∘ ] just X ∣ Γ₁ ++ Δ ⇓ R} {eq : Γ ≡ Γ₀ ++ Γ₁} {eq' : Γ ++ Δ ≡ Γ₀ ++ Γ₁ ++ Δ} →
+              unfoc {∘}{∙} n (⊸r⋆⇑ Δ (foc s r (focl {∘} (at→posat x) lf f eq')))
+                ≗⇓ focl {∙} _ lf (unfoc {∙}{∙} (inj₂ n) (⊸r⋆⇑ Δ (foc (at→negat x) r (focl (at→posat x) blurl f refl)))) eq
+
+  early-rf : ∀ {T Γ Γ₁ Γ₂ Δ N Q R} t {n} {q : isPos Q} {r}
+            {rf : just (N , neg→negat n) ⇛rf Γ₂ ； R}
+            {f : T ∣ Δ ++ Γ₁ ⇑ N} (ℓ : L T Δ Q) {eq : Γ ≡ Γ₁ ++ Γ₂} →
+            unfoc {∙}{∘} q (runL {Δ = Γ} ℓ (foc t r (focr {∘} {Γ₀ = Δ ++ Γ₁}{Γ₂}_ rf (unfoc {∘}{∙} n f) (cong (Δ ++_) eq))))
+              ≗⇓ focr {∙} _ rf (unfoc {∙}{∙} (inj₁ q) (runL {Δ = Γ₁} ℓ f)) eq
+
+  early-rf-at : ∀ {T Γ Γ₁ Γ₂ Δ X Q R} t {x} {q : isPos Q} {r}
+                {rf : just (X , at→negat x) ⇛rf Γ₂ ； R}
+                {f : [ ∘ , ∙ ] T ∣ Δ ++ Γ₁ ⇓ X} (ℓ : L T Δ Q) {eq : Γ ≡ Γ₁ ++ Γ₂} →
+              unfoc {∙}{∘} q (runL {Δ = Γ} ℓ (foc t r (focr {∘} {Γ₀ = Δ ++ Γ₁}{Γ₂} _ rf f (cong (Δ ++_) eq))))
+              ≗⇓ focr {∙} _ rf (unfoc {∙}{∙} (inj₁ q) (runL {Δ = Γ₁} ℓ (foc t (at→posat x) (focr (just (X , at→negat x)) blurr f refl)))) eq
+
+
+  blurr-at : ∀ {Γ P X p} {f : just P ∣ Γ ⇑ ` X} → focr {∙} _ blurr (unfoc (inj₁ p) f) refl ≗⇓ unfoc {∙}{∘} p f
+  blurl-at : ∀ {Γ N X n} {f : just (` X) ∣ Γ ⇑ N} → focl {∙} _ blurl (unfoc (inj₂ n) f) refl ≗⇓ unfoc {∘}{∙} n f
+
+--   early-lf : ∀ {S Γ₀ Γ₁ Γ₂} Δ {C Q R s n q} r
+--             {lf : pos→posat q ⇛lf S ； Γ₀} {rf : just (Δ ⊸⋆ R , neg→negat n) ⇛rf Γ₂ ； C}
+--             {f : just Q ∣ Γ₁ ++ Δ ⇑ R} →
+--             focr {∘} {Γ₀ = Γ₀ ++ Γ₁} _ rf (unfoc n (⊸r⋆⇑ Δ (foc s r (focl (pos→posat q) lf (unfoc q f) refl)))) refl
+--               ≗⇓ focl _ lf (focr _ rf (unfoc (inj₁ q) (⊸r⋆⇑ Δ f)) refl) refl
+
+--   early-rf : ∀ {S T Γ₀ Γ₁ Γ₂ Δ N Q R} t {n q r}
+--             {lf : pos→posat q ⇛lf S ； Γ₀} {rf : just (N , neg→negat n) ⇛rf Γ₂ ； R}
+--             {f : T ∣ Δ ++ Γ₁ ⇑ N} (ℓ : L T Δ Q) →
+--             focl {∘} {Γ₀ = Γ₀} {Γ₁ ++ Γ₂} _ lf (unfoc q (runL {Δ = Γ₁ ++ Γ₂} ℓ (foc t r (focr {Γ₀ = Δ ++ Γ₁}{Γ₂}_ rf (unfoc n f) refl)))) refl
+--               ≗⇓ focl _ lf (focr _ rf (unfoc (inj₁ q) (runL {Δ = Γ₁} ℓ f)) refl) refl
+
+data _≗lf_ {Q}{q'} where
+
+  refl : ∀ {S Γ} {f : q' ⇛lf S ； Γ} → f ≗lf f
+  ~_ : ∀ {S Γ} {f g : q' ⇛lf S ； Γ} → f ≗lf g → g ≗lf f
+  _•_ : ∀ {S Γ} {f g h : q' ⇛lf S ； Γ} → f ≗lf g → g ≗lf h → f ≗lf h
+
+  pass : ∀ {Γ A} {f g : q' ⇛lf just A ； Γ} → f ≗lf g → pass f ≗lf pass g
+
+  ⊸l+ : ∀ {Γ₀ Δ Γ' A₀ Q Ξ q}
+           {fs gs : All (λ ΓA → ─ ∣ proj₁ ΓA ⇑ proj₂ ΓA) ((Γ₀ , A₀) ∷ Ξ)} → fs ≗s⇑ gs → 
+           {f g : q' ⇛lf just Q ； Δ} → f ≗lf g → 
+           {eq eq' : Γ' ≡ Γ₀ ++ concat (cxts Ξ) ++ Δ} → 
+      ----------------------------------------------------------
+          ⊸l+ Γ₀ Ξ q fs f eq ≗lf ⊸l+ Γ₀ Ξ q gs g eq'
+
+data _≗rf_ where
+
+  refl : ∀ {s Γ C} {f : s ⇛rf Γ ； C} → f ≗rf f
+  ~_ : ∀ {s Γ C} {f g : s ⇛rf Γ ； C} → f ≗rf g → g ≗rf f
+  _•_ : ∀ {s Γ C} {f g h : s ⇛rf Γ ； C} → f ≗rf g → g ≗rf h → f ≗rf h
+
+  ⊗r+ : ∀ {Γ Γ' Δ₀ M B₀ s Ξ m}
+        {f g : s ⇛rf Γ ； M} → f ≗rf g → 
+        {fs gs : All (λ ΔB → ─ ∣ proj₁ ΔB ⇑ proj₂ ΔB) ((Δ₀ , B₀) ∷ Ξ)} → fs ≗s⇑ gs → 
+        {eq eq' : Γ' ≡ Γ ++ Δ₀ ++ concat (cxts Ξ)} →
+      ------------------------------------
+         ⊗r+ Δ₀ Ξ m f fs eq ≗rf ⊗r+ Δ₀ Ξ m g gs eq' 
+
+data _≗s⇑_ where
+  [] : [] ≗s⇑ []
+  _∷_ : ∀ {Δ B Ξ} {f g : ─ ∣ Δ ⇑ B} (eq : f ≗⇑ g)
+          {fs gs : All (λ ΔB → ─ ∣ proj₁ ΔB ⇑ proj₂ ΔB) Ξ} (eqs : fs ≗s⇑ gs) →
+          (f ∷ fs) ≗s⇑ (g ∷ gs) 
+
+refl⇑ : ∀{S Γ A} {f g : S ∣ Γ ⇑ A} → f ≡ g → f ≗⇑ g
+refl⇑ refl = refl
+
+foc-same : ∀{S Γ Q s q} {f g : [ ∘ , ∘ ] S ∣ Γ ⇓ Q} (eq : f ≗⇓ g) → foc s q f ≗⇑ foc s q g
+foc-same eq = foc eq
 
 
 
 
-{-
-⊗r+Il⇑N : {Γ₀ Γ : Cxt} (Γ₁ Δ₀ : Cxt) {A B₀ : Fma}
-           (n : isNeg (Γ₁ ⊸⋆ A))
-           (Ξ : List (Cxt × Fma))
-           (f : ─ ∣ Γ ⇑ A)
-           (gs : All (λ ΔB → ─ ∣ proj₁ ΔB ⇑ proj₂ ΔB) ((Δ₀ , B₀) ∷ Ξ))
-           (eq : Γ ≡ Γ₀ ++ Γ₁) →
-           ⊗r+⇑N Γ₁ Δ₀ n Ξ (Il⇑ f) gs eq ≡ Il⇑ (⊗r+⇑N Γ₁ Δ₀ n Ξ f gs eq)
-⊗r+Il⇑N Γ₁ Δ₀ n Ξ (⊸r f) gs refl = ⊗r+Il⇑N (Γ₁ ∷ʳ _) Δ₀ n Ξ f gs refl
-⊗r+Il⇑N Γ₁ Δ₀ n Ξ (foc s q f) gs refl = refl
-
-⊗r+Il⇑ : {Γ : Cxt} (Δ₀ : Cxt) {B₀ A : Fma}
-          (Ξ : List (Cxt × Fma))
-          (f : ─ ∣ Γ ⇑ A)
-          (gs : All (λ ΔB → ─ ∣ proj₁ ΔB ⇑ proj₂ ΔB) ((Δ₀ , B₀) ∷ Ξ)) →
-    ---------------------------------------------------------------------
-        ⊗r+⇑ Δ₀ Ξ (Il⇑ f) gs ≡ Il⇑ (⊗r+⇑ Δ₀ Ξ f gs)
-⊗r+Il⇑ Δ₀ {A = ` X} Ξ (foc s q f) gs = refl
-⊗r+Il⇑ Δ₀ {A = I} Ξ (foc s q f) gs = refl
-⊗r+Il⇑ Δ₀ {A = A' ⊗ B'} Ξ (foc s q f) gs = refl
-⊗r+Il⇑ Δ₀ {A = A' ⊸ B'} Ξ f gs = ⊗r+Il⇑N [] Δ₀ tt Ξ f gs refl
-
-⊗r+⊗l⇑N : {Γ₀ Γ : Cxt} (Γ₁ Δ₀ : Cxt) {A' B' A B₀ : Fma}
-           (n : isNeg (Γ₁ ⊸⋆ A))
-           (Ξ : List (Cxt × Fma))
-           (f : just A' ∣ B' ∷ Γ ⇑ A)
-           (gs : All (λ ΔB → ─ ∣ proj₁ ΔB ⇑ proj₂ ΔB) ((Δ₀ , B₀) ∷ Ξ))
-           (eq : Γ ≡ Γ₀ ++ Γ₁) →
-           ⊗r+⇑N Γ₁ Δ₀ n Ξ (⊗l⇑ f) gs eq ≡ ⊗l⇑ (⊗r+⇑N Γ₁ Δ₀ n Ξ f gs (cong (B' ∷_) eq))
-⊗r+⊗l⇑N Γ₁ Δ₀ n Ξ (⊸r f) gs refl = ⊗r+⊗l⇑N (Γ₁ ∷ʳ _) Δ₀ n Ξ f gs refl
-⊗r+⊗l⇑N Γ₁ Δ₀ n Ξ (Il q f) gs refl = refl
-⊗r+⊗l⇑N Γ₁ Δ₀ n Ξ (⊗l q f) gs refl =  refl
-⊗r+⊗l⇑N Γ₁ Δ₀ {` X} n Ξ (foc s q f) gs refl = refl
-⊗r+⊗l⇑N Γ₁ Δ₀ {_ ⊸ _} n Ξ (foc s q f) gs refl = refl
-
-⊗r+⊗l⇑ : {Γ : Cxt} (Δ₀ : Cxt) {A' B' B₀ A : Fma}
-          (Ξ : List (Cxt × Fma))
-          (f : just A' ∣ B' ∷ Γ ⇑ A)
-          (gs : All (λ ΔB → ─ ∣ proj₁ ΔB ⇑ proj₂ ΔB) ((Δ₀ , B₀) ∷ Ξ)) →
-    ---------------------------------------------------------------------
-        ⊗r+⇑ Δ₀ Ξ (⊗l⇑ f) gs ≡ ⊗l⇑ (⊗r+⇑ Δ₀ Ξ f gs)
-⊗r+⊗l⇑ Δ₀ {A = ` X} Ξ (Il q f) gs = refl
-⊗r+⊗l⇑ Δ₀ {A = ` X} Ξ (⊗l q f) gs = refl
-⊗r+⊗l⇑ Δ₀ {A = ` X} Ξ (foc s q f) gs = refl
-⊗r+⊗l⇑ Δ₀ {A = I} Ξ (Il q f) gs = refl
-⊗r+⊗l⇑ Δ₀ {A = I} Ξ (⊗l q f) gs = refl
-⊗r+⊗l⇑ Δ₀ {A = I} Ξ (foc s q f) gs = refl
-⊗r+⊗l⇑ Δ₀ {A = A' ⊗ B'} Ξ (Il q f) gs = refl
-⊗r+⊗l⇑ Δ₀ {A = A' ⊗ B'} Ξ (⊗l q f) gs = refl
-⊗r+⊗l⇑ Δ₀ {A = A' ⊗ B'} Ξ (foc s q f) gs = refl
-⊗r+⊗l⇑ Δ₀ {A = A' ⊸ B'} Ξ f gs = ⊗r+⊗l⇑N [] Δ₀ tt Ξ f gs refl
-
-⊸r⊸l⇑ : {Γ Δ : Cxt} {A B C D : Fma}
-         (f : ─ ∣ Γ ⇑ A) (g : just B ∣ Δ ∷ʳ D ⇑ C) → 
-    -----------------------------------------------------------------------
-        ⊸r (⊸l⇑ f g) ≡ ⊸l⇑ f (⊸r g)
-⊸r⊸l⇑ {B = ` X} f g = refl
-⊸r⊸l⇑ {B = I} f g = refl
-⊸r⊸l⇑ {B = B ⊗ B₁} f g = refl
-⊸r⊸l⇑ {B = B ⊸ B₁} f g = refl
-
-eq-focus : ∀ {S Γ A} {f g : S ∣ Γ ⊢ A}
-  → f ≗' g → focus f ≡ focus g
-eq-focus refl = refl
-eq-focus (~ eq) = sym (eq-focus eq)
-eq-focus (eq ∙ eq₁) = trans (eq-focus eq) (eq-focus eq₁)
-eq-focus (pass eq) = cong pass⇑ (eq-focus eq)
-eq-focus (Il eq) = cong Il⇑ (eq-focus eq)
-eq-focus (⊗l eq) = cong ⊗l⇑ (eq-focus eq)
-eq-focus (⊗r eq eq₁) = cong₂ ⊗r⇑ (eq-focus eq) (eq-focus eq₁)
-eq-focus (⊸r eq) = cong ⊸r (eq-focus eq)
-eq-focus (⊸l eq eq₁) = cong₂ ⊸l⇑ (eq-focus eq) (eq-focus eq₁)
-eq-focus axI = refl
-eq-focus ax⊗ = refl
-eq-focus ax⊸ = refl
-eq-focus (⊗rIl {Δ = Δ}) = ⊗r+Il⇑ Δ [] _ _
-eq-focus (⊗r⊗l {Δ = Δ}) = ⊗r+⊗l⇑ Δ [] _ _
-eq-focus ⊸rpass = refl
-eq-focus ⊸rIl = refl
-eq-focus ⊸r⊗l = refl
-eq-focus ⊸r⊸l = ⊸r⊸l⇑ _ _
--}
