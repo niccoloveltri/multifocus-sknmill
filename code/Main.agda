@@ -26,3 +26,5 @@ import MaxMultifocSeqCalc
 -- Correctness of multi-focusing
 -- -- Equational completeness
 import correct.multifocus.EqComplete
+
+import correct.multifocus.Iso1
