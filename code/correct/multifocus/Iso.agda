@@ -119,11 +119,77 @@ no-bools⇓ {∙} {∙} {just A} s q (unfoc ok f) = {!imp!}
           (fs : All (λ ΔB → ─ ∣ proj₁ ΔB ⇑ proj₂ ΔB) ((Γ₀ , A₀) ∷ Ξ))
           (gs : All (λ ΔB → ─ ∣ proj₁ ΔB ⇑ proj₂ ΔB) ((Γ₁ , A₁) ∷ Ξ'))
           (f : just B ∣ Δ ⇑ C) →
-          ⊸l+⇑ Γ₀ (Ξ ++ (Γ₁ , A₁) ∷ Ξ') (fs ++All gs) f ≡ ⊸l+⇑ Γ₀ Ξ fs (⊸l+⇑ Γ₁ Ξ' gs f)
+          ⊸l+⇑ Γ₀ (Ξ ++ (Γ₁ , A₁) ∷ Ξ') (fs ++All gs) f
+            ≡ ⊸l+⇑ Γ₀ Ξ fs (⊸l+⇑ Γ₁ Ξ' gs f)
 ++⊸l+⇑ {B = ` X} fs gs f = ++⊸l+⇑M fs gs f
 ++⊸l+⇑ {B = I} fs gs f = ++⊸l+⇑P fs gs f refl done
 ++⊸l+⇑ {B = A ⊗ B} fs gs f = ++⊸l+⇑P fs gs f refl done
 ++⊸l+⇑ {B = A ⊸ B} fs gs f = ++⊸l+⇑M fs gs f
+
+++⊗r+⇑N : ∀ {S Γ Γ₀ Γ₁ Δ₀ Δ₁ B₀ B₁ A Ξ Ξ' n}
+          (f : S ∣ Γ ⇑ A)
+          (eq : Γ ≡ Γ₀ ++ Γ₁)
+          (fs : All (λ ΔB → ─ ∣ proj₁ ΔB ⇑ proj₂ ΔB) ((Δ₀ , B₀) ∷ Ξ)) →
+          (gs : All (λ ΔB → ─ ∣ proj₁ ΔB ⇑ proj₂ ΔB) ((Δ₁ , B₁) ∷ Ξ')) →
+          ⊗r+⇑N Γ₁ Δ₀ n (Ξ ++ (Δ₁ , B₁) ∷ Ξ') f (fs ++All gs) eq
+            ≡ ⊗r+⇑Q Δ₁ (isPosAt⊗⋆ tt (fmas Ξ)) Ξ' (⊗r+⇑N Γ₁ Δ₀ n Ξ f fs eq) gs
+++⊗r+⇑N (⊸r f) refl fs gs = ++⊗r+⇑N f refl fs gs
+++⊗r+⇑N {Γ₁ = Γ₁} (Il q f) refl fs gs =
+  trans (cong (λ x → Il x (⊗r+⇑N Γ₁ _ _ _ f (fs ++All gs) refl)) (isProp-isPosAt _ _))
+        (cong (Il _) (++⊗r+⇑N f refl fs gs))
+++⊗r+⇑N {Γ₁ = Γ₁} (⊗l q f) refl fs gs = 
+  trans (cong (λ x → ⊗l x (⊗r+⇑N Γ₁ _ _ _ f (fs ++All gs) refl)) (isProp-isPosAt _ _))
+        (cong (⊗l _) (++⊗r+⇑N f refl fs gs))
+++⊗r+⇑N (foc s q f) refl fs gs =
+  cong (λ x → foc s x (focr _ (⊗r+ _ _ _ blurr (fs ++All gs) _) _ refl)) (isProp-isPosAt _ _)
+
+++⊗r+⇓Q : ∀ {b S Γ Δ₀ Δ₁ B₀ B₁ A Ξ Ξ' q}
+          (f : [ b , ∘ ] S ∣ Γ ⇓ A)
+          (fs : All (λ ΔB → ─ ∣ proj₁ ΔB ⇑ proj₂ ΔB) ((Δ₀ , B₀) ∷ Ξ)) →
+          (gs : All (λ ΔB → ─ ∣ proj₁ ΔB ⇑ proj₂ ΔB) ((Δ₁ , B₁) ∷ Ξ')) →
+          ⊗r+⇓Q Δ₀ q (Ξ ++ (Δ₁ , B₁) ∷ Ξ') f (fs ++All gs)
+            ≡ ⊗r+⇓Q Δ₁ (isPosAt⊗⋆ tt (fmas Ξ)) Ξ' (⊗r+⇓Q Δ₀ q Ξ f fs) gs
+
+++⊗r+⇑Q : ∀ {S Γ Δ₀ Δ₁ B₀ B₁ A Ξ Ξ' q}
+          (f : S ∣ Γ ⇑ A)
+          (fs : All (λ ΔB → ─ ∣ proj₁ ΔB ⇑ proj₂ ΔB) ((Δ₀ , B₀) ∷ Ξ)) →
+          (gs : All (λ ΔB → ─ ∣ proj₁ ΔB ⇑ proj₂ ΔB) ((Δ₁ , B₁) ∷ Ξ')) →
+          ⊗r+⇑Q Δ₀ q (Ξ ++ (Δ₁ , B₁) ∷ Ξ') f (fs ++All gs)
+            ≡ ⊗r+⇑Q Δ₁ (isPosAt⊗⋆ tt (fmas Ξ)) Ξ' (⊗r+⇑Q Δ₀ q Ξ f fs) gs
+
+++⊗r+⇓Q (focl q lf f refl) fs gs =
+  cong (λ x → focl q lf x refl) (++⊗r+⇓Q f fs gs)
+++⊗r+⇓Q (focr s rf f refl) fs gs =
+  cong (λ x → focr s x f refl) {!!}
+++⊗r+⇓Q {∙} {just P} (unfoc ok f) fs gs = cong (unfoc ok) (++⊗r+⇑Q f fs gs)
+
+++⊗r+⇑Q (Il q f) fs gs =
+  trans (cong (λ x → Il x (⊗r+⇑Q _ _ _ f (fs ++All gs))) (isProp-isPosAt _ _))
+        (cong (Il _) (++⊗r+⇑Q f fs gs))
+++⊗r+⇑Q (⊗l q f) fs gs = 
+  trans (cong (λ x → ⊗l x (⊗r+⇑Q _ _ _ f (fs ++All gs))) (isProp-isPosAt _ _))
+        (cong (⊗l _) (++⊗r+⇑Q f fs gs))
+++⊗r+⇑Q (foc s q f) fs gs = 
+  cong₂ (foc s) (isProp-isPosAt _ _) (++⊗r+⇓Q f fs gs)
+
+⊗r+⇑-posat : ∀ {S Γ Δ₀ B₀ A Ξ q}
+             {f : S ∣ Γ ⇑ A}
+             {fs : All (λ ΔB → ─ ∣ proj₁ ΔB ⇑ proj₂ ΔB) ((Δ₀ , B₀) ∷ Ξ)} →
+             ⊗r+⇑ Δ₀ Ξ f fs ≡ ⊗r+⇑Q Δ₀ q Ξ f fs
+⊗r+⇑-posat {A = ` X} = refl
+⊗r+⇑-posat {A = I} = refl
+⊗r+⇑-posat {A = A ⊗ B} = refl
+
+++⊗r+⇑ : ∀ {S Γ Δ₀ Δ₁ B₀ B₁ A Ξ Ξ'}
+        (f : S ∣ Γ ⇑ A)
+        (fs : All (λ ΔB → ─ ∣ proj₁ ΔB ⇑ proj₂ ΔB) ((Δ₀ , B₀) ∷ Ξ)) →
+        (gs : All (λ ΔB → ─ ∣ proj₁ ΔB ⇑ proj₂ ΔB) ((Δ₁ , B₁) ∷ Ξ')) →
+        ⊗r+⇑ Δ₀ (Ξ ++ (Δ₁ , B₁) ∷ Ξ') f (fs ++All gs)
+          ≡ ⊗r+⇑ Δ₁ Ξ' (⊗r+⇑ Δ₀ Ξ f fs) gs
+++⊗r+⇑ {A = ` X} f fs gs = trans (++⊗r+⇑Q f fs gs) (sym ⊗r+⇑-posat)
+++⊗r+⇑ {A = I} f fs gs = trans (++⊗r+⇑Q f fs gs) (sym ⊗r+⇑-posat)
+++⊗r+⇑ {A = A ⊗ B} f fs gs = trans (++⊗r+⇑Q f fs gs) (sym ⊗r+⇑-posat)
+++⊗r+⇑ {A = A ⊸ B} f fs gs = trans (++⊗r+⇑N f refl fs gs) (sym ⊗r+⇑-posat)
 
 focus⊸l⋆ : {Δ : Cxt} {B C : Fma}
        {Ξ : List (Cxt × Fma)}
@@ -145,7 +211,7 @@ focus⊗r⋆ f [] = refl
 focus⊗r⋆ f (g ∷ []) = refl
 focus⊗r⋆ f (g' ∷ g ∷ gs) =
   trans (focus⊗r⋆ (⊗r f g') (g ∷ gs))
-        {!!}
+        (sym (++⊗r+⇑ (focus f) (focus g' ∷ []) (focuss (g ∷ gs))))
 
 
 -- ⊸l+⇑-pos : ∀ {Γ₀ Δ A₀ B C Ξ} (p : isPos B)
