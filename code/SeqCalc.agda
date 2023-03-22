@@ -5,7 +5,7 @@ module SeqCalc where
 open import Data.Empty
 open import Data.Maybe renaming (map to mmap)
 open import Data.Sum hiding (map)
-open import Data.List
+open import Data.List hiding (concat)
 open import Data.Product hiding (map)
 open import Relation.Binary.PropositionalEquality hiding (_≗_)
 open ≡-Reasoning

@@ -2,7 +2,7 @@
 
 module MaxMultifocSeqCalc where
 
-open import Data.List 
+open import Data.List hiding (concat)
 open import Data.List.Relation.Unary.All hiding (map)
 open import Data.List.Relation.Unary.Any hiding (map)
 open import Data.Maybe hiding (map)
