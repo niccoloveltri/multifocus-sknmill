@@ -130,7 +130,10 @@ data _≗_ : {S : Stp}{Γ : Cxt}{A : Fma} → S ∣ Γ ⊢ A → S ∣ Γ ⊢ A 
   ⊸r⊸l : {Γ Δ : Cxt} {A B C D : Fma}
     → {f : ─ ∣ Γ ⊢ A} {g : just B ∣ Δ ++ C ∷ [] ⊢ D}
     → ⊸r {Γ = Γ ++ Δ} (⊸l f g) ≗ ⊸l f (⊸r g)
-    
+
+refl≗ : ∀ {S Γ A} {f g : S ∣ Γ ⊢ A} → f ≡ g → f ≗ g
+refl≗ refl = refl
+
 -- Iterated ⊸r
 ⊸r⋆ : {S : Stp} {Γ : Cxt} (Δ : Cxt) {A : Fma}
       (f : S ∣ Γ ++ Δ ⊢ A) →

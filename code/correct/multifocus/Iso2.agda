@@ -25,6 +25,26 @@ cong⊗r⋆₁ : ∀ {S Γ A Ξ} {f g : S ∣ Γ ⊢ A} → f ≗ g
 cong⊗r⋆₁ eq [] = eq
 cong⊗r⋆₁ eq (g' ∷ gs) = cong⊗r⋆₁ (⊗r eq refl) gs
 
+data _≗s_ : ∀ {Ξ} (fs gs : All (λ ΔB → ─ ∣ proj₁ ΔB ⊢ proj₂ ΔB) Ξ) → Set where
+  [] : [] ≗s []
+  _∷_ : ∀ {Δ B Ξ} {f g : ─ ∣ Δ ⊢ B} (eq : f ≗ g)
+          {fs gs : All (λ ΔB → ─ ∣ proj₁ ΔB ⊢ proj₂ ΔB) Ξ} (eqs : fs ≗s gs) →
+          (f ∷ fs) ≗s (g ∷ gs) 
+
+refl≗s' : ∀ {Ξ} (fs : All (λ ΔB → ─ ∣ proj₁ ΔB ⊢ proj₂ ΔB) Ξ) → fs ≗s fs
+refl≗s' [] = []
+refl≗s' (f ∷ fs) = refl ∷ refl≗s' fs
+
+refl≗s : ∀ {Ξ} {fs gs : All (λ ΔB → ─ ∣ proj₁ ΔB ⊢ proj₂ ΔB) Ξ} → fs ≡ gs → fs ≗s gs
+refl≗s refl = refl≗s' _
+
+cong⊗r⋆₂ : ∀ {S Γ A Ξ} (f : S ∣ Γ ⊢ A)
+  → {fs gs : All (λ ΓA → ─ ∣ proj₁ ΓA ⊢ proj₂ ΓA) Ξ}
+  → fs ≗s gs
+  → ⊗r⋆ f fs ≗ ⊗r⋆ f gs
+cong⊗r⋆₂ _ [] = refl
+cong⊗r⋆₂ f {_ ∷ fs} (eq ∷ eqs) = cong⊗r⋆₁ (⊗r refl eq) fs • cong⊗r⋆₂ (⊗r f _) eqs
+
 ⊗r⋆pass : ∀ {Γ A' A Ξ} (f : just A' ∣ Γ ⊢ A)
   → (gs : All (λ ΓA → ─ ∣ proj₁ ΓA ⊢ proj₂ ΓA) Ξ)
   → ⊗r⋆ (pass f) gs ≗ pass (⊗r⋆ f gs)
@@ -162,6 +182,14 @@ emblf⊗r⋆ lf f (g ∷ gs) =
       (fs : All (λ ΓA → ─ ∣ proj₁ ΓA ⊢ proj₂ ΓA) Ξ) → 
       (gs : All (λ ΓA → ─ ∣ proj₁ ΓA ⊢ proj₂ ΓA) Ξ') →
       ⊗r⋆ f (fs ++All gs) ≡ ⊗r⋆ (⊗r⋆ f fs) gs
+⊗r⋆⊗r⋆ f [] gs = refl
+⊗r⋆⊗r⋆ f (f' ∷ fs) gs = ⊗r⋆⊗r⋆ (⊗r f f') fs gs
+
+embs⇑++ : ∀ {Ξ Ξ'} (fs : All (λ ΔB → ─ ∣ proj₁ ΔB ⇑ proj₂ ΔB) Ξ)
+  → (gs : All (λ ΔB → ─ ∣ proj₁ ΔB ⇑ proj₂ ΔB) Ξ')
+  → embs⇑ (fs ++All gs) ≡ embs⇑ fs ++All embs⇑ gs
+embs⇑++ [] gs = refl
+embs⇑++ (f ∷ fs) gs = cong (_ ∷_) (embs⇑++ fs gs)
 
 embrf++rf : ∀ {S Δ} {Δ₀ : Cxt} {Γ : Cxt} {B₀ C : Fma} {Ξ : List (Cxt × Fma)}
        {s : Maybe (Σ Fma isNegAt)}
@@ -170,8 +198,13 @@ embrf++rf : ∀ {S Δ} {Δ₀ : Cxt} {Γ : Cxt} {B₀ C : Fma} {Ξ : List (Cxt �
        (h : end-rf? _∣_⊢_ S Δ s) → 
        embrf s (++rf Δ₀ Ξ s rf gs) h ≗ ⊗r⋆ (embrf s rf h) (embs⇑ gs)
 embrf++rf Ir gs (refl , refl) = refl
-embrf++rf {s = just x} (⊗r+ Δ₀ Ξ m rf gs₁ refl) gs h = {!!}
-embrf++rf {s = ─} (⊗r+ Δ₀ Ξ m rf gs₁ refl) gs (refl , refl) = {!!}
+embrf++rf {s = just x} (⊗r+ Δ₀ Ξ m rf gs₁ refl) gs h =
+  cong⊗r⋆₂  (embrf (just x) rf h) (refl≗s (embs⇑++ gs₁ gs))
+  • refl≗ (⊗r⋆⊗r⋆ (embrf (just x) rf h) (embs⇑ gs₁) (embs⇑ gs))
+embrf++rf {s = ─} (⊗r+ Δ₀ Ξ m rf gs₁ refl) gs (refl , refl) =
+  cong⊗r⋆₂  (embrf nothing rf _) (refl≗s (embs⇑++ gs₁ gs))
+  • refl≗ (⊗r⋆⊗r⋆ (embrf nothing rf _) (embs⇑ gs₁) (embs⇑ gs))
+
 embrf++rf blurr gs h = refl
  
 emb⊗r+⇑Q : ∀ {S Γ Δ₀ B₀ Q p Ξ}
@@ -205,6 +238,15 @@ emb⊗r+⇑ {A = I} f gs = emb⊗r+⇑Q f gs
 emb⊗r+⇑ {A = A ⊗ B} f gs = emb⊗r+⇑Q f gs
 emb⊗r+⇑ {A = A ⊸ B} f gs = emb⊗r+⇑N [] f gs refl
 
+emb⊸l+⇑ : ∀ {Γ₀ Δ A₀ B C Ξ}
+  → (fs : All (λ ΔB → ─ ∣ proj₁ ΔB ⇑ proj₂ ΔB) ((Γ₀ , A₀) ∷ Ξ))
+  → (f : just B ∣ Δ ⇑ C)
+  → emb⇑ (⊸l+⇑ Γ₀ Ξ fs f) ≗ ⊸l⋆ (embs⇑ fs) (emb⇑ f)
+emb⊸l+⇑ {B = ` X} fs f = {!!}
+emb⊸l+⇑ {B = I} fs f = {!!}
+emb⊸l+⇑ {B = A ⊗ B} fs f = {!!}
+emb⊸l+⇑ {B = A ⊸ B} fs f = {!!}
+
 emb⇑∘focus : ∀ {S Γ A} (f : S ∣ Γ ⊢ A) → emb⇑ (focus f) ≗ f
 emb⇑∘focus ax = refl
 emb⇑∘focus (pass f) = embpass⇑ (focus f) • pass (emb⇑∘focus f)
@@ -214,4 +256,5 @@ emb⇑∘focus (⊗r f g) =
   emb⊗r+⇑ (focus f) (focus g ∷ []) • ⊗r (emb⇑∘focus f) (emb⇑∘focus g)
 emb⇑∘focus (⊗l f) = emb⊗l⇑ (focus f) • ⊗l (emb⇑∘focus f)
 emb⇑∘focus (⊸r f) = ⊸r (emb⇑∘focus f)
-emb⇑∘focus (⊸l f g) = {!!}
+emb⇑∘focus (⊸l f g) =
+  emb⊸l+⇑ (focus f ∷ []) (focus g) • ⊸l (emb⇑∘focus f) (emb⇑∘focus g)
