@@ -150,9 +150,9 @@ emb⇑ : ∀ {S Γ A} → S ∣ Γ ⇑ A → S ∣ Γ ⊢ A
 emb⇓ : ∀ {b b' S Γ A} → [ b , b' ] S ∣ Γ ⇓ A → S ∣ Γ ⊢ A
 embs⇑ : ∀ {Ξ} → All (λ ΔB → ─ ∣ proj₁ ΔB ⇑ proj₂ ΔB) Ξ
   → All (λ ΔB → ─ ∣ proj₁ ΔB ⊢ proj₂ ΔB) Ξ
-emblf : ∀ {b S Γ₀ Γ₁ C Q} (q : isPosAt Q)
+emblf : ∀ {S Γ₀ Γ₁ C Q} (q : isPosAt Q)
  → (lf : q ⇛lf S ； Γ₀)
- → (f : [ ∙ , b ] just Q ∣ Γ₁ ⇓ C)          
+ → (f : just Q ∣ Γ₁ ⊢ C)          
  → S ∣ Γ₀ ++ Γ₁ ⊢ C
 embrf : ∀ {S Γ₀ Γ₁ C} (s : Maybe (Σ Fma isNegAt))
   → (rf : s ⇛rf Γ₁ ； C)
@@ -165,7 +165,7 @@ emb⇑ (⊗l q f) = ⊗l (emb⇑ f)
 emb⇑ (foc s q f) = emb⇓ f
 
 emb⇓ ax = ax
-emb⇓ (focl q lf f refl) = emblf q lf f
+emb⇓ (focl q lf f refl) = emblf q lf (emb⇓ f)
 emb⇓ (focr (just _) rf f refl) = embrf _ rf (emb⇓ f)
 emb⇓ (focr ─ rf f refl) = embrf _ rf f
 emb⇓ (unfoc ok f) = emb⇑ f
@@ -175,7 +175,7 @@ embs⇑ (f ∷ fs) = emb⇑ f ∷ embs⇑ fs
 
 emblf q (pass lf) f = pass (emblf q lf f)
 emblf q (⊸l+ Γ₀ Ξ q₁ fs lf refl) f = ⊸l⋆ (embs⇑ fs) (emblf q lf f)
-emblf q blurl f = emb⇓ f
+emblf q blurl f = f
 
 embrf (just _) (⊗r+ Δ₀ Ξ m₁ rf gs refl) f = ⊗r⋆ (embrf _ rf f) (embs⇑ gs)
 embrf (just _) blurr f = f

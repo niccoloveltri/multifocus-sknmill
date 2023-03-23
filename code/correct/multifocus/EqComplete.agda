@@ -829,7 +829,7 @@ focus≗ : ∀ {S Γ A} {f g : S ∣ Γ ⊢ A}
   → f ≗ g → focus f ≗⇑ focus g
 focus≗ refl = refl
 focus≗ (~ eq) = ~ (focus≗ eq)
-focus≗ (eq ∙ eq₁) = (focus≗ eq) • (focus≗ eq₁)
+focus≗ (eq • eq₁) = (focus≗ eq) • (focus≗ eq₁)
 focus≗ (pass eq) = congpass⇑ (focus≗ eq)
 focus≗ (Il eq) = congIl⇑ (focus≗ eq) 
 focus≗ (⊗l eq) = cong⊗l⇑ (focus≗ eq)  

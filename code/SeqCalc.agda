@@ -89,14 +89,14 @@ ccut Δ₀ f (⊗l {B = B} g) r = ⊗l (ccut (B ∷ Δ₀) f g (cong (_∷_ B) r
 
 -- Equality of proofs 
 
-infixl 15 _∙_
+infixl 15 _•_
 
 data _≗_ : {S : Stp}{Γ : Cxt}{A : Fma} → S ∣ Γ ⊢ A → S ∣ Γ ⊢ A → Set where
 
 -- -- equivalence relation
   refl : ∀{S Γ A} {f : S ∣ Γ ⊢ A} → f ≗ f
   ~_ : ∀{S Γ A} {f g : S ∣ Γ ⊢ A} → f ≗ g → g ≗ f
-  _∙_ : ∀{S Γ A} {f g h : S ∣ Γ ⊢ A} → f ≗ g → g ≗ h → f ≗ h
+  _•_ : ∀{S Γ A} {f g h : S ∣ Γ ⊢ A} → f ≗ g → g ≗ h → f ≗ h
 
 -- -- congruence
   pass : ∀{Γ A C} {f g : just A ∣ Γ ⊢ C} → f ≗ g → pass f ≗ pass g
@@ -161,25 +161,25 @@ cong⊸r⋆ (A ∷ Δ) eq = ⊸r (cong⊸r⋆ Δ eq)
           {f : just A ∣ Γ ++ Γ' ⊢ C} → 
           ⊸r⋆ Γ' (pass f) ≗ pass (⊸r⋆ Γ' f)
 ⊸r⋆pass [] = refl
-⊸r⋆pass (B ∷ Γ') = ⊸r (⊸r⋆pass Γ') ∙ ⊸rpass
+⊸r⋆pass (B ∷ Γ') = ⊸r (⊸r⋆pass Γ') • ⊸rpass
 
 ⊸r⋆Il : {Γ : Cxt} (Γ' : Cxt) {C : Fma}
         {f : ─ ∣ Γ ++ Γ' ⊢ C} → 
         ⊸r⋆ Γ' (Il f) ≗ Il (⊸r⋆ Γ' f)
 ⊸r⋆Il [] = refl
-⊸r⋆Il (B ∷ Γ') = ⊸r (⊸r⋆Il Γ') ∙ ⊸rIl
+⊸r⋆Il (B ∷ Γ') = ⊸r (⊸r⋆Il Γ') • ⊸rIl
 
 ⊸r⋆⊗l : {Γ : Cxt} (Γ' : Cxt) {A B C : Fma}
         {f : just A ∣ B ∷ Γ ++ Γ' ⊢ C} → 
         ⊸r⋆ Γ' (⊗l f) ≗ ⊗l (⊸r⋆ Γ' f)
 ⊸r⋆⊗l [] = refl
-⊸r⋆⊗l (B ∷ Γ') = ⊸r (⊸r⋆⊗l Γ') ∙ ⊸r⊗l
+⊸r⋆⊗l (B ∷ Γ') = ⊸r (⊸r⋆⊗l Γ') • ⊸r⊗l
 
 ⊸r⋆⊸l : {Γ : Cxt} (Γ' : Cxt) {Δ : Cxt} {A B C : Fma}
          {f : ─ ∣ Γ ⊢ A} {g : just B ∣ Δ ++ Γ' ⊢ C} → 
          ⊸r⋆ {Γ = Γ ++ Δ} Γ' (⊸l f g) ≗ ⊸l f (⊸r⋆ Γ' g)
 ⊸r⋆⊸l [] = refl
-⊸r⋆⊸l (A' ∷ Γ') {Δ}  = ⊸r (⊸r⋆⊸l Γ' {Δ ∷ʳ A'}) ∙ ⊸r⊸l
+⊸r⋆⊸l (A' ∷ Γ') {Δ}  = ⊸r (⊸r⋆⊸l Γ' {Δ ∷ʳ A'}) • ⊸r⊸l
 
 
 open import Data.List.Relation.Unary.All hiding (map)
