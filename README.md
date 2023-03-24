@@ -6,7 +6,7 @@
 
 ---
 
-The file [Main.agda](https://github.com/niccoloveltri/multifocus-sknmill/blob/main/code/Main.agda) imports the whole development.  
+The file [Main.agda](https://github.com/niccoloveltri/multifocus-sknmill/blob/mf-correctness/code/Main.agda) imports the whole development.  
 The formalization includes proofs of Theorem 1 and 2.  
 Code for the correctness of multi-focusing is in branch [mf-correctness](https://github.com/niccoloveltri/multifocus-sknmill/tree/mf-correctness).  
 The correctness of maximal multi-focusing is work-in-progress.
