@@ -21,10 +21,15 @@ import MultifocSeqCalc
 -- Maximally multi-focused sequent calculus
 import MaxMultifocSeqCalc
 
--- -- WIP
+-- ===========================================
 
 -- Correctness of multi-focusing
 -- -- Equational completeness
 import correct.multifocus.EqComplete
 
+-- -- Equational soundness
+import correct.multifocus.EqSound
+
+-- -- The sequent calculi are equivalent
 import correct.multifocus.Iso1
+import correct.multifocus.Iso2
