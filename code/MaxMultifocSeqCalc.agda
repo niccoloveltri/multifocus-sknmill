@@ -200,6 +200,13 @@ data _⇛rf_；_ where
   blurr : {M : Fma} {m : isNegAt M} → 
          just (M , m) ⇛rf [] ； M
 
+
+subst⇑ : ∀ {S Γ Δ A} (f : S ∣ Γ ⇑ A) (eq : Γ ≡ Δ) → S ∣ Δ ⇑ A
+subst⇑ f refl = f
+
+subst⇓ : ∀ {b c S Γ Δ A} (f : [ b , c ] S ∣ Γ ⇓ A) (eq : Γ ≡ Δ) → [ b , c ] S ∣ Δ ⇓ A
+subst⇓ f refl = f
+
 -- ===================================
 
 -- Embedding into multi-focused calculus (in Theorem 2)
@@ -560,19 +567,19 @@ max (MF.⊗l q f) = ⊗l q (max f)
 --max (MF.foc s q (MF.focr {Γ₁ = Γ} (just (.(` _) , snd)) rf MF.ax refl)) =
 --  foc s q (focl {Γ₁ = ∘cxt Γ} tt blurl (focr {Γ₁ = ∘cxt Γ} (just _) (max-rf rf) ax refl refl tt) refl refl tt)
 
--- -- focL + focR + ax
-max (MF.foc s q (MF.focl {Γ₀ = Γ₀} {Γ₁} q₁ lf (MF.focr (just (` X , m)) rf MF.ax refl) refl)) =
-  foc s q (focl {Γ₀ = ∘cxt Γ₀} {∘cxt Γ₁} q₁ (max-lf lf) (focr {Γ₀ = []} {∘cxt Γ₁} (just (` X , m)) (max-rf rf) ax refl refl tt) refl refl tt)
--- -- focR + focL + ax
-max (MF.foc s q (MF.focr {Γ₀ = Γ₀} {Γ₁} (just (` X , m)) rf (MF.focl q₁ lf MF.ax refl) refl)) =
-  foc s q (focl {Γ₀ = ∘cxt Γ₀} {∘cxt Γ₁} q₁ (max-lf lf) (focr {Γ₀ = []} {∘cxt Γ₁} (just (` X , m)) (max-rf rf) ax refl refl tt) refl refl tt)
-
 -- -- focL + focR + unfoc
 max (MF.foc s q (MF.focl {Γ₀ = Γ₀} q₁ lf (MF.focr {Γ₀ = Γ₁}{Γ₂} (just (M , m)) rf (MF.unfoc ok f) refl) refl)) =
   foc s q (focl {Γ₀ = ∘cxt Γ₀} {∘cxt (Γ₁ ++ Γ₂)} q₁ (max-lf lf) (focr {Γ₀ = ∘cxt Γ₁} {∘cxt Γ₂} (just (M , m)) (max-rf rf) (unfoc ok (max f)) refl refl tt) refl refl tt)
 -- -- focL + focR + unfoc
 max (MF.foc s q (MF.focr {Γ₁ = Γ₂} (just (M , m)) rf (MF.focl {Γ₀ = Γ₀}{Γ₁} q₁ lf (MF.unfoc ok f) refl) refl)) =
   foc s q (focl {Γ₀ = ∘cxt Γ₀} {∘cxt (Γ₁ ++ Γ₂)} q₁ (max-lf lf) (focr {Γ₀ = ∘cxt Γ₁} {∘cxt Γ₂} (just (M , m)) (max-rf rf) (unfoc ok (max f)) refl refl tt) refl refl tt)
+
+-- -- focL + focR + ax
+max (MF.foc s q (MF.focl {Γ₀ = Γ₀} {Γ₁} q₁ lf (MF.focr (just (` X , m)) rf MF.ax refl) refl)) =
+  foc s q (focl {Γ₀ = ∘cxt Γ₀} {∘cxt Γ₁} q₁ (max-lf lf) (focr {Γ₀ = []} {∘cxt Γ₁} (just (` X , m)) (max-rf rf) ax refl refl tt) refl refl tt)
+-- -- focR + focL + ax
+max (MF.foc s q (MF.focr {Γ₀ = Γ₀} {Γ₁} (just (` X , m)) rf (MF.focl q₁ lf MF.ax refl) refl)) =
+  foc s q (focl {Γ₀ = ∘cxt Γ₀} {∘cxt Γ₁} q₁ (max-lf lf) (focr {Γ₀ = []} {∘cxt Γ₁} (just (` X , m)) (max-rf rf) ax refl refl tt) refl refl tt)
 
 -- -- focR with right-focusing ending in IR
 max (MF.foc s q (MF.focr {Γ₀ = Γ₀}{Γ₁} ─ rf (refl , refl) refl)) = foc s q (focr {Γ₀ = ∘cxt Γ₀} {∘cxt Γ₁} nothing (max-rf rf) (refl , refl) refl refl tt)

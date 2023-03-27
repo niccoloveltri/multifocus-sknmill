@@ -462,9 +462,8 @@ data _≗s⇑_ : ∀ {Ξ} (fs gs : All (λ ΔB → ─ ∣ proj₁ ΔB ⇑ proj�
 data _≗⇑_ where
 
 -- -- equivalence relation
-  refl : ∀{S Γ A} {f : S ∣ Γ ⇑ A} → f ≗⇑ f
-  ~_ : ∀{S Γ A} {f g : S ∣ Γ ⇑ A} → f ≗⇑ g → g ≗⇑ f
-  _•_ : ∀{S Γ A} {f g h : S ∣ Γ ⇑ A} → f ≗⇑ g → g ≗⇑ h → f ≗⇑ h
+--  refl : ∀{S Γ A} {f : S ∣ Γ ⇑ A} → f ≗⇑ f
+--  _•_ : ∀{S Γ A} {f g h : S ∣ Γ ⇑ A} → f ≗⇑ g → g ≗⇑ h → f ≗⇑ h
 
 -- -- congruence
   ⊸r : ∀{S Γ A C} {f g : S ∣ Γ ∷ʳ A ⇑ C} → f ≗⇑ g → ⊸r f ≗⇑ ⊸r g
@@ -557,9 +556,7 @@ data _≗⇓_ where
 
 data _≗lf_ {Q}{q'} where
 
-  refl : ∀ {S Γ} {f : q' ⇛lf S ； Γ} → f ≗lf f
-  ~_ : ∀ {S Γ} {f g : q' ⇛lf S ； Γ} → f ≗lf g → g ≗lf f
-  _•_ : ∀ {S Γ} {f g h : q' ⇛lf S ； Γ} → f ≗lf g → g ≗lf h → f ≗lf h
+  blurl : blurl ≗lf blurl
 
   pass : ∀ {Γ A} {f g : q' ⇛lf just A ； Γ} → f ≗lf g → pass f ≗lf pass g
 
@@ -572,9 +569,9 @@ data _≗lf_ {Q}{q'} where
 
 data _≗rf_ where
 
-  refl : ∀ {s Γ C} {f : s ⇛rf Γ ； C} → f ≗rf f
-  ~_ : ∀ {s Γ C} {f g : s ⇛rf Γ ； C} → f ≗rf g → g ≗rf f
-  _•_ : ∀ {s Γ C} {f g h : s ⇛rf Γ ； C} → f ≗rf g → g ≗rf h → f ≗rf h
+  blurr : ∀ {M} {m : isNegAt M} → blurr {m = m} ≗rf blurr
+
+  Ir : Ir ≗rf Ir
 
   ⊗r+ : ∀ {Γ Γ' Δ₀ M B₀ s Ξ m}
         {f g : s ⇛rf Γ ； M} → f ≗rf g → 
@@ -589,8 +586,57 @@ data _≗s⇑_ where
           {fs gs : All (λ ΔB → ─ ∣ proj₁ ΔB ⇑ proj₂ ΔB) Ξ} (eqs : fs ≗s⇑ gs) →
           (f ∷ fs) ≗s⇑ (g ∷ gs) 
 
+refl⇑' : ∀{S Γ A} {f : S ∣ Γ ⇑ A} → f ≗⇑ f
+refl⇑' {f = ⊸r f} = ⊸r refl⇑'
+refl⇑' {f = Il q f} = Il refl⇑'
+refl⇑' {f = ⊗l q f} = ⊗l refl⇑'
+refl⇑' {f = foc s q f} = foc refl
+
 refl⇑ : ∀{S Γ A} {f g : S ∣ Γ ⇑ A} → f ≡ g → f ≗⇑ g
-refl⇑ refl = refl
+refl⇑ refl = refl⇑'
+
+sym⇑ : ∀{S Γ A} {f g : S ∣ Γ ⇑ A} → f ≗⇑ g → g ≗⇑ f
+sym⇑ (⊸r eq) = ⊸r (sym⇑ eq)
+sym⇑ (Il eq) = Il (sym⇑ eq)
+sym⇑ (⊗l eq) = ⊗l (sym⇑ eq)
+sym⇑ (foc eq) = foc (~ eq)
+
+syms⇑ : ∀ {Ξ} {fs gs : All (λ ΔB → ─ ∣ proj₁ ΔB ⇑ proj₂ ΔB) Ξ}
+  → fs ≗s⇑ gs → gs ≗s⇑ fs
+syms⇑ [] = []
+syms⇑ (eq ∷ eqs) = sym⇑ eq ∷ syms⇑ eqs
+
+sym-lf : ∀ {Q S Γ} {q : isPosAt Q} {f g : q ⇛lf S ； Γ} → f ≗lf g → g ≗lf f
+sym-lf blurl = blurl
+sym-lf (pass eq) = pass (sym-lf eq)
+sym-lf (⊸l+ eqs eq) = ⊸l+ (syms⇑ eqs) (sym-lf eq)
+
+sym-rf : ∀ {s Γ C} {f g : s ⇛rf Γ ； C} → f ≗rf g → g ≗rf f
+sym-rf blurr = blurr
+sym-rf Ir = Ir
+sym-rf (⊗r+ eq eqs) = ⊗r+ (sym-rf eq) (syms⇑ eqs)
+
+trans⇑ : ∀{S Γ A} {f g h : S ∣ Γ ⇑ A} → f ≗⇑ g → g ≗⇑ h → f ≗⇑ h
+trans⇑ (⊸r eq) (⊸r eq') = ⊸r (trans⇑ eq eq')
+trans⇑ (Il eq) (Il eq') = Il (trans⇑ eq eq')
+trans⇑ (⊗l eq) (⊗l eq') = ⊗l (trans⇑ eq eq')
+trans⇑ (foc eq) (foc eq₁) = foc (eq • eq₁)
+
+transs⇑ : ∀ {Ξ} {fs gs hs : All (λ ΔB → ─ ∣ proj₁ ΔB ⇑ proj₂ ΔB) Ξ}
+  → fs ≗s⇑ gs → gs ≗s⇑ hs → fs ≗s⇑ hs
+transs⇑ [] [] = []
+transs⇑ (eq ∷ eqs) (eq₁ ∷ eqs') = trans⇑ eq eq₁ ∷ transs⇑ eqs eqs'
+
+trans-lf : ∀ {Q S Γ} {q : isPosAt Q} {f g h : q ⇛lf S ； Γ}
+  → f ≗lf g → g ≗lf h → f ≗lf h
+trans-lf blurl eq' = eq'
+trans-lf (pass eq) (pass eq') = pass (trans-lf eq eq')
+trans-lf (⊸l+ eqs eq) (⊸l+ eqs' eq') = ⊸l+ (transs⇑ eqs eqs') (trans-lf eq eq')
+
+trans-rf : ∀ {s Γ C} {f g h : s ⇛rf Γ ； C} → f ≗rf g → g ≗rf h → f ≗rf h
+trans-rf blurr eq' = eq'
+trans-rf Ir eq' = eq'
+trans-rf (⊗r+ eq eqs) (⊗r+ eq' eqs') = ⊗r+ (trans-rf eq eq') (transs⇑ eqs eqs')
 
 foc-same : ∀{S Γ Q s q} {f g : [ ∘ , ∘ ] S ∣ Γ ⇓ Q} (eq : f ≗⇓ g) → foc s q f ≗⇑ foc s q g
 foc-same eq = foc eq

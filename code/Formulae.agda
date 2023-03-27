@@ -190,3 +190,7 @@ isProp-isn't⊗ {_ ⊸ _} p q = refl
 isProp-isNegAt : ∀ {A} (p q : isNegAt A) → p ≡ q
 isProp-isNegAt {` X} p q = refl
 isProp-isNegAt {_ ⊸ _} p q = refl
+
+isProp-isIrr : {S : Stp} (s s' : isIrr S) → s ≡ s'
+isProp-isIrr {just x} s s' = isProp-isNegAt s s'
+isProp-isIrr {─} s s' = refl
