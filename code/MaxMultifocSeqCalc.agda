@@ -372,11 +372,10 @@ only-lf⇑ : {S : Stp} {Δ₀ : Cxt} (Δ₁ : TCxt) {C Q : Fma}
       ------------------------------------
            (∘ , S) ∣ ∘cxt Δ₀ ++ Δ₁ ⇑ (∘ , C)
 
-only-lf⇑P : {S S' : Stp} {Δ : TCxt} {Δ₀ : Cxt} (Δ₁ : TCxt) {Γ : Cxt} {C P : Fma}
+only-lf⇑P : {S S' : Stp} {Δ₀ : Cxt} (Δ₁ : TCxt) {Γ : Cxt} {C P : Fma}
             (s : isIrr S) (p : isPos P)
             (lf : pos→posat p ⇛lf S ∣ Δ₀) 
-            (f : (∘ , S') ∣ Δ ⇑ (∘ , C)) → 
-            (eq : Δ ≡ ∘cxt Γ ++ Δ₁)
+            (f : (∘ , S') ∣ ∘cxt Γ ++ Δ₁ ⇑ (∘ , C)) → 
             (ℓ : MF.L S' Γ P) →
       ------------------------------------
            (∘ , S) ∣ ∘cxt Δ₀ ++ Δ₁ ⇑ (∘ , C)
@@ -392,13 +391,13 @@ only-lf-fP : {S S' : Stp} {Δ : TCxt} {Δ₀ : Cxt} (Δ₁ : TCxt) {Γ : Cxt} {Q
 
 
 only-lf⇑ Δ₁ {Q = ` X} s p lf f = only-lf⇑-at Δ₁ s p lf f
-only-lf⇑ Δ₁ {Q = I} s p lf f = only-lf⇑P Δ₁ s p lf f refl MF.done
-only-lf⇑ Δ₁ {Q = Q ⊗ Q₁} s p lf f = only-lf⇑P Δ₁ s p lf f refl MF.done
+only-lf⇑ Δ₁ {Q = I} s p lf f = only-lf⇑P Δ₁ s p lf f MF.done
+only-lf⇑ Δ₁ {Q = Q ⊗ Q₁} s p lf f = only-lf⇑P Δ₁ s p lf f MF.done
 
-only-lf⇑P Δ₁ s p lf (⊸r f) refl ℓ = ⊸r (only-lf⇑P (Δ₁ ∷ʳ _) s p lf f refl ℓ)
-only-lf⇑P Δ₁ s p lf (Il q₁ f) eq ℓ = only-lf⇑P Δ₁ s p lf f eq (MF.Il-1 ℓ)
-only-lf⇑P Δ₁ s p lf (⊗l q₁ f) refl ℓ = only-lf⇑P Δ₁ s p lf f refl (MF.⊗l-1 ℓ)
-only-lf⇑P Δ₁ s p lf (foc s' q₁ f) eq ℓ = foc s q₁ (only-lf-fP Δ₁ s' p q₁ lf f eq ℓ)
+only-lf⇑P Δ₁ s p lf (⊸r f) ℓ = ⊸r (only-lf⇑P (Δ₁ ∷ʳ _) s p lf f ℓ)
+only-lf⇑P Δ₁ s p lf (Il q₁ f) ℓ = only-lf⇑P Δ₁ s p lf f (MF.Il-1 ℓ)
+only-lf⇑P Δ₁ s p lf (⊗l q₁ f) ℓ = only-lf⇑P Δ₁ s p lf f (MF.⊗l-1 ℓ)
+only-lf⇑P Δ₁ s p lf (foc s' q₁ f) ℓ = foc s q₁ (only-lf-fP Δ₁ s' p q₁ lf f refl ℓ)
 
 only-lf-fP {Δ₀ = Δ₀} Δ₁ {Γ} s' p q lf (focl {Γ₀ = Γ₀} {Γ₁} q₂ lf₁ (focr (just (.(` _) , snd)) rf ax refl refl ξ) refl refl ξ') eq ℓ with ++?-alt (∘cxt Γ) Γ₀ Δ₁ Γ₁ eq
 ... | inj₁ (Ω , refl , refl) =
@@ -480,11 +479,11 @@ only-rf⇑ : {S : Stp} (Δ₀ : TCxt) {Δ₁ : Cxt} {M Q : Fma}
               ------------------------------------
                (∘ , S) ∣ Δ₀ ++ ∘cxt Δ₁ ⇑ (∘ , Q)
 
-only-rf⇑N : {S : Stp} {Δ : TCxt} (Δ₀ : TCxt) {Δ₁ : Cxt} (Γ : Cxt) {B Q : Fma}
+only-rf⇑N : {S : Stp} (Δ₀ : TCxt) {Δ₁ : Cxt} (Γ : Cxt) {B Q : Fma}
                (n : isNeg (Γ ⊸⋆ B)) (q : isPosAt Q)
                (rf : just (Γ ⊸⋆ B , neg→negat n) ⇛rf Δ₁ ； Q) 
-               (f : (∘ , S) ∣ Δ ⇑ (∘ , B))
-               (eq : Δ ≡ Δ₀ ++ ∘cxt Γ) → 
+               (f : (∘ , S) ∣ Δ₀ ++ ∘cxt Γ ⇑ (∘ , B)) → 
+--               (eq : Δ ≡ Δ₀ ++ ∘cxt Γ) → 
               ------------------------------------
                (∘ , S) ∣ Δ₀ ++ ∘cxt Δ₁ ⇑ (∘ , Q)
 
@@ -497,12 +496,12 @@ only-rf-fN : {S : Stp} {Δ : TCxt} (Δ₀ : TCxt) {Δ₁ : Cxt} (Γ : Cxt) {Q Q'
                [ ∘ , ∘ ] (∘ , S) ∣ Δ₀ ++ ∘cxt Δ₁ ⇓ (∘ , Q)
 
 only-rf⇑ Δ₀ {M = ` X} m q rf f = only-rf⇑-at Δ₀ m q rf f
-only-rf⇑ Δ₀ {M = A ⊸ B} m q rf f = only-rf⇑N Δ₀ [] tt q rf f refl
+only-rf⇑ Δ₀ {M = A ⊸ B} m q rf f = only-rf⇑N Δ₀ [] tt q rf f
 
-only-rf⇑N Δ₀ Γ n q rf (⊸r f) refl = only-rf⇑N Δ₀ (Γ ∷ʳ _) n q rf f refl 
-only-rf⇑N Δ₀ Γ n q rf (Il _ f) eq = Il q (only-rf⇑N Δ₀ Γ n q rf f eq)
-only-rf⇑N Δ₀ Γ n q rf (⊗l _ f) refl = ⊗l q (only-rf⇑N (_ ∷ Δ₀) Γ n q rf f refl)
-only-rf⇑N Δ₀ Γ n q rf (foc s q' f) eq = foc s q (only-rf-fN Δ₀ Γ s n q q' rf f eq)
+only-rf⇑N Δ₀ Γ n q rf (⊸r f) = only-rf⇑N Δ₀ (Γ ∷ʳ _) n q rf f
+only-rf⇑N Δ₀ Γ n q rf (Il _ f) = Il q (only-rf⇑N Δ₀ Γ n q rf f)
+only-rf⇑N Δ₀ Γ n q rf (⊗l _ f) = ⊗l q (only-rf⇑N (_ ∷ Δ₀) Γ n q rf f)
+only-rf⇑N Δ₀ Γ n q rf (foc s q' f) = foc s q (only-rf-fN Δ₀ Γ s n q q' rf f refl)
 
 only-rf-fN Δ₀ {Δ₁} Γ s n q q' rf (focl {Γ₀ = Γ₀} {Γ₁} q₁ lf (focr (just (._ , snd)) rf₁ ax refl refl ξ₁) refl refl ξ) eq with ++? _ Γ₀ (∘cxt Γ) Γ₁ eq
 ... | inj₁ (Λ , refl , refl) =
