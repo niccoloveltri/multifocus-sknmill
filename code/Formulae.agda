@@ -187,6 +187,9 @@ isProp-isn't⊗ {` X} p q = refl
 isProp-isn't⊗ {I} p q = refl
 isProp-isn't⊗ {_ ⊸ _} p q = refl
 
+isProp-isNeg : ∀ {A} (p q : isNeg A) → p ≡ q
+isProp-isNeg {_ ⊸ _} p q = refl
+
 isProp-isNegAt : ∀ {A} (p q : isNegAt A) → p ≡ q
 isProp-isNegAt {` X} p q = refl
 isProp-isNegAt {_ ⊸ _} p q = refl

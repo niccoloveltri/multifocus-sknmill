@@ -6,7 +6,7 @@ open import Data.List hiding (concat)
 open import Data.List.Relation.Unary.All hiding (map)
 open import Data.List.Relation.Unary.Any hiding (map)
 open import Data.Maybe hiding (map)
-open import Data.Sum hiding (map)
+open import Data.Sum renaming (map to map⊎)
 open import Data.Product renaming (map to map×)
 open import Data.Unit
 open import Data.Empty
@@ -353,7 +353,7 @@ only-lf-f-at : {S : Stp} {Δ₀ : Cxt} (Δ₁ : TCxt) {C X : Fma}
            [ ∘ , ∘ ] (∘ , S) ∣ ∘cxt Δ₀ ++ Δ₁ ⇓ (∘ , C)
 only-lf-f-at Δ₁ s x lf (focl {Γ₀ = []} q₁ blurl f refl refl ξ) = focl (at→posat x) lf f refl refl tt
 only-lf-f-at Δ₁ s x lf (focr {Γ₀ = Γ₀} (just (M , m)) rf (unfoc ok f) eq refl ξ) =
-  focl (at→posat x) lf (focr (just (M , m)) rf (unfoc (inj₂ ok) (l∙→∘⇑ {Γ = ∘tcxt Γ₀} f)) eq refl ξ) refl refl tt
+  focl (at→posat x) lf (focr (just (M , m)) rf (unfoc (inj₂ (x , ok)) (l∙→∘⇑ {Γ = ∘tcxt Γ₀} f)) eq refl ξ) refl refl tt
 
 only-lf⇑-at : {S : Stp} {Δ₀ : Cxt} (Δ₁ : TCxt) {C X : Fma}
                (s : isIrr S) (x : isAt X)
@@ -506,7 +506,7 @@ only-rf⇑N Δ₀ Γ n q rf (foc s q' f) = foc s q (only-rf-fN Δ₀ Γ s n q q'
 only-rf-fN Δ₀ {Δ₁} Γ s n q q' rf (focl {Γ₀ = Γ₀} {Γ₁} q₁ lf (focr (just (._ , snd)) rf₁ ax refl refl ξ₁) refl refl ξ) eq with ++? _ Γ₀ (∘cxt Γ) Γ₁ eq
 ... | inj₁ (Λ , refl , refl) =
   focl {Γ₀ = Γ₀} {Λ ++ ∘cxt Δ₁} q₁ lf
-       (focr {Γ₀ = Λ} {∘cxt Δ₁} (just _) rf (unfoc (inj₂ n) (⊸r⋆⇑ Γ (foc tt q' (focl {Γ₀ = []} _ blurl (focr {Γ₀ = []} {∘tcxt Λ ++ ∘cxt Γ} _ rf₁ ax refl refl tt) refl refl tt)))) refl refl tt)
+       (focr {Γ₀ = Λ} {∘cxt Δ₁} (just _) rf (unfoc (inj₂ (tt , n)) (⊸r⋆⇑ Γ (foc tt q' (focl {Γ₀ = []} _ blurl (focr {Γ₀ = []} {∘tcxt Λ ++ ∘cxt Γ} _ rf₁ ax refl refl tt) refl refl tt)))) refl refl tt)
        refl refl tt
 ... | inj₂ (A , Λ , refl , eq') with split-map ∘fma Γ (_ ∷ Λ) Γ₁ eq'
 ... | _ ∷ Λ' , Γ₁' , refl , refl , refl =
@@ -516,10 +516,10 @@ only-rf-fN Δ₀ {Δ₁} Γ s n q q' rf (focl {Γ₀ = Γ₀} {Γ₁} q₁ lf (f
 only-rf-fN _ {Δ₁} Γ s n q q' rf (focl {Γ₀ = Γ₀} q₁ lf (focr {Γ₀ = Γ₁} {Γ₂} (just (M , m)) rf₁ (unfoc ok f) refl refl ξ₁) refl refl ξ) eq with ++? _ Γ₀ (∘cxt Γ) (Γ₁ ++ Γ₂) eq
 ... | inj₁ (Λ , eq' , refl) with ++? Λ Γ₁ (∘cxt Γ) Γ₂ eq'
 ... | inj₁ (Λ' , refl , refl) =
-  focl {Γ₀ = Γ₀} {Γ₁ ++ Λ' ++ ∘cxt Δ₁} q₁ lf (focr {Γ₀ = Γ₁ ++ Λ'} {∘cxt Δ₁} (just _) rf (unfoc (inj₂ n) (⊸r⋆⇑ Γ (only-rf⇑ _ m q' rf₁ f))) refl refl tt) refl refl tt
+  focl {Γ₀ = Γ₀} {Γ₁ ++ Λ' ++ ∘cxt Δ₁} q₁ lf (focr {Γ₀ = Γ₁ ++ Λ'} {∘cxt Δ₁} (just _) rf (unfoc (map⊎ id (map× id (λ _ → n)) ok) (⊸r⋆⇑ Γ (only-rf⇑ _ m q' rf₁ f))) refl refl tt) refl refl tt
 ... | inj₂ (A' , Λ' , refl , eq'') with split-map ∘fma Γ (_ ∷ Λ') Γ₂ eq''
 ... | _ ∷ Λ'' , Γ₂' , refl , refl , refl =
-  focl {Γ₀ = Γ₀} {Λ ++ ∘cxt Δ₁} q₁ lf (focr {Γ₀ = Λ} {∘cxt Δ₁} (just _) rf (unfoc (inj₂ tt) (⊸r⋆⇑ (_ ∷ Λ'' ++ Γ₂') (only-rf⇑ _ m q' rf₁ f))) refl refl tt) refl refl tt
+  focl {Γ₀ = Γ₀} {Λ ++ ∘cxt Δ₁} q₁ lf (focr {Γ₀ = Λ} {∘cxt Δ₁} (just _) rf (unfoc (map⊎ id (map× id (λ _ → n)) ok) (⊸r⋆⇑ (_ ∷ Λ'' ++ Γ₂') (only-rf⇑ _ m q' rf₁ f))) refl refl tt) refl refl tt
 only-rf-fN Δ₀ {Δ₁} Γ s n q q' rf (focl q₁ lf (focr {Γ₀ = Γ₁} {Γ₂} (just x) rf₁ (unfoc ok f) refl refl ξ₁) refl refl ξ) eq | inj₂ (A , Λ , refl , eq') with split-map ∘fma Γ (_ ∷ Λ) (Γ₁ ++ Γ₂) eq'
 ... | _ ∷ Λ' , Ω , refl , eq'' , refl with split-map ∘fma Ω Γ₁ Γ₂ eq''
 ... | Γ₁' , Γ₂' , refl , refl , refl = 

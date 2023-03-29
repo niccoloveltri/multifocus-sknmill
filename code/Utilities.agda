@@ -178,6 +178,22 @@ cases++-inj₂ xs xs' ys x | inj₂ (.xs , refl , refl) | refl = refl
 ... | inj₁ (x ∷ xs₀ , refl , refl) = inj₂ (x , xs₀ , refl , refl)
 ... | inj₂ (y , xs₀ , refl , refl) = inj₁ (y ∷ xs₀ , refl , refl)
 
+++?-alt-eq₁ : {X : Set} → (xs xs' ys' : List X) →
+  ++?-alt xs (xs ++ xs') (xs' ++ ys') ys' refl ≡ inj₁ (xs' , refl , refl) 
+++?-alt-eq₁ xs xs' ys' with ++? xs (xs ++ xs') (xs' ++ ys') ys' refl
+... | inj₁ (x ∷ xs₀ , p , q) = ⊥-elim (canc⊥ (xs₀ ++ xs') ys' p)
+... | inj₂ (x , xs₀ , p , q) with canc++ xs' (x ∷ xs₀) {ys'} q
+++?-alt-eq₁ xs .(x ∷ xs₀) ys' | inj₂ (x , xs₀ , refl , refl) | refl = refl
+++?-alt-eq₁ xs [] ys' | inj₁ ([] , refl , refl) = refl
+++?-alt-eq₁ xs (x ∷ xs') ys' | inj₁ ([] , p , q) = ⊥-elim (canc⊥2 xs q)
+
+++?-alt-eq₂ : {X : Set} → (x : X) (xs xs' ys : List X) →
+  ++?-alt (xs ++ x ∷ xs') xs ys (x ∷ xs' ++ ys) refl ≡ inj₂ (x , xs' , refl , refl) 
+++?-alt-eq₂ x xs xs' ys with ++? (xs ++ x ∷ xs') xs ys (x ∷ xs' ++ ys) refl
+... | inj₂ (x' , xs₀ , p , q) = ⊥-elim (canc⊥2 xs p)
+... | inj₁ (xs₀ , p , q) with canc++ (x ∷ xs') xs₀ {ys} p
+++?-alt-eq₂ x xs xs' ys | inj₁ (.(x ∷ xs') , refl , refl) | refl = refl
+
 ++?-inj₁ : {X : Set} (xs₀ xs' ys : List X) →
            ++? (xs' ++ xs₀) xs' ys (xs₀ ++ ys) refl ≡ inj₁ (xs₀ , refl , refl)
 ++?-inj₁ xs₀ xs' ys with ++? (xs' ++ xs₀) xs' ys (xs₀ ++ ys) refl
@@ -329,3 +345,8 @@ snocAll ps p = ps ++All p ∷ []
 
 infixr 5 _++All_
 
+id : {A : Set} → A → A
+id x = x
+
+--postulate
+--  funext⊥ : {A : Set} {x y : A → ⊥} → x ≡ y

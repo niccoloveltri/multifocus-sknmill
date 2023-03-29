@@ -102,16 +102,13 @@ cong-embrf₂ : ∀ {S Γ₀ Γ₁ C s}
   → {f : end-rf? (λ T Γ A → T ∣ Γ ⊢ A) S Γ₀ s}
   → embrf s h f ≗ embrf s k f
 
-cong-emblf₂ refl = refl
-cong-emblf₂ (~ eq) = ~ cong-emblf₂ eq
-cong-emblf₂ (eq • eq₁) = cong-emblf₂ eq • cong-emblf₂ eq₁
+cong-emblf₂ blurl = refl
 cong-emblf₂ (pass eq) = pass (cong-emblf₂ eq)
 cong-emblf₂ (⊸l+ eqs eq {eq = refl}{refl}) =
   cong⊸l⋆₁ (embs⇑≗ eqs) • cong⊸l⋆₂ (embs⇑ _) (cong-emblf₂ eq)
 
-cong-embrf₂ refl = refl
-cong-embrf₂ (~ eq) = ~ cong-embrf₂ eq
-cong-embrf₂ (eq • eq₁) = cong-embrf₂ eq • cong-embrf₂ eq₁
+cong-embrf₂ blurr = refl
+cong-embrf₂ Ir = refl
 cong-embrf₂ {s = just x} (⊗r+ eq {gs = gs} eqs {eq = refl} {refl}) =
   cong⊗r⋆₂ _ (embs⇑≗ eqs) • cong⊗r⋆₁ (cong-embrf₂ eq) (embs⇑ gs)
 cong-embrf₂ {s = ─} (⊗r+ eq {gs = gs} eqs {eq = refl} {refl}) {refl , refl} =
@@ -120,9 +117,6 @@ cong-embrf₂ {s = ─} (⊗r+ eq {gs = gs} eqs {eq = refl} {refl}) {refl , refl
 embs⇑≗ [] = []
 embs⇑≗ (eq ∷ eqs) = (emb⇑≗ eq) ∷ (embs⇑≗ eqs)
 
-emb⇑≗ refl = refl
-emb⇑≗ (~ eq) = ~ emb⇑≗ eq
-emb⇑≗ (eq • eq₁) = emb⇑≗ eq • emb⇑≗ eq₁
 emb⇑≗ (⊸r eq) = ⊸r (emb⇑≗ eq)
 emb⇑≗ (Il eq) = Il (emb⇑≗ eq)
 emb⇑≗ (⊗l eq) = ⊗l (emb⇑≗ eq)

@@ -198,10 +198,10 @@ focus⊗r⋆ f (g' ∷ g ∷ gs) =
            ⊸l+⇑P Γ₀ Δ₀ Δ₁ p Ξ fs f refl ℓ
              ≗⇑ foc tt q (focl {Γ₁ = Δ₁} (pos→posat p) (⊸l+ Γ₀ Ξ (pos→posat p) fs blurl refl) (unfoc p (runLQ q ℓ f)) refl)
 ⊸l+⇑P-eq p q (Il q₁ f) ℓ =
-  ⊸l+⇑P-eq p q f (Il-1 ℓ) • foc (focl refl (unfoc (congrunLQ ℓ (Il refl))))
+  trans⇑ (⊸l+⇑P-eq p q f (Il-1 ℓ)) (foc (focl refl-lf (unfoc (congrunLQ ℓ (Il refl⇑')))))
 ⊸l+⇑P-eq p q (⊗l q₁ f) ℓ = 
-  ⊸l+⇑P-eq p q f (⊗l-1 ℓ) • foc (focl refl (unfoc (congrunLQ ℓ (⊗l refl))))
-⊸l+⇑P-eq p q (foc s q₁ f) ℓ = foc (focl refl (unfoc (congrunLQ ℓ refl)))
+  trans⇑ (⊸l+⇑P-eq p q f (⊗l-1 ℓ)) (foc (focl refl-lf (unfoc (congrunLQ ℓ (⊗l refl⇑')))))
+⊸l+⇑P-eq p q (foc s q₁ f) ℓ = foc (focl refl-lf (unfoc (congrunLQ ℓ refl⇑')))
 
 pass⇑P-eq : {Γ : Cxt} {P C : Fma}
             (p : isPos P) (q : isPosAt C)
@@ -217,10 +217,10 @@ pass⇑P-eq p q (foc s q₁ f) = ⊥-elim (pos×negat→⊥ p s)
            (f : just X ∣ Γ₀ ++ Γ₁ ⇑ A)
            {gs : All (λ ΔB → ─ ∣ proj₁ ΔB ⇑ proj₂ ΔB) ((Δ₀ , B₀) ∷ Ξ)} → 
            ⊗r+⇑N Γ₁ Δ₀ n Ξ f gs refl
-             ≗⇑ foc (at→negat x) (isPosAt⊗⋆ tt (fmas Ξ)) (focr (just (_ , neg→negat n)) (⊗r+ Δ₀ Ξ (neg→isn't⊗ n) blurr gs refl) (focl (at→posat x) blurl (unfoc (inj₂ n) (⊸r⋆⇑ Γ₁ f)) refl) refl)
+             ≗⇑ foc (at→negat x) (isPosAt⊗⋆ tt (fmas Ξ)) (focr (just (_ , neg→negat n)) (⊗r+ Δ₀ Ξ (neg→isn't⊗ n) blurr gs refl) (focl (at→posat x) blurl (unfoc (inj₂ (x , n)) (⊸r⋆⇑ Γ₁ f)) refl) refl)
 ⊗r+⇑N-eq Γ₁ n x (⊸r f) =
-  ⊗r+⇑N-eq (Γ₁ ∷ʳ _) n x f • foc (focr refl (focl refl (unfoc (refl⇑ (⊸r⋆⊸r⋆⇑ Γ₁ {_ ∷ []})))))
-⊗r+⇑N-eq Γ₁ {X = ` X} n x (foc s q f) = foc (focr refl (~ blurl-at))
+  trans⇑ (⊗r+⇑N-eq (Γ₁ ∷ʳ _) n x f) (foc (focr refl-rf (focl refl-lf (unfoc (refl⇑ (⊸r⋆⊸r⋆⇑ Γ₁ {_ ∷ []}))))))
+⊗r+⇑N-eq Γ₁ {X = ` X} n x (foc s q f) = foc (focr refl-rf (~ blurl-at))
 
 ⊗r+⇑N-eq' : ∀ {S Γ₀} Γ₁ {Δ₀ A B₀ Ξ}
            (n : isNeg (Γ₁ ⊸⋆ A)) (s : isIrr S)
@@ -228,7 +228,7 @@ pass⇑P-eq p q (foc s q₁ f) = ⊥-elim (pos×negat→⊥ p s)
            {gs : All (λ ΔB → ─ ∣ proj₁ ΔB ⇑ proj₂ ΔB) ((Δ₀ , B₀) ∷ Ξ)} → 
            ⊗r+⇑N Γ₁ Δ₀ n Ξ f gs refl
              ≗⇑ foc s (isPosAt⊗⋆ tt (fmas Ξ)) (focr (just (_ , neg→negat n)) (⊗r+ Δ₀ Ξ (neg→isn't⊗ n) blurr gs refl) (unfoc n (⊸r⋆⇑ Γ₁ f)) refl)
-⊗r+⇑N-eq' Γ₁ n s (⊸r f) = ⊗r+⇑N-eq' (Γ₁ ∷ʳ _) n s f • foc (focr refl (unfoc (refl⇑ (⊸r⋆⊸r⋆⇑ Γ₁ {_ ∷ []}))))
+⊗r+⇑N-eq' Γ₁ n s (⊸r f) = trans⇑ (⊗r+⇑N-eq' (Γ₁ ∷ʳ _) n s f) (foc (focr refl-rf (unfoc (refl⇑ (⊸r⋆⊸r⋆⇑ Γ₁ {_ ∷ []})))))
 ⊗r+⇑N-eq' Γ₁ n s (foc s₁ q f) = foc refl
 
 
@@ -271,8 +271,8 @@ focuss∘embs⇑ : ∀ {Ξ} (fs : All (λ ΔB → ─ ∣ proj₁ ΔB ⇑ proj�
 --   → focus (emblf p lf f) ≗⇑ foc s r (focl p lf f refl)
 
 focus∘emb⇑ (⊸r f) = ⊸r (focus∘emb⇑ f)
-focus∘emb⇑ (Il q f) = refl⇑ (Il⇑eq {q = q} _) • Il (focus∘emb⇑ f)
-focus∘emb⇑ (⊗l q f) = refl⇑ (⊗l⇑eq {q = q} _) • ⊗l (focus∘emb⇑ f)
+focus∘emb⇑ (Il q f) = trans⇑ (refl⇑ (Il⇑eq {q = q} _)) (Il (focus∘emb⇑ f))
+focus∘emb⇑ (⊗l q f) = trans⇑ (refl⇑ (⊗l⇑eq {q = q} _)) (⊗l (focus∘emb⇑ f))
 focus∘emb⇑ (foc s q f) = focus∘emb⇓ s q f 
 
 focuss∘embs⇑ [] = []
@@ -280,274 +280,274 @@ focuss∘embs⇑ (f ∷ fs) = (focus∘emb⇑ f) ∷ (focuss∘embs⇑ fs)
 
 focus∘emb⇓ s q (focl q₁ (pass (⊸l+ Γ₀ Ξ q₂ fs blurl refl)) (focr (just x) (⊗r+ Δ₀ Ξ₁ m (⊗r+ Δ₁ Ξ₂ m₁ rf gs₁ eq₂) gs eq₁) f eq) refl) = ⊥-elim (is⊗×isn't⊗→⊥ (is⊗⊗⋆ tt (fmas Ξ₂)) m)
 focus∘emb⇓ s q (focl q₁ (pass (⊸l+ Γ₀ Ξ q₂ (f ∷ fs) blurl refl)) (focr (just .(` _ , _)) (⊗r+ Δ₀ Ξ₁ m blurr (g ∷ gs) refl) ax refl) refl) =
-  congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) • cong⊸l⋆⇑ (focuss∘embs⇑ (f ∷ fs)) (refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs)))))
-  • foc (focl refl (focr (⊗r+ refl (focuss∘embs⇑ (g ∷ gs))) refl))
-focus∘emb⇓ s q (focl {Q = ` X} q₁ (pass (⊸l+ Γ₀ Ξ q₂ (f ∷ fs) blurl refl)) (focr (just (M ⊸ M₁ , tt)) (⊗r+ Δ₀ Ξ₁ m blurr (g ∷ gs) refl) (unfoc (inj₂ tt) h) refl) refl) = 
-  congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) • cong⊸l⋆⇑ (focuss∘embs⇑ (f ∷ fs)) (refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs))) • cong⊗r+⇑ (focus∘emb⇑ h) (focuss∘embs⇑ (g ∷ gs)) • ⊗r+⇑N-eq [] tt tt h))
-  • foc (~ swap)
+  congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) •⇑ cong⊸l⋆⇑ (focuss∘embs⇑ (f ∷ fs)) (refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs)))))
+  •⇑ foc (focl refl-lf (focr (⊗r+ refl-rf (focuss∘embs⇑ (g ∷ gs))) refl))
+focus∘emb⇓ s q (focl {Q = ` X} q₁ (pass (⊸l+ Γ₀ Ξ q₂ (f ∷ fs) blurl refl)) (focr (just (M ⊸ M₁ , tt)) (⊗r+ Δ₀ Ξ₁ m blurr (g ∷ gs) refl) (unfoc (inj₂ (tt , tt)) h) refl) refl) = 
+  congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) •⇑ cong⊸l⋆⇑ (focuss∘embs⇑ (f ∷ fs)) (refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs))) •⇑ cong⊗r+⇑ (focus∘emb⇑ h) (focuss∘embs⇑ (g ∷ gs)) •⇑ ⊗r+⇑N-eq [] tt tt h))
+  •⇑ foc (~ swap)
 focus∘emb⇓ s q (focl {Q = I} q₁ (pass (⊸l+ Γ₀ Ξ q₂ (f ∷ fs) blurl refl)) (focr (just (M ⊸ M₁ , tt)) (⊗r+ Δ₀ Ξ₁ m blurr (g ∷ gs) refl) (unfoc ok h) refl) refl) = 
-  congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) • cong⊸l⋆⇑ (focuss∘embs⇑ (f ∷ fs)) (refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs))) • cong⊗r+⇑ (focus∘emb⇑ h) (focuss∘embs⇑ (g ∷ gs)) ))
-  • congpass⇑ (⊸l+⇑P-eq tt (isPosAt⊗⋆ tt (fmas Ξ₁)) (⊗r+⇑N [] Δ₀ tt Ξ₁ h (g ∷ gs) refl) done)
-  • foc (focl refl (early-rf⇑N h done • focr refl (unfoc refl)))
+  congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) •⇑ cong⊸l⋆⇑ (focuss∘embs⇑ (f ∷ fs)) (refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs))) •⇑ cong⊗r+⇑ (focus∘emb⇑ h) (focuss∘embs⇑ (g ∷ gs)) ))
+  •⇑ congpass⇑ (⊸l+⇑P-eq tt (isPosAt⊗⋆ tt (fmas Ξ₁)) (⊗r+⇑N [] Δ₀ tt Ξ₁ h (g ∷ gs) refl) done)
+  •⇑ foc (focl refl-lf (early-rf⇑N h done • focr refl-rf (unfoc refl⇑')))
 focus∘emb⇓ s q (focl {Q = Q ⊗ Q₁} q₁ (pass (⊸l+ Γ₀ Ξ q₂ (f ∷ fs) blurl refl)) (focr (just (M ⊸ M₁ , tt)) (⊗r+ Δ₀ Ξ₁ m blurr (g ∷ gs) refl) (unfoc ok h) refl) refl) = 
-  congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) • cong⊸l⋆⇑ (focuss∘embs⇑ (f ∷ fs)) (refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs))) • cong⊗r+⇑ (focus∘emb⇑ h) (focuss∘embs⇑ (g ∷ gs)) ))
-  • congpass⇑ (⊸l+⇑P-eq tt (isPosAt⊗⋆ tt (fmas Ξ₁)) (⊗r+⇑N [] Δ₀ tt Ξ₁ h (g ∷ gs) refl) done)
-  • foc (focl refl (early-rf⇑N h done • focr refl (unfoc refl)))
+  congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) •⇑ cong⊸l⋆⇑ (focuss∘embs⇑ (f ∷ fs)) (refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs))) •⇑ cong⊗r+⇑ (focus∘emb⇑ h) (focuss∘embs⇑ (g ∷ gs)) ))
+  •⇑ congpass⇑ (⊸l+⇑P-eq tt (isPosAt⊗⋆ tt (fmas Ξ₁)) (⊗r+⇑N [] Δ₀ tt Ξ₁ h (g ∷ gs) refl) done)
+  •⇑ foc (focl refl-lf (early-rf⇑N h done • focr refl-rf (unfoc refl⇑')))
 focus∘emb⇓ s q (focl {Q = ` Y} q₁ (pass (⊸l+ Γ₀ Ξ q₂ (f ∷ fs) blurl refl)) (focr (just (` X , tt)) (⊗r+ Δ₀ Ξ₁ m blurr (g ∷ gs) refl) (unfoc (inj₁ ()) h) refl) refl)
 focus∘emb⇓ s q (focl {Q = I} q₁ (pass (⊸l+ Γ₀ Ξ q₂ (f ∷ fs) blurl refl)) (focr (just (` X , tt)) (⊗r+ Δ₀ Ξ₁ m blurr (g ∷ gs) refl) (unfoc (inj₁ ok) h) refl) refl) = 
-  congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) • cong⊸l⋆⇑ (focuss∘embs⇑ (f ∷ fs)) (refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs))) • cong⊗r+⇑ (focus∘emb⇑ h) (focuss∘embs⇑ (g ∷ gs)) ))
-  • congpass⇑ (⊸l+⇑P-eq tt (isPosAt⊗⋆ tt (fmas Ξ₁)) (⊗r+⇑Q Δ₀ tt Ξ₁ h (g ∷ gs)) done)
-  • foc (focl refl (early-rf⇑-at tt h refl done))
+  congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) •⇑ cong⊸l⋆⇑ (focuss∘embs⇑ (f ∷ fs)) (refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs))) •⇑ cong⊗r+⇑ (focus∘emb⇑ h) (focuss∘embs⇑ (g ∷ gs)) ))
+  •⇑ congpass⇑ (⊸l+⇑P-eq tt (isPosAt⊗⋆ tt (fmas Ξ₁)) (⊗r+⇑Q Δ₀ tt Ξ₁ h (g ∷ gs)) done)
+  •⇑ foc (focl refl-lf (early-rf⇑-at tt h refl done))
 focus∘emb⇓ s q (focl {Q = Q ⊗ Q₁} q₁ (pass (⊸l+ Γ₀ Ξ q₂ (f ∷ fs) blurl refl)) (focr (just (` X , tt)) (⊗r+ Δ₀ Ξ₁ m blurr (g ∷ gs) refl) (unfoc (inj₁ ok) h) refl) refl) = 
-  congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) • cong⊸l⋆⇑ (focuss∘embs⇑ (f ∷ fs)) (refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs))) • cong⊗r+⇑ (focus∘emb⇑ h) (focuss∘embs⇑ (g ∷ gs)) ))
-  • congpass⇑ (⊸l+⇑P-eq tt (isPosAt⊗⋆ tt (fmas Ξ₁)) (⊗r+⇑Q Δ₀ tt Ξ₁ h (g ∷ gs)) done)
-  • foc (focl refl (early-rf⇑-at tt h refl done))
+  congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) •⇑ cong⊸l⋆⇑ (focuss∘embs⇑ (f ∷ fs)) (refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs))) •⇑ cong⊗r+⇑ (focus∘emb⇑ h) (focuss∘embs⇑ (g ∷ gs)) ))
+  •⇑ congpass⇑ (⊸l+⇑P-eq tt (isPosAt⊗⋆ tt (fmas Ξ₁)) (⊗r+⇑Q Δ₀ tt Ξ₁ h (g ∷ gs)) done)
+  •⇑ foc (focl refl-lf (early-rf⇑-at tt h refl done))
 focus∘emb⇓ s q (focl q₁ (pass (⊸l+ Γ₀ Ξ q₂ (f ∷ fs) blurl refl)) (focr .(just (` _ , _)) blurr ax refl) refl) =
-  congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _)) • foc (focl (pass (⊸l+ (focuss∘embs⇑ (f ∷ fs)) refl)) refl)
-focus∘emb⇓ s q (focl {Q = ` X} q₁ (pass (⊸l+ Γ₀ Ξ q₂ (f ∷ fs) blurl refl)) (focr .(just (_ , _)) blurr (unfoc (inj₂ ok) h) refl) refl) = ⊥-elim (neg×posat→⊥ ok q)
+  congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _)) •⇑ foc (focl (pass (⊸l+ (focuss∘embs⇑ (f ∷ fs)) refl-lf)) refl)
+focus∘emb⇓ s q (focl {Q = ` X} q₁ (pass (⊸l+ Γ₀ Ξ q₂ (f ∷ fs) blurl refl)) (focr .(just (_ , _)) blurr (unfoc (inj₂ (_ , ok)) h) refl) refl) = ⊥-elim (neg×posat→⊥ ok q)
 focus∘emb⇓ s q (focl {Q = I} q₁ (pass (⊸l+ Γ₀ Ξ q₂ (f ∷ fs) blurl refl)) (focr (just (` X , m)) blurr (unfoc (inj₁ tt) h) refl) refl) = 
-  congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) • cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h))
-  • congpass⇑ (⊸l+⇑P-eq tt q h done)
-  • foc (focl refl (~ blurr-at))
+  congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) •⇑ cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h))
+  •⇑ congpass⇑ (⊸l+⇑P-eq tt q h done)
+  •⇑ foc (focl refl-lf (~ blurr-at))
 focus∘emb⇓ s q (focl {Q = Q ⊗ Q₁} q₁ (pass (⊸l+ Γ₀ Ξ q₂ (f ∷ fs) blurl refl)) (focr (just (` X , m)) blurr (unfoc (inj₁ tt) h) refl) refl) = 
-  congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) • cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h))
-  • congpass⇑ (⊸l+⇑P-eq tt q h done)
-  • foc (focl refl (~ blurr-at))
+  congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) •⇑ cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h))
+  •⇑ congpass⇑ (⊸l+⇑P-eq tt q h done)
+  •⇑ foc (focl refl-lf (~ blurr-at))
 focus∘emb⇓ s q (focl {Q = I} q₁ (pass (⊸l+ Γ₀ Ξ q₂ (f ∷ fs) blurl refl)) (unfoc ok h) refl) = 
-  congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) • cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h))
-  • congpass⇑ (⊸l+⇑P-eq ok q h done)
+  congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) •⇑ cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h))
+  •⇑ congpass⇑ (⊸l+⇑P-eq ok q h done)
 focus∘emb⇓ s q (focl {Q = Q ⊗ Q₁} q₁ (pass (⊸l+ Γ₀ Ξ q₂ (f ∷ fs) blurl refl)) (unfoc ok h) refl) = 
-  congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) • cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h))
-  • congpass⇑ (⊸l+⇑P-eq ok q h done)
+  congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) •⇑ cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h))
+  •⇑ congpass⇑ (⊸l+⇑P-eq ok q h done)
 focus∘emb⇓ s q (focl q₁ (pass blurl) (focr (just (M , m)) (⊗r+ Δ₀ Ξ m₁ (⊗r+ Δ₁ Ξ₁ m₂ rf gs₁ eq₂) gs eq₁) f eq) refl) = ⊥-elim (is⊗×isn't⊗→⊥ (is⊗⊗⋆ tt (fmas Ξ₁)) m₁)
 focus∘emb⇓ s q (focl q₁ (pass blurl) (focr (just (.(` _) , m)) (⊗r+ Δ₀ Ξ m₁ blurr (g ∷ gs) refl) ax refl) refl) =
   congpass⇑ (refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs))))
-  • foc (focl refl (focr (⊗r+ refl (focuss∘embs⇑ (g ∷ gs))) refl))
+  •⇑ foc (focl refl-lf (focr (⊗r+ refl-rf (focuss∘embs⇑ (g ∷ gs))) refl))
 focus∘emb⇓ s q (focl {Q = ` Y} q₁ (pass blurl) (focr (just (` X , tt)) (⊗r+ Δ₀ Ξ m₁ blurr (g ∷ gs) refl) (unfoc (inj₁ ()) f) refl) refl)
 focus∘emb⇓ s q (focl {Q = I} q₁ (pass blurl) (focr (just (` X , m)) (⊗r+ Δ₀ Ξ m₁ blurr (g ∷ gs) refl) (unfoc (inj₁ ok) f) refl) refl) = 
-  congpass⇑ (refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs))) • cong⊗r+⇑ (focus∘emb⇑ f) (focuss∘embs⇑ (g ∷ gs)))
-  • pass⇑P-eq ok (isPosAt⊗⋆ tt (fmas Ξ)) (⊗r+⇑Q Δ₀ tt Ξ f (g ∷ gs))
-  • foc (focl refl (early-rf⇑-at tt f refl done))
+  congpass⇑ (refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs))) •⇑ cong⊗r+⇑ (focus∘emb⇑ f) (focuss∘embs⇑ (g ∷ gs)))
+  •⇑ pass⇑P-eq ok (isPosAt⊗⋆ tt (fmas Ξ)) (⊗r+⇑Q Δ₀ tt Ξ f (g ∷ gs))
+  •⇑ foc (focl refl-lf (early-rf⇑-at tt f refl done))
 focus∘emb⇓ s q (focl {Q = _ ⊗ _} q₁ (pass blurl) (focr (just (` X , m)) (⊗r+ Δ₀ Ξ m₁ blurr (g ∷ gs) refl) (unfoc (inj₁ ok) f) refl) refl) = 
-  congpass⇑ (refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs))) • cong⊗r+⇑ (focus∘emb⇑ f) (focuss∘embs⇑ (g ∷ gs)))
-  • pass⇑P-eq ok (isPosAt⊗⋆ tt (fmas Ξ)) (⊗r+⇑Q Δ₀ tt Ξ f (g ∷ gs))
-  • foc (focl refl (early-rf⇑-at tt f refl done))
+  congpass⇑ (refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs))) •⇑ cong⊗r+⇑ (focus∘emb⇑ f) (focuss∘embs⇑ (g ∷ gs)))
+  •⇑ pass⇑P-eq ok (isPosAt⊗⋆ tt (fmas Ξ)) (⊗r+⇑Q Δ₀ tt Ξ f (g ∷ gs))
+  •⇑ foc (focl refl-lf (early-rf⇑-at tt f refl done))
 focus∘emb⇓ s q (focl {Q = ` X} q₁ (pass blurl) (focr (just (M ⊸ M₁ , m)) (⊗r+ Δ₀ Ξ m₁ blurr (g ∷ gs) refl) (unfoc (inj₂ ok) f) refl) refl) = 
-  congpass⇑ (refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs))) • cong⊗r+⇑ (focus∘emb⇑ f) (focuss∘embs⇑ (g ∷ gs)) • ⊗r+⇑N-eq [] tt tt f)
-  • foc (~ swap)
+  congpass⇑ (refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs))) •⇑ cong⊗r+⇑ (focus∘emb⇑ f) (focuss∘embs⇑ (g ∷ gs)) •⇑ ⊗r+⇑N-eq [] tt tt f)
+  •⇑ foc (~ swap)
 focus∘emb⇓ s q (focl {Q = I} q₁ (pass blurl) (focr (just (M ⊸ M₁ , m)) (⊗r+ Δ₀ Ξ m₁ blurr (g ∷ gs) refl) (unfoc ok f) refl) refl) = 
-  congpass⇑ (refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs))) • cong⊗r+⇑ (focus∘emb⇑ f) (focuss∘embs⇑ (g ∷ gs)))
-  • pass⇑P-eq tt (isPosAt⊗⋆ tt (fmas Ξ)) (⊗r+⇑N [] Δ₀ tt Ξ f (g ∷ gs) refl)
-  • foc (focl refl (early-rf⇑N f done • focr refl (unfoc refl)))
+  congpass⇑ (refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs))) •⇑ cong⊗r+⇑ (focus∘emb⇑ f) (focuss∘embs⇑ (g ∷ gs)))
+  •⇑ pass⇑P-eq tt (isPosAt⊗⋆ tt (fmas Ξ)) (⊗r+⇑N [] Δ₀ tt Ξ f (g ∷ gs) refl)
+  •⇑ foc (focl refl-lf (early-rf⇑N f done • focr refl-rf (unfoc refl⇑')))
 focus∘emb⇓ s q (focl {Q = _ ⊗ _} q₁ (pass blurl) (focr (just (M ⊸ M₁ , m)) (⊗r+ Δ₀ Ξ m₁ blurr (g ∷ gs) refl) (unfoc ok f) refl) refl) = 
-  congpass⇑ (refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs))) • cong⊗r+⇑ (focus∘emb⇑ f) (focuss∘embs⇑ (g ∷ gs)))
-  • pass⇑P-eq tt (isPosAt⊗⋆ tt (fmas Ξ)) (⊗r+⇑N [] Δ₀ tt Ξ f (g ∷ gs) refl)
-  • foc (focl refl (early-rf⇑N f done • focr refl (unfoc refl)))
-focus∘emb⇓ s q (focl q₁ (pass blurl) (focr (just (.(` _) , m)) blurr ax refl) refl) = refl
+  congpass⇑ (refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs))) •⇑ cong⊗r+⇑ (focus∘emb⇑ f) (focuss∘embs⇑ (g ∷ gs)))
+  •⇑ pass⇑P-eq tt (isPosAt⊗⋆ tt (fmas Ξ)) (⊗r+⇑N [] Δ₀ tt Ξ f (g ∷ gs) refl)
+  •⇑ foc (focl refl-lf (early-rf⇑N f done • focr refl-rf (unfoc refl⇑')))
+focus∘emb⇓ s q (focl q₁ (pass blurl) (focr (just (.(` _) , m)) blurr ax refl) refl) = refl⇑'
 focus∘emb⇓ s q (focl {Q = I} q₁ (pass blurl) (focr (just (` X , m)) blurr (unfoc (inj₁ ok) f) refl) refl) =
-  congpass⇑ (focus∘emb⇑ f) • pass⇑P-eq ok tt f • foc (focl refl (~ blurr-at))
+  congpass⇑ (focus∘emb⇑ f) •⇑ pass⇑P-eq ok tt f •⇑ foc (focl refl-lf (~ blurr-at))
 focus∘emb⇓ s q (focl {Q = _ ⊗ _} q₁ (pass blurl) (focr (just (` X , m)) blurr (unfoc (inj₁ ok) f) refl) refl) =
-  congpass⇑ (focus∘emb⇑ f) • pass⇑P-eq ok tt f • foc (focl refl (~ blurr-at))
+  congpass⇑ (focus∘emb⇑ f) •⇑ pass⇑P-eq ok tt f •⇑ foc (focl refl-lf (~ blurr-at))
 focus∘emb⇓ s q (focl {Q = I} q₁ (pass blurl) (unfoc ok f) refl) = 
-  congpass⇑ (focus∘emb⇑ f) • pass⇑P-eq ok q f
+  congpass⇑ (focus∘emb⇑ f) •⇑ pass⇑P-eq ok q f
 focus∘emb⇓ s q (focl {Q = _ ⊗ _} q₁ (pass blurl) (unfoc ok f) refl) = 
-  congpass⇑ (focus∘emb⇑ f) • pass⇑P-eq ok q f
+  congpass⇑ (focus∘emb⇑ f) •⇑ pass⇑P-eq ok q f
 
 focus∘emb⇓ s q (focl q₁ (⊸l+ Γ₀ Ξ q₂ fs blurl refl) (focr (just x) (⊗r+ Δ₀ Ξ₁ m (⊗r+ Δ₁ Ξ₂ m₁ rf gs₁ eq₂) gs eq₁) f eq) refl) = ⊥-elim (is⊗×isn't⊗→⊥ (is⊗⊗⋆ tt (fmas Ξ₂)) m)
 focus∘emb⇓ s q (focl q₁ (⊸l+ Γ₀ Ξ q₂ (f ∷ fs) blurl refl) (focr (just .(` _ , _)) (⊗r+ Δ₀ Ξ₁ m blurr (g ∷ gs) refl) ax refl) refl) =
-  refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) • cong⊸l⋆⇑ (focuss∘embs⇑ (f ∷ fs)) (refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs))))
-  • foc (focl refl (focr (⊗r+ refl (focuss∘embs⇑ (g ∷ gs))) refl))
-focus∘emb⇓ s q (focl {Q = ` X} q₁ (⊸l+ Γ₀ Ξ q₂ (f ∷ fs) blurl refl) (focr (just (M ⊸ M₁ , tt)) (⊗r+ Δ₀ Ξ₁ m blurr (g ∷ gs) refl) (unfoc (inj₂ tt) h) refl) refl) = 
-  refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) • cong⊸l⋆⇑ (focuss∘embs⇑ (f ∷ fs)) (refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs))) • cong⊗r+⇑ (focus∘emb⇑ h) (focuss∘embs⇑ (g ∷ gs)) • ⊗r+⇑N-eq [] tt tt h)
-  • foc (~ swap)
+  refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) •⇑ cong⊸l⋆⇑ (focuss∘embs⇑ (f ∷ fs)) (refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs))))
+  •⇑ foc (focl refl-lf (focr (⊗r+ refl-rf (focuss∘embs⇑ (g ∷ gs))) refl))
+focus∘emb⇓ s q (focl {Q = ` X} q₁ (⊸l+ Γ₀ Ξ q₂ (f ∷ fs) blurl refl) (focr (just (M ⊸ M₁ , tt)) (⊗r+ Δ₀ Ξ₁ m blurr (g ∷ gs) refl) (unfoc (inj₂ (_ , tt)) h) refl) refl) = 
+  refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) •⇑ cong⊸l⋆⇑ (focuss∘embs⇑ (f ∷ fs)) (refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs))) •⇑ cong⊗r+⇑ (focus∘emb⇑ h) (focuss∘embs⇑ (g ∷ gs)) •⇑ ⊗r+⇑N-eq [] tt tt h)
+  •⇑ foc (~ swap)
 focus∘emb⇓ s q (focl {Q = I} q₁ (⊸l+ Γ₀ Ξ q₂ (f ∷ fs) blurl refl) (focr (just (M ⊸ M₁ , tt)) (⊗r+ Δ₀ Ξ₁ m blurr (g ∷ gs) refl) (unfoc ok h) refl) refl) = 
-  refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) • cong⊸l⋆⇑ (focuss∘embs⇑ (f ∷ fs)) (refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs))) • cong⊗r+⇑ (focus∘emb⇑ h) (focuss∘embs⇑ (g ∷ gs)))
-  • ⊸l+⇑P-eq tt (isPosAt⊗⋆ tt (fmas Ξ₁)) (⊗r+⇑N [] Δ₀ tt Ξ₁ h (g ∷ gs) refl) done
-  • foc (focl refl (early-rf⇑N h done • focr refl (unfoc refl)))
+  refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) •⇑ cong⊸l⋆⇑ (focuss∘embs⇑ (f ∷ fs)) (refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs))) •⇑ cong⊗r+⇑ (focus∘emb⇑ h) (focuss∘embs⇑ (g ∷ gs)))
+  •⇑ ⊸l+⇑P-eq tt (isPosAt⊗⋆ tt (fmas Ξ₁)) (⊗r+⇑N [] Δ₀ tt Ξ₁ h (g ∷ gs) refl) done
+  •⇑ foc (focl refl-lf (early-rf⇑N h done • focr refl-rf (unfoc refl⇑')))
 focus∘emb⇓ s q (focl {Q = Q ⊗ Q₁} q₁ (⊸l+ Γ₀ Ξ q₂ (f ∷ fs) blurl refl) (focr (just (M ⊸ M₁ , tt)) (⊗r+ Δ₀ Ξ₁ m blurr (g ∷ gs) refl) (unfoc ok h) refl) refl) = 
-  refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) • cong⊸l⋆⇑ (focuss∘embs⇑ (f ∷ fs)) (refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs))) • cong⊗r+⇑ (focus∘emb⇑ h) (focuss∘embs⇑ (g ∷ gs)))
-  • ⊸l+⇑P-eq tt (isPosAt⊗⋆ tt (fmas Ξ₁)) (⊗r+⇑N [] Δ₀ tt Ξ₁ h (g ∷ gs) refl) done
-  • foc (focl refl (early-rf⇑N h done • focr refl (unfoc refl)))
+  refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) •⇑ cong⊸l⋆⇑ (focuss∘embs⇑ (f ∷ fs)) (refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs))) •⇑ cong⊗r+⇑ (focus∘emb⇑ h) (focuss∘embs⇑ (g ∷ gs)))
+  •⇑ ⊸l+⇑P-eq tt (isPosAt⊗⋆ tt (fmas Ξ₁)) (⊗r+⇑N [] Δ₀ tt Ξ₁ h (g ∷ gs) refl) done
+  •⇑ foc (focl refl-lf (early-rf⇑N h done • focr refl-rf (unfoc refl⇑')))
 focus∘emb⇓ s q (focl {Q = ` Y} q₁ (⊸l+ Γ₀ Ξ q₂ (f ∷ fs) blurl refl) (focr (just (` X , tt)) (⊗r+ Δ₀ Ξ₁ m blurr (g ∷ gs) refl) (unfoc (inj₁ ()) h) refl) refl)
 focus∘emb⇓ s q (focl {Q = I} q₁ (⊸l+ Γ₀ Ξ q₂ (f ∷ fs) blurl refl) (focr (just (` X , tt)) (⊗r+ Δ₀ Ξ₁ m blurr (g ∷ gs) refl) (unfoc (inj₁ ok) h) refl) refl) = 
-  refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) • cong⊸l⋆⇑ (focuss∘embs⇑ (f ∷ fs)) (refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs))) • cong⊗r+⇑ (focus∘emb⇑ h) (focuss∘embs⇑ (g ∷ gs)))
-  • ⊸l+⇑P-eq tt (isPosAt⊗⋆ tt (fmas Ξ₁)) (⊗r+⇑Q Δ₀ tt Ξ₁ h (g ∷ gs)) done
-  • foc (focl refl (early-rf⇑-at tt h refl done))
+  refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) •⇑ cong⊸l⋆⇑ (focuss∘embs⇑ (f ∷ fs)) (refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs))) •⇑ cong⊗r+⇑ (focus∘emb⇑ h) (focuss∘embs⇑ (g ∷ gs)))
+  •⇑ ⊸l+⇑P-eq tt (isPosAt⊗⋆ tt (fmas Ξ₁)) (⊗r+⇑Q Δ₀ tt Ξ₁ h (g ∷ gs)) done
+  •⇑ foc (focl refl-lf (early-rf⇑-at tt h refl done))
 focus∘emb⇓ s q (focl {Q = Q ⊗ Q₁} q₁ (⊸l+ Γ₀ Ξ q₂ (f ∷ fs) blurl refl) (focr (just (` X , tt)) (⊗r+ Δ₀ Ξ₁ m blurr (g ∷ gs) refl) (unfoc (inj₁ ok) h) refl) refl) = 
-  refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) • cong⊸l⋆⇑ (focuss∘embs⇑ (f ∷ fs)) (refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs))) • cong⊗r+⇑ (focus∘emb⇑ h) (focuss∘embs⇑ (g ∷ gs)))
-  • ⊸l+⇑P-eq tt (isPosAt⊗⋆ tt (fmas Ξ₁)) (⊗r+⇑Q Δ₀ tt Ξ₁ h (g ∷ gs)) done
-  • foc (focl refl (early-rf⇑-at tt h refl done))
+  refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) •⇑ cong⊸l⋆⇑ (focuss∘embs⇑ (f ∷ fs)) (refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs))) •⇑ cong⊗r+⇑ (focus∘emb⇑ h) (focuss∘embs⇑ (g ∷ gs)))
+  •⇑ ⊸l+⇑P-eq tt (isPosAt⊗⋆ tt (fmas Ξ₁)) (⊗r+⇑Q Δ₀ tt Ξ₁ h (g ∷ gs)) done
+  •⇑ foc (focl refl-lf (early-rf⇑-at tt h refl done))
 focus∘emb⇓ s q (focl q₁ (⊸l+ Γ₀ Ξ q₂ (f ∷ fs) blurl refl) (focr .(just (` _ , _)) blurr ax refl) refl) =
-  refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) • foc (focl (⊸l+ (focuss∘embs⇑ (f ∷ fs)) refl) refl)
-focus∘emb⇓ s q (focl {Q = ` X} q₁ (⊸l+ Γ₀ Ξ q₂ (f ∷ fs) blurl refl) (focr .(just (_ , _)) blurr (unfoc (inj₂ ok) h) refl) refl) = ⊥-elim (neg×posat→⊥ ok q)
+  refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) •⇑ foc (focl (⊸l+ (focuss∘embs⇑ (f ∷ fs)) refl-lf) refl)
+focus∘emb⇓ s q (focl {Q = ` X} q₁ (⊸l+ Γ₀ Ξ q₂ (f ∷ fs) blurl refl) (focr .(just (_ , _)) blurr (unfoc (inj₂ (_ , ok)) h) refl) refl) = ⊥-elim (neg×posat→⊥ ok q)
 focus∘emb⇓ s q (focl {Q = I} q₁ (⊸l+ Γ₀ Ξ q₂ (f ∷ fs) blurl refl) (focr (just (` X , m)) blurr (unfoc (inj₁ tt) h) refl) refl) = 
-  refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) • cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h)
-  • ⊸l+⇑P-eq tt q h done
-  • foc (focl refl (~ blurr-at))
+  refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) •⇑ cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h)
+  •⇑ ⊸l+⇑P-eq tt q h done
+  •⇑ foc (focl refl-lf (~ blurr-at))
 focus∘emb⇓ s q (focl {Q = Q ⊗ Q₁} q₁ (⊸l+ Γ₀ Ξ q₂ (f ∷ fs) blurl refl) (focr (just (` X , m)) blurr (unfoc (inj₁ tt) h) refl) refl) = 
-  refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) • cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h)
-  • ⊸l+⇑P-eq tt q h done
-  • foc (focl refl (~ blurr-at))
+  refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) •⇑ cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h)
+  •⇑ ⊸l+⇑P-eq tt q h done
+  •⇑ foc (focl refl-lf (~ blurr-at))
 focus∘emb⇓ s q (focl {Q = I} q₁ (⊸l+ Γ₀ Ξ q₂ (f ∷ fs) blurl refl) (unfoc ok h) refl) = 
-  refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) • cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h)
-  • ⊸l+⇑P-eq ok q h done
+  refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) •⇑ cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h)
+  •⇑ ⊸l+⇑P-eq ok q h done
 focus∘emb⇓ s q (focl {Q = Q ⊗ Q₁} q₁ (⊸l+ Γ₀ Ξ q₂ (f ∷ fs) blurl refl) (unfoc ok h) refl) = 
-  refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) • cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h)
-  • ⊸l+⇑P-eq ok q h done
+  refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) •⇑ cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h)
+  •⇑ ⊸l+⇑P-eq ok q h done
 
 
 focus∘emb⇓ s q (focl {Q = ` X} q₁ blurl (focr (just (_ , m)) (⊗r+ Δ₀ Ξ m₁ (⊗r+ Δ₁ Ξ₁ m₂ rf gs₁ eq) gs refl) f refl) refl) = ⊥-elim (is⊗×isn't⊗→⊥ (is⊗⊗⋆ tt (fmas Ξ₁)) m₁)
 focus∘emb⇓ s q (focl {Q = ` X} q₁ blurl (focr (just (.(` X) , tt)) (⊗r+ Δ₀ Ξ m₁ blurr (g ∷ gs) refl) ax refl) refl) =
-  refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs))) • foc (focl refl (focr (⊗r+ refl (focuss∘embs⇑ (g ∷ gs))) refl))
-focus∘emb⇓ s q (focl {Q = ` X} q₁ blurl (focr (just (M ⊸ M' , m)) (⊗r+ Δ₀ Ξ m₁ blurr (g ∷ gs) refl) (unfoc (inj₂ n) f) refl) refl) = 
+  refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs))) •⇑ foc (focl refl-lf (focr (⊗r+ refl-rf (focuss∘embs⇑ (g ∷ gs))) refl))
+focus∘emb⇓ s q (focl {Q = ` X} q₁ blurl (focr (just (M ⊸ M' , m)) (⊗r+ Δ₀ Ξ m₁ blurr (g ∷ gs) refl) (unfoc (inj₂ (_ , n)) f) refl) refl) = 
   refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs)))
-  • cong⊗r+⇑ (focus∘emb⇑ f) (focuss∘embs⇑ (g ∷ gs))
-  • ⊗r+⇑N-eq [] n tt f
-  • foc (~ swap)
-focus∘emb⇓ s q (focl {Q = ` X} q₁ blurl (focr (just (` .X , tt)) blurr ax refl) refl) = refl
+  •⇑ cong⊗r+⇑ (focus∘emb⇑ f) (focuss∘embs⇑ (g ∷ gs))
+  •⇑ ⊗r+⇑N-eq [] n tt f
+  •⇑ foc (~ swap)
+focus∘emb⇓ s q (focl {Q = ` X} q₁ blurl (focr (just (` .X , tt)) blurr ax refl) refl) = refl⇑'
 focus∘emb⇓ s q (focl {Q = ` X} q₁ blurl (focr (just (` Y , tt)) blurr (unfoc (inj₁ ()) f) refl) refl)
 focus∘emb⇓ s q (focl {Q = ` X} q₁ blurl (focr (just (` Y , tt)) blurr (unfoc (inj₂ ()) f) refl) refl)
 
 focus∘emb⇓ s q (focr (just (M , m)) (⊗r+ Δ₀ Ξ m₁ (⊗r+ Δ₁ Ξ₁ m₂ rf gs₁ eq₁) gs eq) f refl) = ⊥-elim (is⊗×isn't⊗→⊥ (is⊗⊗⋆ tt (fmas Ξ₁)) m₁)
 focus∘emb⇓ s q (focr (just (.(` _) , m)) (⊗r+ Δ₀ Ξ m₁ blurr (g ∷ gs) refl) (focl q₁ (pass (⊸l+ Γ₀ Ξ₁ q₂ (f ∷ fs) blurl refl)) ax refl) refl) =
   refl⇑ (focus⊗r⋆ (pass (⊸l⋆ (embs⇑ (f ∷ fs)) ax)) (embs⇑ (g ∷ gs)))
-  • cong⊗r+⇑ (congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) ax))) (focuss∘embs⇑ (g ∷ gs))
-  • foc (swap • focr refl (focl (pass (⊸l+ (focuss∘embs⇑ (f ∷ fs)) refl)) refl))
+  •⇑ cong⊗r+⇑ (congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) ax))) (focuss∘embs⇑ (g ∷ gs))
+  •⇑ foc (swap • focr refl-rf (focl (pass (⊸l+ (focuss∘embs⇑ (f ∷ fs)) refl-lf)) refl))
 focus∘emb⇓ s q (focr (just (` X , m)) (⊗r+ Δ₀ Ξ m₁ blurr (g ∷ gs) refl) (focl {Q =  ` Y} q₁ (pass (⊸l+ Γ₀ Ξ₁ q₂ (f ∷ fs) blurl refl)) (unfoc (inj₂ ()) h) refl) refl) 
 focus∘emb⇓ s q (focr (just (` X , m)) (⊗r+ Δ₀ Ξ m₁ blurr (g ∷ gs) refl) (focl {Q =  I} q₁ (pass (⊸l+ Γ₀ Ξ₁ q₂ (f ∷ fs) blurl refl)) (unfoc (inj₁ tt) h) refl) refl) =
   refl⇑ (focus⊗r⋆ (pass (⊸l⋆ (embs⇑ (f ∷ fs)) _)) (embs⇑ (g ∷ gs)))
-  • cong⊗r+⇑ (congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) • cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h) • ⊸l+⇑P-eq tt tt h done)) (focuss∘embs⇑ (g ∷ gs))
-  • foc (focl refl (early-rf⇑-at tt h refl done) • swap)
+  •⇑ cong⊗r+⇑ (congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) •⇑ cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h) •⇑ ⊸l+⇑P-eq tt tt h done)) (focuss∘embs⇑ (g ∷ gs))
+  •⇑ foc (focl refl-lf (early-rf⇑-at tt h refl done) • swap)
 focus∘emb⇓ s q (focr (just (` X , m)) (⊗r+ Δ₀ Ξ m₁ blurr (g ∷ gs) refl) (focl {Q =  _ ⊗ _} q₁ (pass (⊸l+ Γ₀ Ξ₁ q₂ (f ∷ fs) blurl refl)) (unfoc (inj₁ tt)h) refl) refl) =
   refl⇑ (focus⊗r⋆ (pass (⊸l⋆ (embs⇑ (f ∷ fs)) _)) (embs⇑ (g ∷ gs)))
-  • cong⊗r+⇑ (congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) • cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h) • ⊸l+⇑P-eq tt tt h done)) (focuss∘embs⇑ (g ∷ gs))
-  • foc (focl refl (early-rf⇑-at tt h refl done) • swap)
-focus∘emb⇓ s q (focr (just (M ⊸ M' , m)) (⊗r+ Δ₀ Ξ m₁ blurr (g ∷ gs) refl) (focl {Q = ` X} q₁ (pass (⊸l+ Γ₀ Ξ₁ q₂ (f ∷ fs) blurl refl)) (unfoc (inj₂ ok) h) refl) refl) =
+  •⇑ cong⊗r+⇑ (congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) •⇑ cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h) •⇑ ⊸l+⇑P-eq tt tt h done)) (focuss∘embs⇑ (g ∷ gs))
+  •⇑ foc (focl refl-lf (early-rf⇑-at tt h refl done) • swap)
+focus∘emb⇓ s q (focr (just (M ⊸ M' , m)) (⊗r+ Δ₀ Ξ m₁ blurr (g ∷ gs) refl) (focl {Q = ` X} q₁ (pass (⊸l+ Γ₀ Ξ₁ q₂ (f ∷ fs) blurl refl)) (unfoc (inj₂ (_ , ok)) h) refl) refl) =
   refl⇑ (focus⊗r⋆ (pass (⊸l⋆ (embs⇑ (f ∷ fs)) _)) (embs⇑ (g ∷ gs)))
-  • cong⊗r+⇑ (congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) • cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h))) (focuss∘embs⇑ (g ∷ gs))
-  • ⊗r+pass⇑ {f = ⊸l+⇑M Γ₀ tt Ξ₁ (f ∷ fs) h}
-  • congpass⇑ (⊗r+⊸l+⇑ {h = h} • cong⊸l+⇑M₂ (⊗r+⇑N-eq [] ok tt h))
-  • foc refl
+  •⇑ cong⊗r+⇑ (congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) •⇑ cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h))) (focuss∘embs⇑ (g ∷ gs))
+  •⇑ ⊗r+pass⇑ {f = ⊸l+⇑M Γ₀ tt Ξ₁ (f ∷ fs) h}
+  •⇑ congpass⇑ (⊗r+⊸l+⇑ {h = h} •⇑ cong⊸l+⇑M₂ (⊗r+⇑N-eq [] ok tt h))
+  •⇑ foc refl
 focus∘emb⇓ s q (focr (just (M ⊸ M' , m)) (⊗r+ Δ₀ Ξ m₁ blurr (g ∷ gs) refl) (focl {Q = I} q₁ (pass (⊸l+ Γ₀ Ξ₁ q₂ (f ∷ fs) blurl refl)) (unfoc ok h) refl) refl) =
   refl⇑ (focus⊗r⋆ (pass (⊸l⋆ (embs⇑ (f ∷ fs)) _)) (embs⇑ (g ∷ gs)))
-  • cong⊗r+⇑ (congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) • cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h))) (focuss∘embs⇑ (g ∷ gs))
-  • ⊗r+pass⇑ {f = ⊸l+⇑P Γ₀ [] _ tt Ξ₁ (f ∷ fs) h refl done}
-  • congpass⇑ (⊗r+⊸l+⇑ {h = h})
-  • congpass⇑ (⊸l+⇑P-eq tt (isPosAt⊗⋆ tt (fmas Ξ)) (⊗r+⇑N [] Δ₀ tt Ξ h (g ∷ gs) refl) done)
-  • foc (focl refl (early-rf⇑N h done • focr refl (unfoc refl)) • swap)
+  •⇑ cong⊗r+⇑ (congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) •⇑ cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h))) (focuss∘embs⇑ (g ∷ gs))
+  •⇑ ⊗r+pass⇑ {f = ⊸l+⇑P Γ₀ [] _ tt Ξ₁ (f ∷ fs) h refl done}
+  •⇑ congpass⇑ (⊗r+⊸l+⇑ {h = h})
+  •⇑ congpass⇑ (⊸l+⇑P-eq tt (isPosAt⊗⋆ tt (fmas Ξ)) (⊗r+⇑N [] Δ₀ tt Ξ h (g ∷ gs) refl) done)
+  •⇑ foc (focl refl-lf (early-rf⇑N h done • focr refl-rf (unfoc refl⇑')) • swap)
 focus∘emb⇓ s q (focr (just (M ⊸ M' , m)) (⊗r+ Δ₀ Ξ m₁ blurr (g ∷ gs) refl) (focl {Q = _ ⊗ _} q₁ (pass (⊸l+ Γ₀ Ξ₁ q₂ (f ∷ fs) blurl refl)) (unfoc ok h) refl) refl) =
   refl⇑ (focus⊗r⋆ (pass (⊸l⋆ (embs⇑ (f ∷ fs)) _)) (embs⇑ (g ∷ gs)))
-  • cong⊗r+⇑ (congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) • cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h))) (focuss∘embs⇑ (g ∷ gs))
-  • ⊗r+pass⇑ {f = ⊸l+⇑P Γ₀ [] _ tt Ξ₁ (f ∷ fs) h refl done}
-  • congpass⇑ (⊗r+⊸l+⇑ {h = h})
-  • congpass⇑ (⊸l+⇑P-eq tt (isPosAt⊗⋆ tt (fmas Ξ)) (⊗r+⇑N [] Δ₀ tt Ξ h (g ∷ gs) refl) done)
-  • foc (focl refl (early-rf⇑N h done • focr refl (unfoc refl)) • swap)
+  •⇑ cong⊗r+⇑ (congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) •⇑ cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h))) (focuss∘embs⇑ (g ∷ gs))
+  •⇑ ⊗r+pass⇑ {f = ⊸l+⇑P Γ₀ [] _ tt Ξ₁ (f ∷ fs) h refl done}
+  •⇑ congpass⇑ (⊗r+⊸l+⇑ {h = h})
+  •⇑ congpass⇑ (⊸l+⇑P-eq tt (isPosAt⊗⋆ tt (fmas Ξ)) (⊗r+⇑N [] Δ₀ tt Ξ h (g ∷ gs) refl) done)
+  •⇑ foc (focl refl-lf (early-rf⇑N h done • focr refl-rf (unfoc refl⇑')) • swap)
 
 focus∘emb⇓ s q (focr (just (.(` _) , m)) (⊗r+ Δ₀ Ξ m₁ blurr (g ∷ gs) refl) (focl q₁ (pass blurl) ax refl) refl) =
   refl⇑ (focus⊗r⋆ (pass ax) (embs⇑ (g ∷ gs)))
-  • foc (focl refl (focr (⊗r+ refl (focuss∘embs⇑ (g ∷ gs))) refl) • swap)
+  •⇑ foc (focl refl-lf (focr (⊗r+ refl-rf (focuss∘embs⇑ (g ∷ gs))) refl) • swap)
 focus∘emb⇓ s q (focr (just (` X , m)) (⊗r+ Δ₀ Ξ m₁ blurr (g ∷ gs) refl) (focl {Q = I} q₁ (pass blurl) (unfoc (inj₁ ok) f) refl) refl) = 
   refl⇑ (focus⊗r⋆ (pass _) (embs⇑ (g ∷ gs)))
-  • cong⊗r+⇑ (congpass⇑ (focus∘emb⇑ f) • pass⇑P-eq ok tt f) (focuss∘embs⇑ (g ∷ gs))
-  • foc (focl refl (early-rf⇑-at tt f refl done) • swap)
+  •⇑ cong⊗r+⇑ (congpass⇑ (focus∘emb⇑ f) •⇑ pass⇑P-eq ok tt f) (focuss∘embs⇑ (g ∷ gs))
+  •⇑ foc (focl refl-lf (early-rf⇑-at tt f refl done) • swap)
 focus∘emb⇓ s q (focr (just (` X , m)) (⊗r+ Δ₀ Ξ m₁ blurr (g ∷ gs) refl) (focl {Q = _ ⊗ _} q₁ (pass blurl) (unfoc (inj₁ ok) f) refl) refl) = 
   refl⇑ (focus⊗r⋆ (pass _) (embs⇑ (g ∷ gs)))
-  • cong⊗r+⇑ (congpass⇑ (focus∘emb⇑ f) • pass⇑P-eq ok tt f) (focuss∘embs⇑ (g ∷ gs))
-  • foc (focl refl (early-rf⇑-at tt f refl done) • swap)
+  •⇑ cong⊗r+⇑ (congpass⇑ (focus∘emb⇑ f) •⇑ pass⇑P-eq ok tt f) (focuss∘embs⇑ (g ∷ gs))
+  •⇑ foc (focl refl-lf (early-rf⇑-at tt f refl done) • swap)
 focus∘emb⇓ s q (focr (just (M ⊸ M' , m)) (⊗r+ Δ₀ Ξ m₁ blurr (g ∷ gs) refl) (focl {Q = ` X} q₁ (pass blurl) (unfoc ok f) refl) refl) = 
   refl⇑ (focus⊗r⋆ (pass _) (embs⇑ (g ∷ gs)))
-  • cong⊗r+⇑ (congpass⇑ (focus∘emb⇑ f)) (focuss∘embs⇑ (g ∷ gs))
-  • ⊗r+⇑N-eq' [] tt tt (pass⇑ f)
-  • foc (focr refl (early-pass⇑-at [] tt f • focl refl (unfoc refl)))
+  •⇑ cong⊗r+⇑ (congpass⇑ (focus∘emb⇑ f)) (focuss∘embs⇑ (g ∷ gs))
+  •⇑ ⊗r+⇑N-eq' [] tt tt (pass⇑ f)
+  •⇑ foc (focr refl-rf (early-pass⇑-at [] tt f • focl refl-lf (unfoc refl⇑')))
 focus∘emb⇓ s q (focr (just (M ⊸ M' , m)) (⊗r+ Δ₀ Ξ m₁ blurr (g ∷ gs) refl) (focl {Q = I} q₁ (pass blurl) (unfoc ok f) refl) refl) = 
   refl⇑ (focus⊗r⋆ (pass _) (embs⇑ (g ∷ gs)))
-  • cong⊗r+⇑ (congpass⇑ (focus∘emb⇑ f)) (focuss∘embs⇑ (g ∷ gs))
-  • ⊗r+pass⇑ {f = f}
-  • pass⇑P-eq tt (isPosAt⊗⋆ tt (fmas Ξ)) _
-  • foc (focl refl (early-rf⇑N f done • focr refl (unfoc refl)) • swap)
+  •⇑ cong⊗r+⇑ (congpass⇑ (focus∘emb⇑ f)) (focuss∘embs⇑ (g ∷ gs))
+  •⇑ ⊗r+pass⇑ {f = f}
+  •⇑ pass⇑P-eq tt (isPosAt⊗⋆ tt (fmas Ξ)) _
+  •⇑ foc (focl refl-lf (early-rf⇑N f done • focr refl-rf (unfoc refl⇑')) • swap)
 focus∘emb⇓ s q (focr (just (M ⊸ M' , m)) (⊗r+ Δ₀ Ξ m₁ blurr (g ∷ gs) refl) (focl {Q = _ ⊗ _} q₁ (pass blurl) (unfoc ok f) refl) refl) = 
   refl⇑ (focus⊗r⋆ (pass _) (embs⇑ (g ∷ gs)))
-  • cong⊗r+⇑ (congpass⇑ (focus∘emb⇑ f)) (focuss∘embs⇑ (g ∷ gs))
-  • ⊗r+pass⇑ {f = f}
-  • pass⇑P-eq tt (isPosAt⊗⋆ tt (fmas Ξ)) _
-  • foc (focl refl (early-rf⇑N f done • focr refl (unfoc refl)) • swap)
+  •⇑ cong⊗r+⇑ (congpass⇑ (focus∘emb⇑ f)) (focuss∘embs⇑ (g ∷ gs))
+  •⇑ ⊗r+pass⇑ {f = f}
+  •⇑ pass⇑P-eq tt (isPosAt⊗⋆ tt (fmas Ξ)) _
+  •⇑ foc (focl refl-lf (early-rf⇑N f done • focr refl-rf (unfoc refl⇑')) • swap)
 
 focus∘emb⇓ s q (focr (just (.(` _) , m)) (⊗r+ Δ₀ Ξ m₁ blurr (g ∷ gs) refl) (focl q₁ (⊸l+ Γ₀ Ξ₁ q₂ (f ∷ fs) blurl refl) ax refl) refl) =
   refl⇑ (focus⊗r⋆ (⊸l⋆ (embs⇑ (f ∷ fs)) ax) (embs⇑ (g ∷ gs)))
-  • cong⊗r+⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) ax)) (focuss∘embs⇑ (g ∷ gs))
-  • foc (swap • focr refl (focl (⊸l+ (focuss∘embs⇑ (f ∷ fs)) refl) refl))
+  •⇑ cong⊗r+⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) ax)) (focuss∘embs⇑ (g ∷ gs))
+  •⇑ foc (swap • focr refl-rf (focl (⊸l+ (focuss∘embs⇑ (f ∷ fs)) refl-lf) refl))
 focus∘emb⇓ s q (focr (just (` X , m)) (⊗r+ Δ₀ Ξ m₁ blurr (g ∷ gs) refl) (focl {Q =  ` Y} q₁ (⊸l+ Γ₀ Ξ₁ q₂ (f ∷ fs) blurl refl) (unfoc (inj₂ ()) h) refl) refl) 
 focus∘emb⇓ s q (focr (just (` X , m)) (⊗r+ Δ₀ Ξ m₁ blurr (g ∷ gs) refl) (focl {Q =  I} q₁ (⊸l+ Γ₀ Ξ₁ q₂ (f ∷ fs) blurl refl) (unfoc (inj₁ tt) h) refl) refl) =
   refl⇑ (focus⊗r⋆ (⊸l⋆ (embs⇑ (f ∷ fs)) _) (embs⇑ (g ∷ gs)))
-  • cong⊗r+⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) • cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h) • ⊸l+⇑P-eq tt tt h done) (focuss∘embs⇑ (g ∷ gs))
-  • foc (focl refl (early-rf⇑-at tt h refl done) • swap)
+  •⇑ cong⊗r+⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) •⇑ cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h) •⇑ ⊸l+⇑P-eq tt tt h done) (focuss∘embs⇑ (g ∷ gs))
+  •⇑ foc (focl refl-lf (early-rf⇑-at tt h refl done) • swap)
 focus∘emb⇓ s q (focr (just (` X , m)) (⊗r+ Δ₀ Ξ m₁ blurr (g ∷ gs) refl) (focl {Q =  _ ⊗ _} q₁ (⊸l+ Γ₀ Ξ₁ q₂ (f ∷ fs) blurl refl) (unfoc (inj₁ tt)h) refl) refl) =
   refl⇑ (focus⊗r⋆ (⊸l⋆ (embs⇑ (f ∷ fs)) _) (embs⇑ (g ∷ gs)))
-  • cong⊗r+⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) • cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h) • ⊸l+⇑P-eq tt tt h done) (focuss∘embs⇑ (g ∷ gs))
-  • foc (focl refl (early-rf⇑-at tt h refl done) • swap)
-focus∘emb⇓ s q (focr (just (M ⊸ M' , m)) (⊗r+ Δ₀ Ξ m₁ blurr (g ∷ gs) refl) (focl {Q = ` X} q₁ (⊸l+ Γ₀ Ξ₁ q₂ (f ∷ fs) blurl refl) (unfoc (inj₂ ok) h) refl) refl) =
+  •⇑ cong⊗r+⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) •⇑ cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h) •⇑ ⊸l+⇑P-eq tt tt h done) (focuss∘embs⇑ (g ∷ gs))
+  •⇑ foc (focl refl-lf (early-rf⇑-at tt h refl done) • swap)
+focus∘emb⇓ s q (focr (just (M ⊸ M' , m)) (⊗r+ Δ₀ Ξ m₁ blurr (g ∷ gs) refl) (focl {Q = ` X} q₁ (⊸l+ Γ₀ Ξ₁ q₂ (f ∷ fs) blurl refl) (unfoc (inj₂ (_ , ok)) h) refl) refl) =
   refl⇑ (focus⊗r⋆ (⊸l⋆ (embs⇑ (f ∷ fs)) _) (embs⇑ (g ∷ gs)))
-  • cong⊗r+⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) • cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h)) (focuss∘embs⇑ (g ∷ gs))
-  • ⊗r+⊸l+⇑ {h = h} • cong⊸l+⇑M₂ (⊗r+⇑N-eq [] ok tt h)
-  • foc refl
+  •⇑ cong⊗r+⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) •⇑ cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h)) (focuss∘embs⇑ (g ∷ gs))
+  •⇑ ⊗r+⊸l+⇑ {h = h} •⇑ cong⊸l+⇑M₂ (⊗r+⇑N-eq [] ok tt h)
+  •⇑ foc refl
 focus∘emb⇓ s q (focr (just (M ⊸ M' , m)) (⊗r+ Δ₀ Ξ m₁ blurr (g ∷ gs) refl) (focl {Q = I} q₁ (⊸l+ Γ₀ Ξ₁ q₂ (f ∷ fs) blurl refl) (unfoc ok h) refl) refl) =
   refl⇑ (focus⊗r⋆ (⊸l⋆ (embs⇑ (f ∷ fs)) _) (embs⇑ (g ∷ gs)))
-  • cong⊗r+⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) • cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h)) (focuss∘embs⇑ (g ∷ gs))
-  • ⊗r+⊸l+⇑ {h = h}
-  • ⊸l+⇑P-eq tt (isPosAt⊗⋆ tt (fmas Ξ)) (⊗r+⇑N [] Δ₀ tt Ξ h (g ∷ gs) refl) done
-  • foc (focl refl (early-rf⇑N h done • focr refl (unfoc refl)) • swap)
+  •⇑ cong⊗r+⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) •⇑ cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h)) (focuss∘embs⇑ (g ∷ gs))
+  •⇑ ⊗r+⊸l+⇑ {h = h}
+  •⇑ ⊸l+⇑P-eq tt (isPosAt⊗⋆ tt (fmas Ξ)) (⊗r+⇑N [] Δ₀ tt Ξ h (g ∷ gs) refl) done
+  •⇑ foc (focl refl-lf (early-rf⇑N h done • focr refl-rf (unfoc refl⇑')) • swap)
 focus∘emb⇓ s q (focr (just (M ⊸ M' , m)) (⊗r+ Δ₀ Ξ m₁ blurr (g ∷ gs) refl) (focl {Q = _ ⊗ _} q₁ (⊸l+ Γ₀ Ξ₁ q₂ (f ∷ fs) blurl refl) (unfoc ok h) refl) refl) =
   refl⇑ (focus⊗r⋆ (⊸l⋆ (embs⇑ (f ∷ fs)) _) (embs⇑ (g ∷ gs)))
-  • cong⊗r+⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) • cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h)) (focuss∘embs⇑ (g ∷ gs))
-  • ⊗r+⊸l+⇑ {h = h}
-  • ⊸l+⇑P-eq tt (isPosAt⊗⋆ tt (fmas Ξ)) (⊗r+⇑N [] Δ₀ tt Ξ h (g ∷ gs) refl) done
-  • foc (focl refl (early-rf⇑N h done • focr refl (unfoc refl)) • swap)
+  •⇑ cong⊗r+⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) •⇑ cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h)) (focuss∘embs⇑ (g ∷ gs))
+  •⇑ ⊗r+⊸l+⇑ {h = h}
+  •⇑ ⊸l+⇑P-eq tt (isPosAt⊗⋆ tt (fmas Ξ)) (⊗r+⇑N [] Δ₀ tt Ξ h (g ∷ gs) refl) done
+  •⇑ foc (focl refl-lf (early-rf⇑N h done • focr refl-rf (unfoc refl⇑')) • swap)
 
 focus∘emb⇓ s q (focr (just (.(` _) , m)) (⊗r+ Δ₀ Ξ m₁ blurr (g ∷ gs) refl) (focl q₁ blurl ax refl) refl) =
   refl⇑ (focus⊗r⋆ ax (embs⇑ (g ∷ gs)))
-  • foc (focl refl (focr (⊗r+ refl (focuss∘embs⇑ (g ∷ gs))) refl) • swap)
+  •⇑ foc (focl refl-lf (focr (⊗r+ refl-rf (focuss∘embs⇑ (g ∷ gs))) refl) • swap)
 focus∘emb⇓ s q (focr (just (M ⊸ M' , m)) (⊗r+ Δ₀ Ξ m₁ blurr (g ∷ gs) refl) (focl {Q = ` X} q₁ blurl (unfoc (inj₂ ok) f) refl) refl) = 
   refl⇑ (focus⊗r⋆ (emb⇑ f) (embs⇑ (g ∷ gs)))
-  • cong⊗r+⇑ (focus∘emb⇑ f) (focuss∘embs⇑ (g ∷ gs))
-  • ⊗r+⇑N-eq [] tt tt f
-  • foc refl
+  •⇑ cong⊗r+⇑ (focus∘emb⇑ f) (focuss∘embs⇑ (g ∷ gs))
+  •⇑ ⊗r+⇑N-eq [] tt tt f
+  •⇑ foc refl
 focus∘emb⇓ s q (focr (just (M ⊸ M' , m)) (⊗r+ Δ₀ Ξ m₁ blurr (g ∷ gs) refl) (unfoc ok f) refl) = 
   refl⇑ (focus⊗r⋆ (emb⇑ f) (embs⇑ (g ∷ gs)))
-  • cong⊗r+⇑ (focus∘emb⇑ f) (focuss∘embs⇑ (g ∷ gs))
-  • ⊗r+⇑N-eq' [] tt s f
-  • foc refl
+  •⇑ cong⊗r+⇑ (focus∘emb⇑ f) (focuss∘embs⇑ (g ∷ gs))
+  •⇑ ⊗r+⇑N-eq' [] tt s f
+  •⇑ foc refl
 focus∘emb⇓ s q (focr (just (.(` _) , m)) blurr (focl q₁ (pass (⊸l+ Γ₀ Ξ q₂ (f ∷ fs) blurl refl)) ax refl) refl) =
-  congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _)) • foc (focl (pass (⊸l+ (focuss∘embs⇑ (f ∷ fs)) refl)) refl • swap)
+  congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _)) •⇑ foc (focl (pass (⊸l+ (focuss∘embs⇑ (f ∷ fs)) refl-lf)) refl • swap)
 focus∘emb⇓ s q (focr (just (.(` _) , m)) blurr (focl q₁ (pass blurl) ax refl) refl) = foc swap
 focus∘emb⇓ s q (focr (just (.(` _) , m)) blurr (focl q₁ (⊸l+ Γ₀ Ξ q₂ (f ∷ fs) blurl refl) ax refl) refl) =
-  refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) • foc (focl (⊸l+ (focuss∘embs⇑ (f ∷ fs)) refl) refl • swap)
+  refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) •⇑ foc (focl (⊸l+ (focuss∘embs⇑ (f ∷ fs)) refl-lf) refl • swap)
 focus∘emb⇓ s q (focr (just (.(` _) , m)) blurr (focl q₁ blurl ax refl) refl) = foc swap
 focus∘emb⇓ s q (focr (just (` X , tt)) blurr (focl {Q = I} q₁ (pass (⊸l+ Γ₀ Ξ q₂ (f ∷ fs) blurl refl)) (unfoc (inj₁ ok) h) refl) refl) =
-  congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) • cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h))
-  • congpass⇑ (⊸l+⇑P-eq tt q h done)
-  • foc (focl refl (~ blurr-at) • swap)
+  congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) •⇑ cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h))
+  •⇑ congpass⇑ (⊸l+⇑P-eq tt q h done)
+  •⇑ foc (focl refl-lf (~ blurr-at) • swap)
 focus∘emb⇓ s q (focr (just (` X , tt)) blurr (focl {Q = Q ⊗ Q₁} q₁ (pass (⊸l+ Γ₀ Ξ q₂ (f ∷ fs) blurl refl)) (unfoc (inj₁ ok) h) refl) refl) = 
-  congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) • cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h))
-  • congpass⇑ (⊸l+⇑P-eq tt q h done)
-  • foc (focl refl (~ blurr-at) • swap)
+  congpass⇑ (refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) •⇑ cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h))
+  •⇑ congpass⇑ (⊸l+⇑P-eq tt q h done)
+  •⇑ foc (focl refl-lf (~ blurr-at) • swap)
 focus∘emb⇓ s q (focr (just (` X , tt)) blurr (focl {Q = I} q₁ (pass blurl) (unfoc (inj₁ ok) f) refl) refl) =
-  congpass⇑ (focus∘emb⇑ f) • pass⇑P-eq ok tt f • foc (focl refl (~ blurr-at) • swap)
+  congpass⇑ (focus∘emb⇑ f) •⇑ pass⇑P-eq ok tt f •⇑ foc (focl refl-lf (~ blurr-at) • swap)
 focus∘emb⇓ s q (focr (just (` X , tt)) blurr (focl {Q = Q ⊗ Q₁} q₁ (pass blurl) (unfoc (inj₁ ok) f) refl) refl) = 
-  congpass⇑ (focus∘emb⇑ f) • pass⇑P-eq ok tt f • foc (focl refl (~ blurr-at) • swap)
+  congpass⇑ (focus∘emb⇑ f) •⇑ pass⇑P-eq ok tt f •⇑ foc (focl refl-lf (~ blurr-at) • swap)
 focus∘emb⇓ s q (focr (just (` X , tt)) blurr (focl {Q = I} q₁ (⊸l+ Γ₀ Ξ q₂ (f ∷ fs) blurl refl) (unfoc (inj₁ ok) h) refl) refl) =
-  refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) • cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h)
-  • ⊸l+⇑P-eq tt q h done
-  • foc (focl refl (~ blurr-at) • swap)
+  refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) •⇑ cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h)
+  •⇑ ⊸l+⇑P-eq tt q h done
+  •⇑ foc (focl refl-lf (~ blurr-at) • swap)
 focus∘emb⇓ s q (focr (just (` X , tt)) blurr (focl {Q = Q ⊗ Q₁} q₁ (⊸l+ Γ₀ Ξ q₂ (f ∷ fs) blurl refl) (unfoc (inj₁ ok) h) refl) refl) = 
-  refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) • cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h)
-  • ⊸l+⇑P-eq tt q h done
-  • foc (focl refl (~ blurr-at) • swap)
-focus∘emb⇓ s q (focr (just (` X , tt)) blurr (focl {Q = ` x} q₁ blurl (unfoc (inj₂ ()) f) refl) refl)
+  refl⇑ (focus⊸l⋆ (embs⇑ (f ∷ fs)) _) •⇑ cong⊸l+⇑ (focuss∘embs⇑ (f ∷ fs)) (focus∘emb⇑ h)
+  •⇑ ⊸l+⇑P-eq tt q h done
+  •⇑ foc (focl refl-lf (~ blurr-at) • swap)
+focus∘emb⇓ s q (focr (just (` X , tt)) blurr (focl {Q = ` x} q₁ blurl (unfoc (inj₂ (_ , ())) f) refl) refl)
 focus∘emb⇓ s q (focr (just (` X , tt)) blurr (unfoc () f) refl)
-focus∘emb⇓ s q (focr ─ Ir (refl , refl) refl) = refl
+focus∘emb⇓ s q (focr ─ Ir (refl , refl) refl) = refl⇑'
 focus∘emb⇓ s q (focr ─ (⊗r+ Δ₀ Ξ m Ir (g ∷ gs) refl) (refl , refl) refl) = 
   refl⇑ (focus⊗r⋆ _ (embs⇑ (g ∷ gs)))
-  • foc (focrn (⊗r+ refl (focuss∘embs⇑ (g ∷ gs))))
+  •⇑ foc (focrn (⊗r+ refl-rf (focuss∘embs⇑ (g ∷ gs))))
 focus∘emb⇓ s q (focr ─ (⊗r+ Δ₀ Ξ m (⊗r+ Δ₁ Ξ₁ m₁ rf gs₁ eq₁) gs eq) (refl , refl) refl) = ⊥-elim (is⊗×isn't⊗→⊥ (is⊗⊗⋆ tt (fmas Ξ₁)) m)
 
 

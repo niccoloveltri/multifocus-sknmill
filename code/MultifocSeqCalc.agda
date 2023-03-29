@@ -28,8 +28,17 @@ UT ∘ ∘ _ _ = ⊥
 UT ∙ ∘ (just A) C = isPos A 
 UT ∙ ∘ ─ C = ⊥
 UT ∘ ∙ S C = isNeg C 
-UT ∙ ∙ (just A) C = isPos A ⊎ isNeg C
+UT ∙ ∙ (just A) C = isPos A ⊎ (isAt A × isNeg C)
 UT ∙ ∙ ─ C = ⊥
+
+isPropUT : ∀{b c S C} (p q : UT b c S C) → p ≡ q
+isPropUT {∘} {∙} = isProp-isNeg
+isPropUT {∙} {∘} {just A} = isProp-isPos
+isPropUT {∙} {∙} {just A} (inj₁ p) (inj₁ q) = cong inj₁ (isProp-isPos p q)
+isPropUT {∙} {∙} {just A} (inj₁ p) (inj₂ (x , _)) = ⊥-elim (pos×negat→⊥ p (at→negat x))
+isPropUT {∙} {∙} {just A} (inj₂ (x , _)) (inj₁ p) = ⊥-elim (pos×negat→⊥ p (at→negat x))
+isPropUT {∙} {∙} {just A} (inj₂ (x , p)) (inj₂ (y , q)) =
+  cong inj₂ (cong₂ _,_ (isProp-isAt x y) (isProp-isNeg p q))
 
 -- A predicate lifting employed in the focR rule
 end-rf? : (P : Stp → Cxt → Fma → Set) → Stp → Cxt → Maybe (Σ Fma isNegAt) → Set
@@ -524,7 +533,7 @@ data _≗⇓_ where
               {lf : at→posat x ⇛lf S ； Γ₀} 
               {f : [ ∙ , ∘ ] just X ∣ Γ₁ ++ Δ ⇓ R} {eq : Γ ≡ Γ₀ ++ Γ₁} {eq' : Γ ++ Δ ≡ Γ₀ ++ Γ₁ ++ Δ} →
               unfoc {∘}{∙} n (⊸r⋆⇑ Δ (foc s r (focl {∘} (at→posat x) lf f eq')))
-                ≗⇓ focl {∙} _ lf (unfoc {∙}{∙} (inj₂ n) (⊸r⋆⇑ Δ (foc (at→negat x) r (focl (at→posat x) blurl f refl)))) eq
+                ≗⇓ focl {∙} _ lf (unfoc {∙}{∙} (inj₂ (x , n)) (⊸r⋆⇑ Δ (foc (at→negat x) r (focl (at→posat x) blurl f refl)))) eq
 
   early-rf : ∀ {T Γ Γ₁ Γ₂ Δ N Q R} t {n} {q : isPos Q} {r}
             {rf : just (N , neg→negat n) ⇛rf Γ₂ ； R}
@@ -540,7 +549,7 @@ data _≗⇓_ where
 
 
   blurr-at : ∀ {Γ P X p} {f : just P ∣ Γ ⇑ ` X} → focr {∙} _ blurr (unfoc (inj₁ p) f) refl ≗⇓ unfoc {∙}{∘} p f
-  blurl-at : ∀ {Γ N X n} {f : just (` X) ∣ Γ ⇑ N} → focl {∙} _ blurl (unfoc (inj₂ n) f) refl ≗⇓ unfoc {∘}{∙} n f
+  blurl-at : ∀ {Γ N X n} {f : just (` X) ∣ Γ ⇑ N} → focl {∙} _ blurl (unfoc (inj₂ (tt , n)) f) refl ≗⇓ unfoc {∘}{∙} n f
 
 --   early-lf : ∀ {S Γ₀ Γ₁ Γ₂} Δ {C Q R s n q} r
 --             {lf : pos→posat q ⇛lf S ； Γ₀} {rf : just (Δ ⊸⋆ R , neg→negat n) ⇛rf Γ₂ ； C}
@@ -595,6 +604,20 @@ refl⇑' {f = foc s q f} = foc refl
 refl⇑ : ∀{S Γ A} {f g : S ∣ Γ ⇑ A} → f ≡ g → f ≗⇑ g
 refl⇑ refl = refl⇑'
 
+refls⇑ : ∀ {Ξ} {fs : All (λ ΔB → ─ ∣ proj₁ ΔB ⇑ proj₂ ΔB) Ξ} → fs ≗s⇑ fs
+refls⇑ {fs = []} = []
+refls⇑ {fs = px ∷ fs} = refl⇑' ∷ refls⇑
+
+refl-lf : ∀ {S Γ Q} {q : isPosAt Q} {f : q ⇛lf S ； Γ} → f ≗lf f
+refl-lf {f = pass f} = pass refl-lf
+refl-lf {f = ⊸l+ Γ₀ Ξ q fs f eq} = ⊸l+ refls⇑ refl-lf
+refl-lf {f = blurl} = blurl
+
+refl-rf : ∀ {s Γ C} {f : s ⇛rf Γ ； C} → f ≗rf f
+refl-rf {f = Ir} = Ir
+refl-rf {f = ⊗r+ Δ₀ Ξ m f gs eq} = ⊗r+ refl-rf refls⇑
+refl-rf {f = blurr} = blurr
+
 sym⇑ : ∀{S Γ A} {f g : S ∣ Γ ⇑ A} → f ≗⇑ g → g ≗⇑ f
 sym⇑ (⊸r eq) = ⊸r (sym⇑ eq)
 sym⇑ (Il eq) = Il (sym⇑ eq)
@@ -621,6 +644,11 @@ trans⇑ (⊸r eq) (⊸r eq') = ⊸r (trans⇑ eq eq')
 trans⇑ (Il eq) (Il eq') = Il (trans⇑ eq eq')
 trans⇑ (⊗l eq) (⊗l eq') = ⊗l (trans⇑ eq eq')
 trans⇑ (foc eq) (foc eq₁) = foc (eq • eq₁)
+
+infixl 15 _•⇑_
+
+_•⇑_ : ∀{S Γ A} {f g h : S ∣ Γ ⇑ A} → f ≗⇑ g → g ≗⇑ h → f ≗⇑ h
+_•⇑_ = trans⇑
 
 transs⇑ : ∀ {Ξ} {fs gs hs : All (λ ΔB → ─ ∣ proj₁ ΔB ⇑ proj₂ ΔB) Ξ}
   → fs ≗s⇑ gs → gs ≗s⇑ hs → fs ≗s⇑ hs
