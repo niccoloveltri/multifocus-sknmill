@@ -317,12 +317,12 @@ untag-seq-f (unfoc ok f) = unfoc ok f
 
 l∙→∘⇑ : ∀ {S Γ C} → (∙ , S) ∣ Γ ⇑ (∘ , C) → (∘ , S) ∣ ∘tcxt Γ ⇑ (∘ , C)
 l∙→∘⇑ (⊸r {Γ = Γ} f) = ⊸r {Γ = ∘tcxt Γ} (l∙→∘⇑ {Γ = Γ ∷ʳ _} f)
-l∙→∘⇑ (foc s q (focl {Γ₀ = Γ₀}{Γ₁} q₁ lf f refl eq' ξ)) =
-  foc s q (focl {Γ₀ = ∘tcxt Γ₀}{∘tcxt Γ₁} q₁ lf (untag-seq-f f) refl eq' tt)
-l∙→∘⇑ (foc s q (focr {Γ₀ = Γ₀}{Γ₁} (just x) rf (unfoc ok f) refl eq' ξ)) =
-  foc s q (focr {Γ₀ = ∘tcxt Γ₀} {∘tcxt Γ₁} (just x) rf (unfoc ok f) refl eq' tt)
-l∙→∘⇑ (foc s q (focr {Γ₀ = Γ₀}{Γ₁} nothing rf (refl , refl) refl eq' ξ)) =
-  foc s q (focr {Γ₀ = ∘tcxt Γ₀} {∘tcxt Γ₁} nothing rf (refl , refl) refl eq' tt)
+l∙→∘⇑ (foc s q (focl {Γ₀ = Γ₀}{Γ₁} q₁ lf f eq eq' ξ)) =
+  foc s q (focl {Γ₀ = ∘tcxt Γ₀}{∘tcxt Γ₁} q₁ lf (untag-seq-f f) (cong ∘tcxt {y = Γ₀ ++ Γ₁} eq) eq' tt)
+l∙→∘⇑ (foc s q (focr {Γ₀ = Γ₀}{Γ₁} (just x) rf (unfoc ok f) eq eq' ξ)) =
+  foc s q (focr {Γ₀ = ∘tcxt Γ₀} {∘tcxt Γ₁} (just x) rf (unfoc ok f) (cong ∘tcxt {y = Γ₀ ++ Γ₁} eq) eq' tt)
+l∙→∘⇑ (foc s q (focr {Γ₀ = Γ₀}{Γ₁} nothing rf (refl , refl) eq eq' ξ)) =
+  foc s q (focr {Γ₀ = ∘tcxt Γ₀} {∘tcxt Γ₁} nothing rf (refl , refl) (cong ∘tcxt {y = Γ₀ ++ Γ₁} eq) eq' tt)
 
 -- A derivation of a sequent with ∙tagged succedent is turned in a
 -- derivation of the same sequent with ∘tagged succedent (and all
@@ -331,14 +331,14 @@ l∙→∘⇑ (foc s q (focr {Γ₀ = Γ₀}{Γ₁} nothing rf (refl , refl) ref
 r∙→∘⇑ : ∀ {S Γ C} → (∘ , S) ∣ Γ ⇑ (∙ , C) → (∘ , S) ∣ ∘tcxt Γ ⇑ (∘ , C)
 r∙→∘⇑ (Il q f) = Il q (r∙→∘⇑ f)
 r∙→∘⇑ (⊗l q f) = ⊗l q (r∙→∘⇑ f)
-r∙→∘⇑ (foc s q (focl {Γ₀ = Γ₀} q₁ lf (focr {Γ₀ = Γ₁} {Γ₂} (just x) rf f refl refl ξ₁) refl refl ξ)) = 
-  foc s q (focl {Γ₀ = ∘tcxt Γ₀} {∘tcxt (Γ₁ ++ Γ₂)} _ lf (focr {Γ₀ = ∘tcxt Γ₁} {∘tcxt Γ₂} _ rf (untag-seq-f f) refl refl tt) refl refl tt)
-r∙→∘⇑ (foc s q (focl {Γ₀ = Γ₀}{Γ₁} q₁ lf (unfoc ok f) refl refl ξ)) =
-  foc s q (focl {Γ₀ = ∘tcxt Γ₀} {∘tcxt Γ₁} _ lf (unfoc ok f) refl refl tt)
-r∙→∘⇑ (foc s q (focr {Γ₀ = Γ₀}{Γ₁} (just _) rf f refl refl ξ)) =
-  foc s q (focr {Γ₀ = ∘tcxt Γ₀}{∘tcxt Γ₁} (just _) rf (untag-seq-f f) refl refl tt)
-r∙→∘⇑ (foc s q (focr {Γ₀ = Γ₀}{Γ₁} nothing rf (refl , refl) refl refl ξ)) =
-  foc s q (focr {Γ₀ = ∘tcxt Γ₀}{∘tcxt Γ₁} nothing rf (refl , refl) refl refl tt)
+r∙→∘⇑ (foc s q (focl {Γ₀ = Γ₀} q₁ lf (focr {Γ₀ = Γ₁} {Γ₂} (just x) rf f refl refl ξ₁) eq eq' ξ)) = 
+  foc s q (focl {Γ₀ = ∘tcxt Γ₀} {∘tcxt (Γ₁ ++ Γ₂)} _ lf (focr {Γ₀ = ∘tcxt Γ₁} {∘tcxt Γ₂} _ rf (untag-seq-f f) refl refl tt) (cong ∘tcxt {y = Γ₀ ++ Γ₁ ++ Γ₂} eq) eq' tt)
+r∙→∘⇑ (foc s q (focl {Γ₀ = Γ₀}{Γ₁} q₁ lf (unfoc ok f) eq refl ξ)) =
+  foc s q (focl {Γ₀ = ∘tcxt Γ₀} {∘tcxt Γ₁} _ lf (unfoc ok f) (cong ∘tcxt {y = Γ₀ ++ Γ₁} eq) refl tt)
+r∙→∘⇑ (foc s q (focr {Γ₀ = Γ₀}{Γ₁} (just _) rf f eq refl ξ)) =
+  foc s q (focr {Γ₀ = ∘tcxt Γ₀}{∘tcxt Γ₁} (just _) rf (untag-seq-f f) (cong ∘tcxt {y = Γ₀ ++ Γ₁} eq) refl tt)
+r∙→∘⇑ (foc s q (focr {Γ₀ = Γ₀}{Γ₁} nothing rf (refl , refl) eq refl ξ)) =
+  foc s q (focr {Γ₀ = ∘tcxt Γ₀}{∘tcxt Γ₁} nothing rf (refl , refl) (cong ∘tcxt {y = Γ₀ ++ Γ₁} eq) refl tt)
 
 -- ====================================================
 
@@ -543,6 +543,10 @@ only-rf-fN _ {Δ₁} Γ s n q q' rf (focr ─ rf₁ (refl , refl) refl refl ξ) 
 
 -- ====================================================
 
+
+
+
+
 -- The maximal multi-focusing function (in Theorem 2)
 
 max : ∀ {S Γ A} → S MF.∣ Γ ⇑ A → (∘ , S) ∣ ∘cxt Γ ⇑ (∘ , A)
@@ -550,6 +554,8 @@ maxs : ∀ {Ξ} → All (λ ΔB → ─ MF.∣ proj₁ ΔB ⇑ proj₂ ΔB) Ξ
   → All (λ ΔB → (∘ , ─) ∣ ∘cxt (proj₁ ΔB) ⇑ (∘ , proj₂ ΔB)) Ξ
 max-lf : ∀ {S Γ Q} {q : isPosAt Q}→ q MF.⇛lf S ； Γ → q ⇛lf S ∣ Γ
 max-rf : ∀ {Γ A} {s : Maybe (Σ Fma isNegAt)}→ s MF.⇛rf Γ ； A → s ⇛rf Γ ； A
+
+
 
 max {Γ = Γ} (MF.⊸r f) = ⊸r (max {Γ = Γ ∷ʳ _} f)
 max (MF.Il q f) = Il q (max f)
@@ -603,3 +609,31 @@ max-rf MF.blurr = blurr
 
 maxs [] = []
 maxs (f ∷ fs) = max f ∷ maxs fs
+
+
+
+congfoc : {l r : Tag} {S : Stp} {Γ : TCxt} {Q : Fma}
+        {s : isIrr S} {q : isPosAt Q}
+        {f g : [ ∘ , ∘ ] (l , S) ∣ Γ ⇓ (r , Q)} → f ≡ g
+        → foc s q f ≡ foc s q g
+congfoc refl = refl        
+
+congfocl : {l : Tag} {S : Stp} {Γ' : Cxt} {Γ Γ₀ Γ₁ : TCxt} {C : TFma} {Q : Fma}
+         {q : isPosAt Q}
+         {h k : q ⇛lf S ∣ Γ'} → h ≡ k → 
+         {f g : [ ∙ , ∘ ] (∘ , just Q) ∣ Γ₁ ⇓ C} → f ≡ g →
+         {eq : Γ ≡ Γ₀ ++ Γ₁}
+         {eq' : Γ' ≡ untag-cxt Γ₀}
+         {ξ : ltag Γ₀ l} →
+         focl {l = l} q h f eq eq' ξ ≡ focl q k g eq eq' ξ
+congfocl refl refl = refl
+
+congfocr : {b r : Tag} {S : TStp} {Γ' : Cxt} {Γ Γ₀ Γ₁ : TCxt} {C : Fma}
+         {s : Maybe (Σ Fma isNegAt)}
+         {h k : s ⇛rf Γ' ； C} → h ≡ k → 
+         {f g : end-rf? (λ T Δ A → [ b , ∙ ] T ∣ Δ ⇓ (∘ , A)) S Γ₀ s} → f ≡ g → 
+         {eq : Γ ≡ Γ₀ ++ Γ₁}
+         {eq' : Γ' ≡ untag-cxt Γ₁}
+         {ξ : rtag s Γ₁ r} →
+         focr s h f eq eq' ξ ≡ focr s k g eq eq' ξ
+congfocr refl refl = refl         
