@@ -18,7 +18,9 @@ open import Formulae
 open import SeqCalc
 open import MultifocSeqCalc as MF
 open import MaxMultifocSeqCalc as MMF
+open import correct.max-multifocus.Lemmata
 
+{-
 Il⇑eq : ∀ {Γ Q} {q : isPosAt Q}
         (f :  (∘ , ─) MMF.∣ Γ ⇑ (∘ , Q)) →
   -------------------------
@@ -239,6 +241,7 @@ only-rf⇑N-focl {Λ = Λ}{Λ'} .((A' ∷ Ω') ++ Γ₁') {` _} s n r q x (focr 
       (trans (only-rf⇑N-at≡ (∘cxt (Λ' ++ A' ∷ Ω')) [] tt r rf f)
              (congfoc (congfocl refl (congfocr refl (cong (unfoc {Γ = ∘cxt (Λ' ++ A' ∷ Ω')} _) (untag-seq≡ {Γ = ∘cxt (Λ' ++ A' ∷ Ω')}{∘cxt (Λ' ++ A' ∷ Ω')} f refl ))))))))))
 only-rf⇑N-focl Γ s n r q x (unfoc ok f) refl = ⊥-elim (pos×negat→⊥ ok (at→negat x))
+-}
 
 only-rf⇑N-focl' : {S : Stp} {Δ₀ : Cxt} {Λ Λ' Δ₁ : Cxt} (Γ : Cxt) {X Q R : Fma}
                  (s : isIrr S) (n : isNeg (Γ ⊸⋆ R)) (r : isPosAt R) (q : isPosAt Q) (x : isAt X)
@@ -280,7 +283,7 @@ max⊸r⋆⇑ {Γ = Γ} (A ∷ Δ) f = cong ⊸r (max⊸r⋆⇑ {Γ = Γ ∷ʳ A
 --               only-rf⇑ Δ₀ m q rf f ≡  only-rf⇑ Δ₀ m q rf g             
 -- cong-only-rf⇑ refl = refl
 
-
+{-
 only-rf⇑++ : ∀ {S Δ₀ Δ₁} Γ Γ' {A Q}
                 {m : isNeg ((Γ ++ Γ') ⊸⋆ A)} {q : isPosAt Q}
                 {rf : just ((Γ ++ Γ') ⊸⋆ A , neg→negat m) MMF.⇛rf Δ₁ ； Q}
@@ -662,7 +665,7 @@ only-rf⇑eq : ∀ {S Δ₀ Δ₁ N Q} (n : isNeg N) {q : isPosAt Q}
               ------------------------------------
                only-rf⇑ Δ₀ (neg→negat n) q rf f ≡ only-rf⇑N Δ₀ [] n q rf f 
 only-rf⇑eq {N = _ ⊸ _} n f = refl
-
+-}
 
 max≗⇑ : ∀ {S Γ A} {f g : S MF.∣ Γ ⇑ A} → f MF.≗⇑ g → max f ≡ max g
 max≗⇓ : ∀ {S Γ Q s q} {f g : MF.[ ∘ , ∘ ] S ∣ Γ ⇓ Q}
