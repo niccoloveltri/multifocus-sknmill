@@ -21,6 +21,26 @@ open import MaxMultifocSeqCalc as MMF
 open import correct.multifocus.EqComplete as EqC
 open import correct.max-multifocus.Lemmata as Lem
 
+untag-untag-seq-f : {b b' : Tag} {S : Stp} {Γ : TCxt} {A : Fma}
+        (f : MMF.[ b , b' ] (∘ , S) ∣ Γ ⇓ (∘ , A)) →
+        untag⇓ (untag-seq-f f) ≡ untag⇓ f
+untag-untag-seq-f ax = refl
+untag-untag-seq-f (focl q lf f refl refl ξ) =
+  cong (λ x → focl q (untag-lf lf) x refl) (untag-untag-seq-f f)
+untag-untag-seq-f (focr (just x) rf f refl refl ξ) =
+  cong (λ y → focr (just x) (untag-rf rf) y refl) (untag-untag-seq-f f)
+untag-untag-seq-f (focr ─ rf (refl , refl) refl refl ξ) = refl
+untag-untag-seq-f (unfoc ok f) = refl
+
+untag-l∙→∘⇑ : ∀ {S Γ C} (f : (∙ , S) MMF.∣ Γ ⇑ (∘ , C))
+  → untag⇑ (l∙→∘⇑ f) ≡ untag⇑ f
+untag-l∙→∘⇑ (⊸r f) = cong ⊸r (untag-l∙→∘⇑ f)
+untag-l∙→∘⇑ (foc s q (focl q₁ lf f refl refl ξ)) =
+  cong (foc s q) (cong (λ x → focl q₁ (untag-lf lf) x refl) (untag-untag-seq-f f))
+untag-l∙→∘⇑ (foc s q (focr (just x) rf (unfoc ok f) refl refl ξ)) = refl
+untag-l∙→∘⇑ (foc s q (focr ─ rf (refl , refl) refl refl ξ)) = refl
+
+
 untag-Il⇑ : {r : Tag} {Γ : TCxt} {C : Fma}
      (f :  (∘ , ─) MMF.∣ Γ ⇑ (r , C)) →
   -------------------------
@@ -90,8 +110,8 @@ MF-only-lf-at : {S : Stp} {Δ₀ : Cxt} (Δ₁ : TCxt) {X C : Fma}
                  (f : (∘ , just X) MMF.∣ Δ₁ ⇑ (∘ , C)) → S MF.∣ Δ₀ ++ untag-cxt Δ₁ ⇑ C
 MF-only-lf-at Δ₁ s x lf (⊸r f) = ⊸r (MF-only-lf-at (Δ₁ ∷ʳ _) s x lf f)
 MF-only-lf-at Δ₁ s x lf (foc m q (focl {Γ₀ = []} q' blurl f refl refl _)) = foc s q (focl {Γ₁ = untag-cxt Δ₁} _ lf (untag⇓ f) refl)
-MF-only-lf-at Δ₁ s x lf (foc m q (focr {Γ₀ = Γ₀} (just (M , m')) rf (unfoc n f) refl refl _)) = 
-  foc s q (focl {Γ₁ = untag-cxt Δ₁} _ lf (focr (just (M , m')) (untag-rf rf) (unfoc (inj₂ (x , n)) (untag⇑ {Γ = ∘tcxt Γ₀} f)) refl) refl)
+MF-only-lf-at Δ₁ s x lf (foc m q (focr {Γ₀ = Γ₀}{Γ₁} (just (M , m')) rf (unfoc n f) eq refl _)) = 
+  foc s q (focl {Γ₁ = untag-cxt Δ₁} _ lf (focr (just (M , m')) (untag-rf rf) (unfoc (inj₂ (x , n)) (untag⇑ {Γ = ∘tcxt Γ₀} f)) (cong untag-cxt {y = Γ₀ ++ Γ₁} eq)) refl)
 
 MF-only-lf : {S : Stp} {Δ₀ : Cxt} (Δ₁ : TCxt) {Q C : Fma}
              (s : isIrr S) (q : isPosAt Q) 
@@ -114,17 +134,33 @@ gen-early-lf Δ (Il q f) = early-lf Δ q
 gen-early-lf Δ (⊗l q f) = early-lf Δ q
 gen-early-lf Δ (foc s q f) = early-lf Δ q
 
+gen-early-lf-at : ∀ {S Γ₀ Γ₁} Δ {X C} {s : isIrr S} {n : isNeg (Δ ⊸⋆ C)} {x : isAt X}
+            {lf : at→posat x ⇛lf S ； Γ₀} 
+            (f : (∘ , just X) MMF.∣ Γ₁ ++ ∘cxt Δ ⇑ (∘ , C)) → 
+            unfoc {∘}{∙} {Γ = Γ₀ ++ untag-cxt Γ₁} n (MF.⊸r⋆⇑ Δ (MF-only-lf-at (Γ₁ ++ ∘cxt Δ) s x lf f)) 
+              ≗⇓ focl {∙} _ lf (unfoc {∙}{∙} (inj₂ (x , n)) (MF.⊸r⋆⇑ Δ (untag⇑ f))) refl
+
+gen-early-lf-at Δ (⊸r f) =
+  unfoc-same (refl⇑ (sym (EqC.⊸r⋆⊸r⋆⇑ Δ {_ ∷ []})))
+  • gen-early-lf-at (Δ ∷ʳ _) f
+  • focl refl-lf (unfoc-same (refl⇑ (EqC.⊸r⋆⊸r⋆⇑ Δ {_ ∷ []})))
+gen-early-lf-at Δ {x = x} (foc s q (focl {Γ₀ = []} q₁ blurl f refl refl ξ))
+  rewrite isProp-isNegAt s (at→negat x) | isProp-isPosAt q₁ (at→posat x) = early-lf-at Δ q
+gen-early-lf-at {Γ₁ = Γ₁} Δ {x = x} (foc s q (focr {Γ₀ = Γ₂} {Γ₃} (just (M , m)) rf (unfoc ok f) eq refl ξ)) with ++? Γ₂ Γ₁ Γ₃ (∘cxt Δ) eq
+gen-early-lf-at {Γ₁ = .(Γ₂ ++ A ∷ Ω)} Δ {X = ` X} {x = x} (foc s q (focr {Γ₀ = Γ₂} {.(A ∷ Ω ++ map (λ A₁ → ∘ , A₁) Δ)} (just (M , m)) rf (unfoc ok f) refl refl ξ)) | inj₂ (A , Ω , refl , refl) =
+  early-lf-at {Γ₁ = _ ++ _ ∷ _} Δ q {eq = refl}
+  • focl refl-lf (unfoc-same (cong⊸r⋆⇑ Δ (foc-same (swap • focr refl-rf blurl-at))))
+... | inj₁ (Ω , r , refl) with split-map ∘fma Δ Ω Γ₃ r
+gen-early-lf-at {Γ₁ = Γ₁} Δ {X = ` X} {x = x} (foc s q (focr {_} {_} {_} {_} {_} {.(Γ₁ ++ map (λ A → ∘ , A) Ω')} {.(map (λ A → ∘ , A) Γ₃')} (just (M , m)) rf (unfoc ok f) refl refl ξ)) | inj₁ (.(map (λ A → ∘ , A) Ω') , r , refl) | Ω' , Γ₃' , refl , refl , refl =
+  early-lf-at Δ q {eq = refl}
+  • focl refl-lf (unfoc-same (cong⊸r⋆⇑ Δ (foc-same (swap • focr refl-rf blurl-at))))
+
+
 untag-only-lf⇑ : {S : Stp} {Δ₀ : Cxt} (Δ₁ : TCxt) {Q C : Fma}
                (s : isIrr S) (q : isPosAt Q)
                (lf : q ⇛lf S ∣ Δ₀) 
                (f : (∘ , just Q) MMF.∣ Δ₁ ⇑ (∘ , C)) →
                untag⇑ (only-lf⇑ Δ₁ s q lf f) ≗⇑ MF-only-lf Δ₁ s q lf f
-
-untag-only-lf-at : {S : Stp} {Δ₀ : Cxt} (Δ₁ : TCxt) {X C : Fma}
-               (s : isIrr S) (x : isAt X)
-               (lf : at→posat x ⇛lf S ∣ Δ₀) 
-               (f : (∘ , just X) MMF.∣ Δ₁ ⇑ (∘ , C)) →
-               untag⇑ (only-lf⇑-at Δ₁ s x lf f) ≗⇑ MF-only-lf-at Δ₁ s x (untag-lf lf) f
 
 untag-only-lfP : {S S' : Stp} {Δ₀ : Cxt} (Δ₁ : TCxt) {Γ : Cxt} {P C : Fma}
             (s : isIrr S) (p : isPos P)
@@ -141,6 +177,14 @@ untag-only-lf-fP : {S S' : Stp} {Δ : TCxt} {Δ₀ : Cxt} (Δ₁ : TCxt) {Γ : C
             (ℓ : MF.L S' Γ P) →
             untag⇓ (only-lf-fP Δ₁ s' p q lf f eq ℓ) ≗⇓
               focl {Γ₁ = untag-cxt Δ₁} _ (untag-lf lf) (unfoc p (MF.runL ℓ (foc s' q (untag⇓ {Γ = ∘cxt Γ ++ Δ₁} (subst⇓ f eq))))) refl
+
+untag-only-lf-at : {S : Stp} {Δ₀ : Cxt} (Δ₁ : TCxt) {X C : Fma}
+               (s : isIrr S) (x : isAt X)
+               (lf : at→posat x ⇛lf S ∣ Δ₀) 
+               (f : (∘ , just X) MMF.∣ Δ₁ ⇑ (∘ , C)) →
+               untag⇑ (only-lf⇑-at Δ₁ s x lf f) ≗⇑ MF-only-lf-at Δ₁ s x (untag-lf lf) f
+
+untag-only-lf-at = {!!}
 
 untag-only-lf⇑ Δ₁ {` X} = untag-only-lf-at Δ₁
 untag-only-lf⇑ Δ₁ {I} s q lf f = untag-only-lfP Δ₁ s tt lf f done
@@ -222,11 +266,34 @@ untag-only-lf-fP .((Λ ++ Γ₀) ++ Γ₁) {Γ} s' p q lf (focl {Γ₀ = .(map (
        (focr refl-rf {eq' = refl} (unfoc-same (refl⇑ (untag-runL {Δ = ∘tcxt (Λ ++ Γ₀)} ℓ _)))
        • focr refl-rf {eq' = refl} (unfoc-same (congrunL ℓ (untag-only-lf-at (∘tcxt Γ₀) s' q₁ lf₁ f)))
        • (~ early-rf s' {r = q} ℓ)
-       • unfoc-same (congrunL ℓ (foc-same (focr refl-rf {!gen-early-lf-at!} • ~ swap))))
+       • unfoc-same (congrunL ℓ (foc-same (focr refl-rf (gen-early-lf-at [] {lf = untag-lf lf₁} f) • ~ swap))))
 ... | inj₂ (A' , Λ , eq'' , refl) with split-map ∘fma Γ Γ₂ (_ ∷ Λ) eq''
-untag-only-lf-fP .(Ω ++ Γ₁) {.(Γ₂' ++ _ ∷ Λ')} s' p q lf (focl {Γ₀ = .(map (λ A → ∘ , A) Γ₂')} q₁ lf₁ (focr {_} {_} {_} {_} {_} {.((∘ , _) ∷ map (λ A → ∘ , A) Λ' ++ Ω)} {Γ₁} (just x) rf (unfoc ok f) refl refl ξ₁) refl refl ξ) refl ℓ | inj₁ (Ω , eq' , refl) | inj₂ (.(∘ , _) , .(map (λ A → ∘ , A) Λ') , eq'' , refl) | Γ₂' , _ ∷ Λ' , refl , refl , refl =
+untag-only-lf-fP .(Ω ++ Γ₁) {.(Γ₂' ++ _ ∷ Λ')} s' p q lf (focl {Γ₀ = .(map (λ A → ∘ , A) Γ₂')} q₁ lf₁ (focr {_} {_} {_} {_} {_} {.((∘ , _) ∷ map (λ A → ∘ , A) Λ' ++ Ω)} {Γ₁} (just (A ⊸ B , n)) rf (unfoc (inj₁ p') f) refl refl ξ₁) refl refl ξ) refl ℓ | inj₁ (Ω , eq' , refl) | inj₂ (.(∘ , _) , .(map (λ A → ∘ , A) Λ') , eq'' , refl) | Γ₂' , _ ∷ Λ' , refl , refl , refl
+  rewrite isProp-isPosAt q₁ (pos→posat p') =
   focl refl-lf
-       {!same as above!}
+       (focr refl-rf {eq' = refl} (unfoc-same (refl⇑ (untag-runL {Δ = ∘tcxt Ω} ℓ _)))
+       • focr refl-rf {eq' = refl} (unfoc-same (congrunL ℓ
+            (trans⇑ (refl⇑ (cong (untag⇑ {Γ = ∘cxt (Γ₂' ++ _ ∷ Λ') ++ ∘tcxt Ω}) (only-lf⇑≡ {Δ₀ = Γ₂'} f)))
+                    (untag-only-lfP (_ ∷ ∘cxt Λ' ++ ∘tcxt Ω) s' p' lf₁ f done))))
+       • ~ early-rf s' {r = q} ℓ {eq = refl}
+       • unfoc-same (congrunL ℓ (foc-same (focr refl-rf (gen-early-lf [] _) • ~ swap))))
+untag-only-lf-fP .(Ω ++ Γ₁) {.(Γ₂' ++ _ ∷ Λ')} s' p q lf (focl {Γ₀ = .(map (λ A → ∘ , A) Γ₂')} q₁ lf₁ (focr {_} {_} {_} {_} {_} {.((∘ , _) ∷ map (λ A → ∘ , A) Λ' ++ Ω)} {Γ₁} (just (` X , x)) rf (unfoc (inj₁ p') f) refl refl ξ₁) refl refl ξ) refl ℓ | inj₁ (Ω , eq' , refl) | inj₂ (.(∘ , _) , .(map (λ A → ∘ , A) Λ') , eq'' , refl) | Γ₂' , _ ∷ Λ' , refl , refl , refl
+  rewrite isProp-isPosAt q₁ (pos→posat p') =
+  focl refl-lf
+       (focr refl-rf {eq' = refl} (unfoc-same (refl⇑ (untag-runL {Δ = ∘tcxt Ω} ℓ _)))
+       • focr refl-rf {eq' = refl} (unfoc-same (congrunL ℓ
+            (trans⇑ (refl⇑ (cong (untag⇑ {Γ = ∘cxt (Γ₂' ++ _ ∷ Λ') ++ ∘tcxt Ω}) (only-lf⇑≡ {Δ₀ = Γ₂'} f)))
+                    (trans⇑ (untag-only-lfP (_ ∷ ∘cxt Λ' ++ ∘tcxt Ω) s' p' lf₁ f done)
+                            (trans⇑ (refl⇑ (MF-only-lfP-eq _ s' p' tt (untag-lf lf₁) (untag⇑ f) done))
+                                   (foc-same (focl refl-lf (~ blurr-at) • swap)))))))
+       • (~ early-rf-at s' ℓ)
+       • unfoc-same (congrunL ℓ (foc-same (~ swap))))
+untag-only-lf-fP .(Ω ++ Γ₁) {.(Γ₂' ++ _ ∷ Λ')} s' p q lf (focl {Γ₀ = .(map (λ A → ∘ , A) Γ₂')} {Q = ` X} q₁ lf₁ (focr {_} {_} {_} {_} {_} {.((∘ , _) ∷ map (λ A → ∘ , A) Λ' ++ Ω)} {Γ₁} (just (_ ⊸ _ , _)) rf (unfoc (inj₂ (x , m)) f) refl refl ξ₁) refl refl ξ) refl ℓ | inj₁ (Ω , eq' , refl) | inj₂ (.(∘ , _) , .(map (λ A → ∘ , A) Λ') , eq'' , refl) | Γ₂' , _ ∷ Λ' , refl , refl , refl = 
+  focl refl-lf
+       (focr refl-rf {eq' = refl} (unfoc-same (refl⇑ (untag-runL {Δ = ∘tcxt Ω} ℓ _)))
+       • focr refl-rf {eq' = refl} (unfoc-same (congrunL ℓ (untag-only-lf-at (∘fma _ ∷ ∘cxt Λ' ++ ∘tcxt Ω)  s' _ lf₁ f)))
+       • (~ early-rf s' {r = q} ℓ)
+       • unfoc-same (congrunL ℓ (foc-same (focr refl-rf (gen-early-lf-at [] {lf = untag-lf lf₁} f) • ~ swap))))
 untag-only-lf-fP Δ₁ {Γ} s' p q lf (focl {Γ₀ = Γ₂} q₁ lf₁ (focr {Γ₀ = Γ₀} {.(A ∷ Ω ++ Δ₁)} (just x) rf (unfoc ok f) refl refl ξ₁) refl refl ξ) eq ℓ | inj₂ (A , Ω , eq' , refl) with split-map ∘fma Γ Γ₂ (Γ₀ ++ _ ∷ Ω) eq'
 ... | (Γ₂' , Λ , refl , eq'' , refl) with split-map ∘fma Λ Γ₀ (_ ∷ Ω) eq''
 untag-only-lf-fP Δ₁ {.(Γ₂' ++ Γ₀' ++ _ ∷ Ω')} s' p q lf (focl {_} {_} {_} {_} {.(map _ Γ₂')} q₁ lf₁ (focr {Γ₀ = .(map (λ A → ∘ , A) Γ₀')} {.((∘ , _) ∷ map (λ A → ∘ , A) Ω' ++ Δ₁)} (just x) rf (unfoc ok f) refl refl ξ₁) refl refl ξ) refl ℓ | inj₂ (.(∘ , _) , .(map (λ A → ∘ , A) Ω') , eq' , refl) | Γ₂' , .(Γ₀' ++ _ ∷ Ω') , refl , eq'' , refl | Γ₀' , _ ∷ Ω' , refl , refl , refl =
@@ -240,8 +307,11 @@ untag-only-lf-fP Δ₁ {.(Γ₀' ++ _ ∷ Ω')} s' p q lf (focl {Γ₀ = .(map (
   focl refl-lf
        (unfoc-same (refl⇑ (trans (cong (untag⇑ {Γ = ∘tcxt Δ₁}) (sym (Lem.runLeq ℓ))) (untag-runL {Δ = ∘tcxt Δ₁} ℓ _))))
 untag-only-lf-fP Δ₁ {Γ} s' p q lf (focr {Γ₀ = Γ₀} {Γ₁} (just x) rf (unfoc ok f) refl refl ξ) eq ℓ with ++?-alt (∘cxt Γ) Γ₀ Δ₁ Γ₁ eq
-untag-only-lf-fP .(Ω ++ Γ₁) {Γ} s' p q lf (focr {Γ₀ = .(map (λ A → ∘ , A) Γ ++ Ω)} {Γ₁} (just x) rf (unfoc ok f) refl refl ξ) refl ℓ | inj₁ (Ω , refl , refl) =
-  focl refl-lf {!!}
+untag-only-lf-fP .(Ω ++ Γ₁) {Γ} s' p q lf (focr {Γ₀ = .(map (λ A → ∘ , A) Γ ++ Ω)} {Γ₁} (just (_ ⊸ _ , _)) rf (unfoc ok f) refl refl ξ) refl ℓ | inj₁ (Ω , refl , refl) =
+  focl refl-lf
+       (focr refl-rf {eq' = refl} (unfoc-same (refl⇑ (untag-runL {Δ = ∘tcxt Ω} ℓ _))) 
+       • ~ early-rf s' {r = q} ℓ
+       • unfoc-same (congrunL ℓ (foc-same (focr refl-rf (unfoc-same (refl⇑ (untag-l∙→∘⇑ f)))))))
 ... | inj₂ (A , Ω , eq' , refl) with split-map ∘fma Γ Γ₀ (A ∷ Ω) eq'
 untag-only-lf-fP Δ₁ {.(Γ₀' ++ _ ∷ Ω')} s' p q lf (focr {Γ₀ = .(map (λ A → ∘ , A) Γ₀')} {.((∘ , _) ∷ map (λ A → ∘ , A) Ω' ++ Δ₁)} (just x) rf (unfoc ok f) refl refl ξ) refl ℓ | inj₂ (.(∘ , _) , .(map (λ A → ∘ , A) Ω') , eq' , refl) | Γ₀' , _ ∷ Ω' , refl , refl , refl =
   focl refl-lf
@@ -250,7 +320,6 @@ untag-only-lf-fP Δ₁ s' p q lf (focr ─ rf (refl , refl) refl refl ξ) refl �
   focl refl-lf
        (unfoc-same (refl⇑ (trans (cong (untag⇑ {Γ = ∘tcxt Δ₁}) (sym (Lem.runLeq ℓ))) (untag-runL {Δ = ∘tcxt Δ₁} ℓ _))))
 
-{-
 untag⇑∘max : ∀ {S Γ A} (f : S MF.∣ Γ ⇑ A) → untag⇑ (max f) ≗⇑ f
 untag∘max-lf : ∀ {S Γ Q} {q : isPosAt Q} (f : q MF.⇛lf S ； Γ)
   → untag-lf (max-lf f) ≗lf f
@@ -275,9 +344,14 @@ untag⇑∘max (Il q f) = Il (untag⇑∘max f)
 untag⇑∘max (⊗l q f) = ⊗l (untag⇑∘max f)
 untag⇑∘max (foc s q (focl q₁ lf (focr (just (.(` _) , snd)) rf ax refl) refl)) = foc (focl (untag∘max-lf lf) (focr (untag∘max-rf rf) refl))
 untag⇑∘max (foc s q (focl q₁ lf (focr (just x) rf (unfoc ok f) refl) refl)) = foc (focl (untag∘max-lf lf) (focr (untag∘max-rf rf) (unfoc (untag⇑∘max f))))
-untag⇑∘max (foc s q (focl q₁ lf (unfoc ok f) refl)) = {!!}
+untag⇑∘max (foc s q (focl {Γ₀ = Γ₀}{Γ₁} q₁ lf (unfoc ok f) refl))
+  rewrite isProp-isPosAt q₁ (pos→posat ok) =
+  trans⇑ (refl⇑ (cong (untag⇑ {Γ = ∘cxt Γ₀ ++ ∘cxt Γ₁}) (only-lf⇑≡ (max f))))
+         (trans⇑ (untag-only-lfP (∘cxt Γ₁) s ok (max-lf lf) (max f) done)
+                 (trans⇑ {!!}
+                         (refl⇑ (MF-only-lfP-eq Γ₁ s ok q lf f done))))
 untag⇑∘max (foc s q (focr (just (.(` _) , snd)) rf (focl q₁ lf ax refl) refl)) = foc (swap • focr (untag∘max-rf rf) (focl (untag∘max-lf lf) refl))
 untag⇑∘max (foc s q (focr (just x) rf (focl q₁ lf (unfoc ok f) refl) refl)) = foc (swap • focr (untag∘max-rf rf) (focl (untag∘max-lf lf) (unfoc (untag⇑∘max f))))
 untag⇑∘max (foc s q (focr (just x) rf (unfoc ok f) refl)) = {!!}
 untag⇑∘max (foc s q (focr ─ rf (refl , refl) refl)) = foc (focrn (untag∘max-rf rf))
--}
+

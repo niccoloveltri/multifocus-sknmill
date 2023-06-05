@@ -228,7 +228,7 @@ untags⇑ {(Γ , A) ∷ Ξ} (f ∷ fs) = untag⇑ {Γ = ∘cxt Γ} f ∷ untags�
 
 untag⇓ ax = MF.ax
 untag⇓ (focl q lf f refl refl ξ) = MF.focl q (untag-lf lf) (untag⇓ f) refl
-untag⇓ (focr (just _) rf f refl refl ξ) = MF.focr _ (untag-rf rf) (untag⇓ f) refl
+untag⇓ (focr {Γ₀ = Γ₀} {Γ₁} (just _) rf f eq refl ξ) = MF.focr _ (untag-rf rf) (untag⇓ f) (cong untag-cxt {y = Γ₀ ++ Γ₁} eq)
 untag⇓ (focr ─ rf (refl , refl) refl refl ξ) = MF.focr _ (untag-rf rf) (refl , refl) refl
 untag⇓ (unfoc {Γ = Γ} ok f) = MF.unfoc ok (untag⇑ {Γ = ∘tcxt Γ} f)
 
