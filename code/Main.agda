@@ -44,4 +44,4 @@ import correct.max-multifocus.Lemmata
 
 -- -- The sequent calculi are equivalent
 import correct.max-multifocus.Iso1
--- import correct.max-multifocus.Iso2
+import correct.max-multifocus.Iso2
