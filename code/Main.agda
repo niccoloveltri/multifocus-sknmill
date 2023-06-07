@@ -37,10 +37,11 @@ import correct.multifocus.Iso2
 -- ===========================================
 
 import correct.max-multifocus.Lemmata
+import correct.max-multifocus.Lemmata2
 
 -- Correctness of max. multi-focusing
 -- -- Equational completeness
--- import correct.max-multifocus.EqComplete
+import correct.max-multifocus.EqComplete
 
 -- -- The sequent calculi are equivalent
 import correct.max-multifocus.Iso1
