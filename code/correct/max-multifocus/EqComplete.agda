@@ -19,6 +19,7 @@ open import SeqCalc
 open import MultifocSeqCalc as MF
 open import MaxMultifocSeqCalc as MMF
 open import correct.max-multifocus.Lemmata
+open import correct.max-multifocus.Lemmata2
 
 {-
 Il⇑eq : ∀ {Γ Q} {q : isPosAt Q}
@@ -277,11 +278,67 @@ max⊸r⋆⇑ : {S : Stp} {Γ : Cxt} (Δ : Cxt) {A : Fma}
 max⊸r⋆⇑ [] f = refl
 max⊸r⋆⇑ {Γ = Γ} (A ∷ Δ) f = cong ⊸r (max⊸r⋆⇑ {Γ = Γ ∷ʳ A} Δ f)
 
--- cong-only-rf⇑ : ∀ {S Δ₀ Δ₁ M Q m q}
---               {rf : just (M , m) MMF.⇛rf Δ₁ ； Q}
---               {f g : (∘ , S) MMF.∣ Δ₀ ⇑ (∘ , M)} → f ≡ g → 
---               only-rf⇑ Δ₀ m q rf f ≡  only-rf⇑ Δ₀ m q rf g             
--- cong-only-rf⇑ refl = refl
+maxIl⇑ : {Γ : Cxt} {C : Fma}
+     (f :  ─ MF.∣ Γ ⇑ C) → max (MF.Il⇑ f) ≡ MMF.Il⇑ (max f)
+maxIl⇑ (⊸r f) = cong ⊸r (maxIl⇑ f)
+maxIl⇑ (foc s q f) = sym (Il⇑eq _)
+
+max⊗l⇑ : {Γ : Cxt} {A B C : Fma}
+     (f :  just A MF.∣ B ∷ Γ ⇑ C) → max (MF.⊗l⇑ f) ≡ MMF.⊗l⇑ (max f)
+max⊗l⇑ (⊸r f) = cong ⊸r (max⊗l⇑ f)
+max⊗l⇑ (Il q f) = refl
+max⊗l⇑ (⊗l q f) = cong (⊗l q) (sym (⊗l⇑eq _))
+max⊗l⇑ (foc s q f) = sym (⊗l⇑eq _)
+
+maxrunL : ∀ {S Γ Δ A C} (ℓ : MF.L S Γ A)
+  → (f : S MF.∣ Γ ++ Δ ⇑ C)
+  → max {Γ = Δ} (MF.runL ℓ f) ≡ MMF.runL ℓ (max {Γ = Γ ++ Δ} f)
+maxrunL done f = refl
+maxrunL (Il-1 ℓ) f = trans (maxrunL ℓ (MF.Il⇑ f)) (cong (MMF.runL ℓ) (maxIl⇑ f))
+maxrunL (⊗l-1 ℓ) f = trans (maxrunL ℓ (MF.⊗l⇑ f)) (cong (MMF.runL ℓ) (max⊗l⇑ f))
+
+_++L_ : ∀ {S Γ Δ A B} → MF.L S Γ A → MF.L (just A) Δ B → MF.L S (Γ ++ Δ) B
+done ++L ℓ' = ℓ'
+Il-1 ℓ ++L ℓ' = Il-1 (ℓ ++L ℓ')
+⊗l-1 ℓ ++L ℓ' = ⊗l-1 (ℓ ++L ℓ')
+
+++Ldone : ∀ {S Γ A} (ℓ : MF.L S Γ A) → ℓ ++L done ≡ ℓ
+++Ldone done = refl
+++Ldone (Il-1 ℓ) = cong Il-1 (++Ldone ℓ)
+++Ldone (⊗l-1 ℓ) = cong ⊗l-1 (++Ldone ℓ)
+{-# REWRITE ++Ldone #-}
+
+only-lf⇑P-Il⇑ : {S : Stp} {Δ₀ : Cxt} {Δ₁ : TCxt} {Γ : Cxt} {C P : Fma}
+                {s : isIrr S} {p : isPos P}
+                {lf : pos→posat p ⇛lf S ∣ Δ₀}
+                (f : (∘ , ─) MMF.∣ ∘cxt Γ ++ Δ₁ ⇑ (∘ , C)) 
+                (ℓ : MF.L (just I) Γ P) →
+                only-lf⇑P Δ₁ s p lf f (Il-1 ℓ) ≡ only-lf⇑P Δ₁ s p lf (MMF.Il⇑ f) ℓ
+only-lf⇑P-Il⇑ {Δ₁ = Δ₁} (⊸r f) ℓ = cong ⊸r (only-lf⇑P-Il⇑ {Δ₁ = Δ₁ ∷ʳ _} f ℓ)
+only-lf⇑P-Il⇑ (foc s q f) ℓ = refl
+
+only-lf⇑P-⊗l⇑ : {S : Stp} {Δ₀ : Cxt} {Δ₁ : TCxt} {Γ : Cxt} {A B C P : Fma}
+                {s : isIrr S} {p : isPos P}
+                {lf : pos→posat p ⇛lf S ∣ Δ₀}
+                (f : (∘ , just A) MMF.∣ ∘cxt (B ∷ Γ) ++ Δ₁ ⇑ (∘ , C)) 
+                (ℓ : MF.L (just (A ⊗ B)) Γ P) →
+                only-lf⇑P Δ₁ s p lf f (⊗l-1 ℓ) ≡ only-lf⇑P Δ₁ s p lf (MMF.⊗l⇑ f) ℓ
+only-lf⇑P-⊗l⇑ {Δ₁ = Δ₁} (⊸r f) ℓ = cong ⊸r (only-lf⇑P-⊗l⇑ {Δ₁ = Δ₁ ∷ʳ _} f ℓ)
+only-lf⇑P-⊗l⇑ (Il q f) ℓ = refl
+only-lf⇑P-⊗l⇑ {Δ₁ = Δ₁} (⊗l q f) ℓ = only-lf⇑P-⊗l⇑ {Δ₁ = Δ₁} f (⊗l-1 ℓ)
+only-lf⇑P-⊗l⇑ (foc s q f) ℓ = refl
+
+only-lf⇑++ : {S S' : Stp} {Δ₀ : Cxt} {Δ₁ : TCxt} {Γ Γ' : Cxt} {C A P : Fma}
+            {s : isIrr S} {p : isPos P}
+            {lf : pos→posat p ⇛lf S ∣ Δ₀}
+            (f : (∘ , S') MMF.∣ ∘cxt (Γ ++ Γ') ++ Δ₁ ⇑ (∘ , C)) 
+            (ℓ : MF.L S' Γ A) (ℓ' : MF.L (just A) Γ' P) →
+            only-lf⇑P Δ₁ {Γ ++ Γ'} s p lf f (ℓ ++L ℓ') ≡ only-lf⇑P Δ₁ s p lf (MMF.runL ℓ f) ℓ'
+only-lf⇑++ f done ℓ' = refl
+only-lf⇑++ {Δ₁ = Δ₁} {Γ} {Γ'} f (Il-1 ℓ) ℓ' =
+  trans (only-lf⇑P-Il⇑ {Δ₁ = Δ₁} {Γ = Γ ++ Γ'} f (ℓ ++L ℓ')) (only-lf⇑++ (MMF.Il⇑ f) ℓ ℓ')
+only-lf⇑++ {Δ₁ = Δ₁} {Γ' = Γ'} f (⊗l-1 {Γ} ℓ) ℓ' = 
+  trans (only-lf⇑P-⊗l⇑ {Δ₁ = Δ₁} {Γ = Γ ++ Γ'} f (ℓ ++L ℓ')) (only-lf⇑++ (MMF.⊗l⇑ f) ℓ ℓ')
 
 {-
 only-rf⇑++ : ∀ {S Δ₀ Δ₁} Γ Γ' {A Q}
@@ -721,6 +778,7 @@ max≗rf : ∀ {Γ A} {s : Maybe (Σ Fma isNegAt)} {h k : s MF.⇛rf Γ ； A}
 max≗⇑s : ∀ {Ξ} {fs gs : All (λ ΔB → ─ MF.∣ proj₁ ΔB ⇑ proj₂ ΔB) Ξ}
   → fs ≗s⇑ gs → maxs fs ≡ maxs gs
 
+{-
 max≗⇓r₁ refl refl = refl
 max≗⇓r₁ (~ eq) refl = sym (max≗⇓r₁ eq refl)
 max≗⇓r₁ (eq • eq₁) refl = trans (max≗⇓r₁ eq refl) (max≗⇓r₁ eq₁ refl)
@@ -747,6 +805,7 @@ max≗⇓r₁ {S = S} {s = s} {m = m} (early-lf-at {Γ₀ = Γ₀} {Γ₁} Δ {R
 max≗⇓r₁ {Γ₀ = Γ₀} {M = M ⊸ M₁} {q = q} (blurl-at {f = f}) {h} refl = 
   sym (trans (only-rf⇑N-at≡ (∘cxt Γ₀) [] tt q (max-rf h) (max f))
              (congfoc (congfocl refl (congfocr refl (cong (unfoc {Γ = ∘cxt Γ₀} _) (untag-seq≡ {Γ = ∘cxt Γ₀} (max f) refl))))))
+-}
 
 max≗⇓l₁ refl refl = refl
 max≗⇓l₁ (~ eq) refl = sym (max≗⇓l₁ eq refl)
@@ -754,7 +813,14 @@ max≗⇓l₁ (eq • eq₁) refl = trans (max≗⇓l₁ eq refl) (max≗⇓l₁
 max≗⇓l₁ (focr eqr {g = g} {eq = refl} {eq' = refl} eq) refl =
   trans (max≗⇓lr₁ eq refl refl) (max≗⇓lr₂ eqr g refl refl)
 max≗⇓l₁ (unfoc eq) refl = cong (only-lf⇑ _ _ _ _) (max≗⇑ eq)
-max≗⇓l₁ (early-rf t ℓ {refl}) refl = {!!}
+max≗⇓l₁ {Γ₀ = Γ₀} {s = s}{q}{r} (early-rf {Γ₁ = Γ₁} {Γ₂} {Δ} t {n} {p} {q'} ℓ {refl}) refl 
+  rewrite isProp-isPosAt r (pos→posat p) | isProp-isPosAt q q' = 
+  trans (cong (only-lf⇑ _ _ _ _) (trans (maxrunL {Δ = Γ₁ ++ Γ₂} ℓ _)
+                                        (cong (MMF.runL ℓ) (only-rf⇑eq n _))))
+        (trans (only-lf⇑≡ {p = p} _)
+               (trans (sym (only-lf⇑++ {Δ₁ = ∘cxt (Γ₁ ++ Γ₂)} _ ℓ done))
+                      (trans (only-lf⇑P-rf⇑N Δ Γ₀ Γ₁ Γ₂ [] _ ℓ)
+                             (congfoc (congfocl refl (congfocr refl (cong (unfoc {Γ = ∘cxt Γ₁} (inj₁ p)) (sym (maxrunL ℓ _)))))))))
 max≗⇓l₁ (early-rf-at t ℓ {refl}) refl = {!!}
 max≗⇓l₁ {Γ₁ = Γ₁} {R = I} {h = h} (blurr-at {f = f}) refl =
   sym (trans (only-lf⇑P-at≡ _ _ _ (max-lf h) (max f) done)
@@ -763,6 +829,7 @@ max≗⇓l₁ {Γ₁ = Γ₁} {R = _ ⊗ _} {h = h} (blurr-at {f = f}) refl =
   sym (trans (only-lf⇑P-at≡ _ _ _ (max-lf h) (max f) done)
              (congfoc (congfocl refl (congfocr refl (cong (unfoc {Γ = ∘cxt Γ₁} _) (untag-seq≡ {Γ = ∘cxt Γ₁} (max f) refl))))))
 
+{-
 max≗⇓r₂ (focl q lf ax refl) eqr refl =
   congfoc (congfocl refl (congfocr (max≗rf eqr) refl))
 max≗⇓r₂ (focl q lf (unfoc ok f) refl) eqr refl =
@@ -826,7 +893,7 @@ max≗rf (⊗r+ eq eqs {refl} {refl}) =
 
 max≗⇑s [] = refl
 max≗⇑s (eq ∷ eqs) = cong₂ _∷_ (max≗⇑ eq) (max≗⇑s eqs)
-
+-}
 
 
 
