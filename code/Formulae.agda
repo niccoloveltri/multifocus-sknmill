@@ -169,3 +169,31 @@ pos→posat {A ⊗ A₁} p = tt
 pos→isn'tat : {A : Fma} → isPos A → isn'tAt A
 pos→isn'tat {I} p = tt
 pos→isn'tat {A ⊗ A₁} p = tt
+
+isProp-isAt : ∀ {A} (p q : isAt A) → p ≡ q
+isProp-isAt {` X} p q = refl
+
+isProp-isPosAt : ∀ {A} (p q : isPosAt A) → p ≡ q
+isProp-isPosAt {` X} p q = refl
+isProp-isPosAt {I} p q = refl
+isProp-isPosAt {_ ⊗ _} p q = refl
+
+isProp-isPos : ∀ {A} (p q : isPos A) → p ≡ q
+isProp-isPos {I} p q = refl
+isProp-isPos {_ ⊗ _} p q = refl
+
+isProp-isn't⊗ : ∀ {A} (p q : isn't⊗ A) → p ≡ q
+isProp-isn't⊗ {` X} p q = refl
+isProp-isn't⊗ {I} p q = refl
+isProp-isn't⊗ {_ ⊸ _} p q = refl
+
+isProp-isNeg : ∀ {A} (p q : isNeg A) → p ≡ q
+isProp-isNeg {_ ⊸ _} p q = refl
+
+isProp-isNegAt : ∀ {A} (p q : isNegAt A) → p ≡ q
+isProp-isNegAt {` X} p q = refl
+isProp-isNegAt {_ ⊸ _} p q = refl
+
+isProp-isIrr : {S : Stp} (s s' : isIrr S) → s ≡ s'
+isProp-isIrr {just x} s s' = isProp-isNegAt s s'
+isProp-isIrr {─} s s' = refl
