@@ -17,6 +17,7 @@
 %\usepackage{quiver}
 \usepackage[all,cmtip]{xy}
 \usepackage{proof}
+\usepackage{pdflscape}
 \usepackage{dashbox}
 %\usepackage[a4paper, total={6in, 8in}]{geometry}
 %\usepackage{lscape}
@@ -1935,4 +1936,187 @@ Uustalu et al. \cite{UVW:protsn} define a normalization procedure for \SkNMILL\ 
 \bibliographystyle{splncs04}
 \bibliography{wollic23}
 
+\appendix
+\begin{landscape}
+\section{Equations}
+
+\[
+\small
+\begin{array}{rcl}
+\proofbox{
+  \infer[\focL]{T \mid \Gamma,\Delta,\Lambda \dn Q}{
+    \deduce{Q' \lf T ; \Gamma}{h} &
+    \infer[\focR]{\dbox{$Q'$} \mid \Delta,\Lambda \dn Q}{
+      \deduce{\dbox{$Q'$} \mid \Delta \dn \dbox{$M$}}{f} &
+      \deduce{M \rf \Lambda ; Q}{k}
+    }
+  }
+}
+& \circeq_\dn &
+\proofbox{
+  \infer[\focR]{T \mid \Gamma,\Delta,\Lambda \dn Q}{    
+    \infer[\focL]{T \mid \Gamma,\Delta \dn \dbox{$M$}}{
+      \deduce{Q' \lf T ; \Gamma}{h} &
+      \deduce{\dbox{$Q'$} \mid \Delta \dn \dbox{$M$}}{f}      
+    }
+    &
+    \deduce{M \rf \Lambda ; Q}{k}
+  }
+}
+\\
+\proofbox{
+  \infer[\unfoc]{T \mid \Gamma,\Delta \dn \dbox{$\Lambda \lolli^+ Q$}}{
+    \infer[\lolliR^+]{T \mid \Gamma,\Delta \up \Lambda \lolli^+ Q}{
+      \infer[\foc]{T \mid \Gamma,\Delta,\Lambda \up Q}{
+        \infer[\focL]{T \mid \Gamma , \Delta,\Lambda \dn Q}{
+          \deduce{P \lf T ; \Gamma}{h} &
+          \infer[\unfoc]{\dbox{$P$} \mid \Delta,\Lambda \dn Q}{
+            \deduce{P \mid \Delta,\Lambda \up Q}{f}
+          }
+        }
+      }
+    }
+  }
+}
+& \circeq_\dn &
+\proofbox{
+  \infer[\focL]{T \mid \Gamma,\Delta \dn \dbox{$\Lambda \lolli^+ Q$}}{
+    \deduce{P \lf T ; \Gamma}{h} &
+    \infer[\unfoc]{\dbox{$P$} \mid \Delta \dn \dbox{$\Lambda \lolli^+ Q$}}{
+      \infer[\lolliR^+]{P \mid \Delta \up \Lambda \lolli^+ Q}{
+        \deduce{P \mid \Delta,\Lambda \up Q}{f}
+      }
+    }
+  }
+}
+\\
+\proofbox{
+  \infer[\unfoc]{T \mid \Gamma,\Delta \dn \dbox{$\Lambda \lolli^+ Q$}}{
+    \infer[\lolliR^+]{T \mid \Gamma,\Delta \up \Lambda \lolli^+ Q}{
+      \infer[\foc]{T \mid \Gamma,\Delta,\Lambda \up Q}{
+        \infer[\focL]{T \mid \Gamma , \Delta,\Lambda \dn Q}{
+          \deduce{X \lf T ; \Gamma}{h} &
+          \deduce{\dbox{$X$} \mid \Delta,\Lambda \dn Q}{f}
+        }
+      }
+    }
+  }
+}  
+& \circeq_\dn &
+\proofbox{
+  \infer[\focL]{T \mid \Gamma,\Delta \dn \dbox{$\Lambda \lolli^+ Q$}}{
+    \deduce{X \lf T ; \Gamma}{h} &
+    \infer[\unfoc]{\dbox{$X$} \mid \Delta \dn \dbox{$\Lambda \lolli^+ Q$}}{
+      \infer[\lolliR^+]{X \mid \Delta \up \Lambda \lolli^+ Q}{
+        \infer[\foc]{X \mid \Delta,\Lambda \up Q}{
+          \infer[\focL]{X \mid \Delta,\Lambda \dn Q}{
+            \infer[\blurL]{X \lf X ; ~}{} &
+            \deduce{\dbox{$X$} \mid \Delta,\Lambda \dn Q}{f}
+          }
+        }
+      }
+    }
+  }
+}
+\end{array}
+\]
+\[\small
+\begin{array}{rcl}
+\proofbox{
+  \infer[\unfoc]{\dbox{$P$} \mid \Delta,\Lambda \dn Q}{
+    \infer[\runL]{P \mid \Delta,\Lambda \up Q}{
+      \deduce{\L(T\mid\Gamma;P)}{\ell} &
+      \infer[\foc]{T \mid \Gamma,\Delta,\Lambda \up Q}{
+        \infer[\focR]{T \mid \Gamma,\Delta,\Lambda \dn Q}{
+          \infer[\unfoc]{T \mid \Gamma,\Delta \dn \dbox{$N$}}{
+            \deduce{T \mid \Gamma,\Delta \up N}{f}
+          }
+          &
+          \deduce{N \rf \Lambda ; Q}{h}
+        }
+      }
+    }
+  }
+}
+& \circeq_\dn &
+\proofbox{
+  \infer[\focR]{\dbox{$P$} \mid \Delta,\Lambda \dn Q}{
+    \infer[\unfoc]{\dbox{$P$} \mid \Delta \dn \dbox{$N$}}{
+      \infer[\runL]{P \mid \Delta \up N}{
+        \deduce{\L(T\mid\Gamma;P)}{\ell} &
+        \deduce{T \mid \Gamma,\Delta \up N}{f}
+      }
+    }
+    &
+    \deduce{N \rf \Lambda ; Q}{h}
+  }
+}
+\\
+\proofbox{
+  \infer[\unfoc]{\dbox{$P$} \mid \Delta,\Lambda \dn Q}{
+    \infer[\runL]{P \mid \Delta,\Lambda \up Q}{
+      \deduce{\L(T\mid\Gamma;P)}{\ell} &
+      \infer[\foc]{T \mid \Gamma,\Delta,\Lambda \up Q}{
+        \infer[\focR]{T \mid \Gamma,\Delta,\Lambda \dn Q}{
+          \deduce{T \mid \Gamma,\Delta \dn \dbox{$X$}}{f}
+          &
+          \deduce{X \rf \Lambda ; Q}{h}
+        }
+      }
+    }
+  }
+}
+& \circeq_\dn &
+\proofbox{
+  \infer[\focR]{\dbox{$P$} \mid \Delta,\Lambda \dn Q}{
+    \infer[\unfoc]{\dbox{$P$} \mid \Delta \dn \dbox{$X$}}{
+      \infer[\runL]{P \mid \Delta \up X}{
+        \deduce{\L(T\mid\Gamma;P)}{\ell} &
+        \infer[\foc]{T \mid \Gamma,\Delta \up X}{
+          \infer[\focR]{T \mid \Gamma,\Delta \dn X}{
+            \deduce{T \mid \Gamma,\Delta \dn \dbox{$X$}}{f}
+            &
+            \infer[\blurR]{X \rf ~ ; X}{}
+          }
+        }
+      }
+    }
+    &
+    \deduce{X \rf \Lambda ; Q}{h}
+  }
+}
+\\
+\proofbox{
+  \infer[\focL]{X \mid \Gamma \dn \dbox{$N$}}{
+    \infer[\blurL]{X \lf X ; ~}{} &
+    \infer[\unfoc]{\dbox{$X$} \mid \Gamma \dn \dbox{$N$}}{
+      \deduce{X \mid \Gamma \up N}{f}
+    }
+  }
+}
+& \circeq_\dn &
+\proofbox{
+  \infer[\unfoc]{X \mid \Gamma \dn \dbox{$N$}}{
+    \deduce{X \mid \Gamma \up N}{f}
+  }
+}
+\\
+\proofbox{
+  \infer[\focL]{\dbox{$P$} \mid \Gamma \dn X}{
+    \infer[\unfoc]{\dbox{$P$} \mid \Gamma \dn \dbox{$X$}}{
+      \deduce{P \mid \Gamma \up X}{f}
+    }
+    &
+    \infer[\blurR]{X \rf ~ ; X}{}
+  }
+}
+& \circeq_\dn &
+\proofbox{
+  \infer[\unfoc]{\dbox{$P$} \mid \Gamma \dn X}{
+    \deduce{P \mid \Gamma \up X}{f}
+  }
+}
+\end{array}
+\]
+\end{landscape}
 \end{document}
