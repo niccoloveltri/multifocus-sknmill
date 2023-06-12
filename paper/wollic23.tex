@@ -526,7 +526,7 @@ We now present a multi-focused sequent calculus for \SkNMILL, which draws  inspi
       T \rf \Delta ; Q
     }
     \\[6pt]
-        \infer[\ax]{\dbox{$X$}_{\, b} \mid ~ \dn \dbox{$X$}_{\, c}}{}
+        \infer[\ax]{\dbox{$X$} \mid ~ \dn \dbox{$X$}}{}
     \qquad
     \infer[\unfoc]{\dbox{$S$}_{\,b} \mid \Gamma \dn \dbox{$A$}_{\,c}}{
       S \mid \Gamma \up A
@@ -604,14 +604,14 @@ b & c & \UT(b,c,S,A) \\
 0 & 0 & 0 \\
 0 & 1 & A = N \\
 1 & 0 & S = P \\
-1 & 1 & S = P \vee A = N\\
+1 & 1 & S = P \vee (S = X \wedge A = N)\\
   \hline
 \end{array}
 \]
-The stoup formula must be positive if it was under focus ($b=1$) but the succedent was not ($c=0$). Dually, the succedent formula must be negative is it was under focus ($c = 1$) and the stoup was not ($b = 0$). If both formulae were under focus ($b = 1 \wedge c = 1$), one of them must have changed its polarity. Unfocusing also requires that at least one formula was previously under focus, hence the condition $b \vee c$ must be true.
+The stoup formula must be positive if it was under focus ($b=1$) but the succedent was not ($c=0$). Dually, the succedent formula must be negative is it was under focus ($c = 1$) and the stoup was not ($b = 0$). If both formulae were under focus ($b = 1 \wedge c = 1$), one of them must have changed its polarity: either the stoup formula has become positive or, if it had become (or stayed)  atomic, the succedent formula has become negative. Unfocusing also requires that at least one formula was previously under focus, hence the condition $b \vee c$ must be true.
 %The axiom rule is usable only if both stoup and succedent formulae were under focus.
 
-For a sequent with atomic stoup and positive succedent $X \mid \Gamma \up P$ (or, dually, negative stoup and atomic succedent), one can choose whether to focus on the stoup formula or not. If the sequent is derivable, both choices will lead to a valid proof. An analogous situation was also present in the multi-focused calculus for classical linear logic \cite{chaudhuri:canonical:2008}, where in a similar circumstances one was given the choice of focusing on negated atoms.
+For a sequent with atomic stoup and positive succedent $X \mid \Gamma \up P$ (or, dually, negative stoup and atomic succedent), one can choose whether to focus on the stoup formula or not, and both choices may lead to a valid proof. For an example, consider the valid sequent $X \mid ~ \up (Y \lolli (X \ot Y)) \ot I$. An analogous situation was also present in the multi-focused calculus for classical linear logic \cite{chaudhuri:canonical:2008}, where in similar circumstances one was given the choice of focusing on negated atoms or not.
 %, e.g. there exist two distinct multi-focused proofs of $\vdash a^\bot,(a \rotatebox[origin=c]{180}{\&} \bot) \otimes \I$.
 %This form of non-determinism can be removed by forcing the focus on atomic formulae, which can be achieved by slighly modifying the side condition in the $\unfoc$ rule: if $b = 1$ then $S=P$ but also $A \not= X$ ($A$ not atomic), and if $b' = 1$ then $A = N$ but also $S \not= X$.
 
@@ -816,18 +816,26 @@ Given a proof $\ell : \L(S\mid\Gamma;A)$, we can turn a derivation $f : S \mid \
   %Assumption $\ell$ serves as an accumulator for dealing with the cases when $g$ is a left-invertible rule. Its employment is similar to the one of the additional context $\Gamma_1$ in (\ref{eq:otRlolliR}).
 %  Assuming proofs $f : S \mid \Delta_0,\Delta_1 \up C$ and $\ell : \L(S\mid \Delta_0;B)$ entails the existence of a proof of $B \mid \Delta_1 \up C$.
 \end{proof}
-The multi-focused sequent calculus in \Cref{fig:multi-focus} is sound and complete wrt. the sequent calculus in \Cref{fig:seqcalc}. Let $\Prf(S \mid \Gamma \vdash A)$ be the set of proofs of the sequent $S \mid \Gamma \vdash A$, and similarly for $\Prf(S \mid \Gamma \up A)$.
+
+Multi-focused proofs are not canonical wrt. to the equational theory in \Cref{fig:circeq}. During proof search, when the stoup formula is negative and the succedent is positive, we have the choice of left-focusing only, right-focusing only, or performing both left- and right-focusing, which can also be achieved in two distinct ways.
+For example, there exist three distinct proofs of the sequent $X \lolli \I \mid X , Y \up (Z \lolli Z) \ot Y$ which correspond to three $\circeq$-related derivations in the unfocused sequent calculus.
+As discussed before, in general we also have the choice of focusing on atomic formulae. %Another form of non-determinism is given by passivation and its interaction with $\otR$: when the succedent formula is a tensor and the context is non-empty, we may have the choice of first passivate and then right-focus or vice versa, and often both possibilities lead to valid derivations.
+
+It is possible to capture the remaining non-determinism in a congruence relation $\circeq_\up$ on derivations of sequents $S \mid \Gamma \up A$. This is inductively specified simultaneously with congruences $\circeq_\dn$, $\circeq_\mathsf{lf}$ and $\circeq_\mathsf{rf}$. The generators of this collection of relations are given in \Cref{sec:app}. It is possible to show that functions $\focus$ and $\emb$ respect the corresponding equivalence of derivations.
+
+The multi-focused sequent calculus in \Cref{fig:multi-focus} is sound and complete wrt. the sequent calculus in \Cref{fig:seqcalc}. 
+Let $\Prf(S \mid \Gamma \vdash A)$ be the set of proofs of the sequent $S \mid \Gamma \vdash A$, and similarly for $\Prf(S \mid \Gamma \up A)$.
 \begin{theorem}\label{thm}
   There exist functions $\focus : \Prf(S \mid \Gamma \vdash A) \to \Prf(S \mid \Gamma \up A)$  and $\emb: \Prf(S \mid \Gamma \up A) \to \Prf(S \mid \Gamma \vdash A)$, turning sequent calculus derivations into multi-focused derivations, and vice versa.
 \end{theorem}
 \begin{proof}
 Function $\emb$ is obtained by erasing all phase-shifting rules and dashed boxes around blurred formulae. Function $\focus$ is defined by induction on the structure of the input derivation, noticing that each rule in \Cref{fig:seqcalc} has an admissible counterpart in the multi-focused sequent calculus.
 \end{proof}
-
-Multi-focused proofs are not canonical wrt. to the equational theory in \Cref{fig:circeq}. During proof search, when the stoup formula is negative and the succedent is positive, we have the choice of left-focusing only, right-focusing only, or performing both left- and right-focusing, which can also be achieved in two distinct ways.
-For example, there exist three distinct proofs of the sequent $X \lolli \I \mid X , Y \up (Z \lolli Z) \ot Y$ which correspond to three $\circeq$-related derivations in the unfocused sequent calculus.
-As discussed before, in general we also have the choice of focusing on atomic formulae. %Another form of non-determinism is given by passivation and its interaction with $\otR$: when the succedent formula is a tensor and the context is non-empty, we may have the choice of first passivate and then right-focus or vice versa, and often both possibilities lead to valid derivations.
-The calculus of maximally multi-focused derivations introduced in the next section is designed to restrict this non-determinism.
+It is also possible to show that the relation $\circ_\up$ is sound and complete wrt. the equivalence of derivations $\circeq$ in \Cref{fig:circeq}.
+\begin{theorem}\label{thmeq}
+  Functions $\focus$ and $\emb$ underlie an isomorphism between the set of proofs of a sequent $S \mid \Gamma \vdash A$ quotiented by the equivalence relation $\circeq$ and the set of proofs of $S \mid \Gamma \up A$ quotiented by the equivalence relation $\circeq_\up$.
+\end{theorem}
+%The calculus of maximally multi-focused derivations introduced in the next section is designed to restrict this non-determinism.
 
 %%\niccolo{Change the next part}
 %%Multi-focusing resolves most of the permutative non-determinism in the sequent calculus. Let $\circeq'$ be the congruence generated by the equations in \Cref{fig:circeq} except the last two involving $\otR/\pass$ and $\otR/\lolliL$.
@@ -1195,10 +1203,13 @@ Each multi-focused derivation can be normalized to a maximally multi-focused one
 where $h'$ is obtained from $h$ by making all applications of red rules ($\red{\focL}$ and $\red{\focR}$) in $h$ black ($\focL$ and $\focR$).
   \end{enumerate}
 \end{proof}
-It is also possible to show that proofs in the maximally multi-focused calculus are canonical wrt. the equational theory in \Cref{fig:circeq}. The full proof can be found in our Agda formalization.
+It is also possible to show that proofs in the maximally multi-focused calculus are canonical wrt. the equational theory in \Cref{sec:app} on multi-focused derivations. Therefore, by \Cref{thmeq}, they are also canonical wrt. the equational theory in \Cref{fig:circeq} on unfocused derivations. We refer the reader to our Agda formalization for details about the proof.
 \begin{theorem}\label{thm3}
-  Functions $\mathsf{max}_\up\circ \focus$ and $\emb \circ \mathsf{untag}_\up$ underlie an isomorphism between the set of proofs of a sequent $S \mid \Gamma \vdash A$ quotiented by the equivalence relation $\circeq$ and the set of proofs of $\green{S} \mid \green{\Gamma} \upm \green{A}$. % in the maximally multi-focused calculus.
+  Functions $\mathsf{max}_\up$ and $\mathsf{untag}_\up$ underlie an isomorphism between the set of proofs of a sequent $S \mid \Gamma \up A$ quotiented by the equivalence relation $\circeq_\up$ and the set of proofs of $\green{S} \mid \green{\Gamma} \upm \green{A}$. % in the maximally multi-focused calculus.
 \end{theorem}
+\begin{corollary}\label{cor}
+  Functions $\mathsf{max}_\up\circ \focus$ and $\emb \circ \mathsf{untag}_\up$ underlie an isomorphism between the set of proofs of a sequent $S \mid \Gamma \vdash A$ quotiented by the equivalence relation $\circeq$ and the set of proofs of $\green{S} \mid \green{\Gamma} \upm \green{A}$. % in the maximally multi-focused calculus.
+\end{corollary}
 
 
 
@@ -1938,10 +1949,10 @@ Uustalu et al. \cite{UVW:protsn} define a normalization procedure for \SkNMILL\ 
 
 \appendix
 \begin{landscape}
-\section{Equations}
-
+\section{Equivalence of Derivations in the Multi-Focused Sequent Calculus}
+\label{sec:app}
+  
 \[
-\small
 \begin{array}{rcl}
 \proofbox{
   \infer[\focL]{T \mid \Gamma,\Delta,\Lambda \dn Q}{
@@ -1963,7 +1974,7 @@ Uustalu et al. \cite{UVW:protsn} define a normalization procedure for \SkNMILL\ 
     \deduce{M \rf \Lambda ; Q}{k}
   }
 }
-\\
+\\[6pt]
 \proofbox{
   \infer[\unfoc]{T \mid \Gamma,\Delta \dn \dbox{$\Lambda \lolli^+ Q$}}{
     \infer[\lolliR^+]{T \mid \Gamma,\Delta \up \Lambda \lolli^+ Q}{
@@ -1989,7 +2000,7 @@ Uustalu et al. \cite{UVW:protsn} define a normalization procedure for \SkNMILL\ 
     }
   }
 }
-\\
+\\[6pt]
 \proofbox{
   \infer[\unfoc]{T \mid \Gamma,\Delta \dn \dbox{$\Lambda \lolli^+ Q$}}{
     \infer[\lolliR^+]{T \mid \Gamma,\Delta \up \Lambda \lolli^+ Q}{
@@ -2020,7 +2031,8 @@ Uustalu et al. \cite{UVW:protsn} define a normalization procedure for \SkNMILL\ 
 }
 \end{array}
 \]
-\[\small
+\[
+%\small
 \begin{array}{rcl}
 \proofbox{
   \infer[\unfoc]{\dbox{$P$} \mid \Delta,\Lambda \dn Q}{
@@ -2051,7 +2063,7 @@ Uustalu et al. \cite{UVW:protsn} define a normalization procedure for \SkNMILL\ 
     \deduce{N \rf \Lambda ; Q}{h}
   }
 }
-\\
+\\[6pt]
 \proofbox{
   \infer[\unfoc]{\dbox{$P$} \mid \Delta,\Lambda \dn Q}{
     \infer[\runL]{P \mid \Delta,\Lambda \up Q}{
@@ -2085,7 +2097,7 @@ Uustalu et al. \cite{UVW:protsn} define a normalization procedure for \SkNMILL\ 
     \deduce{X \rf \Lambda ; Q}{h}
   }
 }
-\\
+\\[6pt]
 \proofbox{
   \infer[\focL]{X \mid \Gamma \dn \dbox{$N$}}{
     \infer[\blurL]{X \lf X ; ~}{} &
@@ -2100,7 +2112,7 @@ Uustalu et al. \cite{UVW:protsn} define a normalization procedure for \SkNMILL\ 
     \deduce{X \mid \Gamma \up N}{f}
   }
 }
-\\
+\\[6pt]
 \proofbox{
   \infer[\focL]{\dbox{$P$} \mid \Gamma \dn X}{
     \infer[\unfoc]{\dbox{$P$} \mid \Gamma \dn \dbox{$X$}}{
