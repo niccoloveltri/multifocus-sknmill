@@ -33,6 +33,7 @@
 %\newtheorem{defn}[definition]{Definition}
 %\newtheorem{example}[definition]{Definition}
 %\newtheorem*{proof}{Proof : }
+\usepackage{float}
 \usepackage{cleveref}
 \usepackage{bbm}
 %\newtheorem{fact}[theorem]{Fact}
@@ -381,7 +382,7 @@ We consider an equivalence relation $\circeq$ on sets of derivations. This is th
   \\
   \tr \text{ } (\lleft \text{ } (f , g), h) & \circeq \lleft \text{ } (f, \tr \text{ } (g, h)) &&(f: - \mid \Gamma \vdash A, g : B \mid \Delta \vdash C, h : - \mid \Lambda \vdash D)
 \end{align*}
-\caption{Equivalence of derivations in \SkNMILL.}
+\caption{Equivalence of derivations in the sequent calculus.}
 \label{fig:circeq}
 \end{figure}
 The congruence $\circeq$ has been chosen to serve as the proof-theoretic counterpart of the equational theory of skew monoidal closed categories \cite{street:skew-closed:2013}.
@@ -677,7 +678,7 @@ Rule $\otR$ of \Cref{fig:seqcalc}, with $\vdash$ replaced everywhere by $\up$, i
         }
       &
       \{ - \mid \Delta_i \up B_i \}_{i}
-    }} =
+    }} \!\!\!\! =
 %    \\
     %   \hspace{3cm}
     \proofbox{
@@ -834,43 +835,201 @@ Multi-focused proofs are not canonical wrt. to the equational theory in \Cref{fi
 For example, there exist four distinct proofs of $X \lolli \I \mid X , Y \up (Z \lolli Z) \ot Y$ which correspond to four $\circeq$-related derivations in the unfocused sequent calculus.
 As discussed before, in general we also have the choice of whether focusing on atomic formulae or not. %Another form of non-determinism is given by passivation and its interaction with $\otR$: when the succedent formula is a tensor and the context is non-empty, we may have the choice of first passivate and then right-focus or vice versa, and often both possibilities lead to valid derivations.
 
-It is possible to capture the remaining non-determinism in a congruence relation $\circeq_\up$ on derivations of sequents $S \mid \Gamma \up A$. This is inductively specified simultaneously with congruences $\circeq_\dn$, $\circeq_\mathsf{lf}$ and $\circeq_\mathsf{rf}$. The generators of this collection of relations are given in \Cref{sec:app}. It is possible to show that functions $\focus$ and $\emb$ respect congruences $\circeq$ and $\circeq_\up$, and moreover define an equivalence between sets of proofs in the different sequent calculi, strengthening the statement of \Cref{thm}.
+
+It is possible to capture the remaining non-determinism in a congruence relation $\circeq_\up$ on derivations of sequents $S \mid \Gamma \up A$. This is inductively specified simultaneously with congruences $\circeq_\dn$, $\circeq_\mathsf{lf}$ and $\circeq_\mathsf{rf}$. The generators of this collection of relations are given in \Cref{sec:app}. We can show that functions $\focus$ and $\emb$ respect congruences $\circeq$ and $\circeq_\up$, and moreover define an equivalence between sets of proofs in the different sequent calculi, strengthening the statement of \Cref{thm}.
 %It is also possible to show that the relation $\circeq_\up$ is sound and complete wrt. the equivalence of derivations $\circeq$ in \Cref{fig:circeq}.
+\begin{figure}[hbpt]
+\scriptsize 
+\[
+\begin{array}{rcl}
+\proofbox{
+  \infer[\focL]{T \mid \Gamma,\Delta,\Lambda \dn Q}{
+    \deduce{T \mid \Gamma \lf Q'}{h} &
+    \infer[\focR]{\dbox{$Q'$} \mid \Delta,\Lambda \dn Q}{
+      \deduce{\dbox{$Q'$} \mid \Delta \dn \dbox{$M$}}{f} &
+      \deduce{M \mid \Lambda \rf Q}{k}
+    }
+  }
+} & \circeq_\dn 
+\\[-15pt] &&
+\hspace{-42pt}
+\proofbox{
+  \infer[\focR]{T \mid \Gamma,\Delta,\Lambda \dn Q}{    
+    \infer[\focL]{T \mid \Gamma,\Delta \dn \dbox{$M$}}{
+      \deduce{T \mid \Gamma \lf Q'}{h} &
+      \deduce{\dbox{$Q'$} \mid \Delta \dn \dbox{$M$}}{f}      
+    }
+    &
+    \deduce{M \mid \Lambda \rf Q}{k}
+  }
+}
+\end{array}
+\]
+\[
+\begin{array}{c}
+\proofbox{
+  \infer[\unfoc]{T \mid \Gamma,\Delta \dn \dbox{$\Lambda \lolli^+ Q$}}{
+    \infer[\lolliR^+]{T \mid \Gamma,\Delta \up \Lambda \lolli^+ Q}{
+      \infer[\foc]{T \mid \Gamma,\Delta,\Lambda \up Q}{
+        \infer[\focL]{T \mid \Gamma , \Delta,\Lambda \dn Q}{
+          \deduce{T \mid \Gamma \lf P}{h} &
+          \infer[\unfoc]{\dbox{$P$} \mid \Delta,\Lambda \dn Q}{
+            \deduce{P \mid \Delta,\Lambda \up Q}{f}
+          }
+        }
+      }
+    }
+  }
+} \circeq_\dn 
+\proofbox{
+  \infer[\focL]{T \mid \Gamma,\Delta \dn \dbox{$\Lambda \lolli^+ Q$}}{
+    \deduce{T \mid \Gamma \lf P}{h} &
+    \infer[\unfoc]{\dbox{$P$} \mid \Delta \dn \dbox{$\Lambda \lolli^+ Q$}}{
+      \infer[\lolliR^+]{P \mid \Delta \up \Lambda \lolli^+ Q}{
+        \deduce{P \mid \Delta,\Lambda \up Q}{f}
+      }
+    }
+  }
+}
+\\[6pt]
+\proofbox{
+  \infer[\unfoc]{T \mid \Gamma,\Delta \dn \dbox{$\Lambda \lolli^+ Q$}}{
+    \infer[\lolliR^+]{T \mid \Gamma,\Delta \up \Lambda \lolli^+ Q}{
+      \infer[\foc]{T \mid \Gamma,\Delta,\Lambda \up Q}{
+        \infer[\focL]{T \mid \Gamma , \Delta,\Lambda \dn Q}{
+          \deduce{T \mid \Gamma \lf X}{h} &
+          \deduce{\dbox{$X$} \mid \Delta,\Lambda \dn Q}{f}
+        }
+      }
+    }
+  }
+}  \circeq_\dn 
+\proofbox{
+  \infer[\focL]{T \mid \Gamma,\Delta \dn \dbox{$\Lambda \lolli^+ Q$}}{
+    \deduce{T \mid \Gamma \lf X}{h} &
+    \hspace{-20pt}
+    \infer[\unfoc]{\dbox{$X$} \mid \Delta \dn \dbox{$\Lambda \lolli^+ Q$}}{
+      \infer[\lolliR^+]{X \mid \Delta \up \Lambda \lolli^+ Q}{
+        \infer[\foc]{X \mid \Delta,\Lambda \up Q}{
+          \infer[\focL]{X \mid \Delta,\Lambda \dn Q}{
+            \infer[\blurL]{X \mid ~ \lf X}{} &
+            \deduce{\dbox{$X$} \mid \Delta,\Lambda \dn Q}{f}
+          }
+        }
+      }
+    }
+  }
+}
+\\[6pt]
+\proofbox{
+  \infer[\unfoc]{\dbox{$P$} \mid \Delta,\Lambda \dn Q}{
+    \infer[\runL]{P \mid \Delta,\Lambda \up Q}{
+      \deduce{\L(T\mid\Gamma;P)}{\ell} &
+      \hspace{-20pt}
+      \infer[\foc]{T \mid \Gamma,\Delta,\Lambda \up Q}{
+        \infer[\focR]{T \mid \Gamma,\Delta,\Lambda \dn Q}{
+          \infer[\unfoc]{T \mid \Gamma,\Delta \dn \dbox{$N$}}{
+            \deduce{T \mid \Gamma,\Delta \up N}{f}
+          }
+          &        
+          \deduce{N \mid \Lambda \rf Q}{h}
+        }
+      }
+    }
+  }
+}
+\circeq_\dn
+\hspace{-6pt}
+\proofbox{
+  \infer[\focR]{\dbox{$P$} \mid \Delta,\Lambda \dn Q}{
+    \infer[\unfoc]{\dbox{$P$} \mid \Delta \dn \dbox{$N$}}{
+      \infer[\runL]{P \mid \Delta \up N}{
+        \deduce{\L(T\mid\Gamma;P)}{\ell} &        
+        \deduce{T \mid \Gamma,\Delta \up N}{f}
+      }
+    }
+    &
+    \hspace{-20pt}
+    \deduce{N \mid \Lambda \rf Q}{h}
+  }
+}
+\\[6pt]
+\proofbox{
+  \infer[\unfoc]{\dbox{$P$} \mid \Delta,\Lambda \dn Q}{
+    \infer[\runL]{P \mid \Delta,\Lambda \up Q}{
+      \deduce{\L(T\mid\Gamma;P)}{\ell} &
+      \hspace{-20pt}
+      \infer[\foc]{T \mid \Gamma,\Delta,\Lambda \up Q}{
+        \infer[\focR]{T \mid \Gamma,\Delta,\Lambda \dn Q}{
+          \deduce{T \mid \Gamma,\Delta \dn \dbox{$X$}}{f}
+          &
+          \deduce{X \mid \Lambda \rf Q}{h}
+        }
+      }
+    }
+  }
+}
+\circeq_\dn
+\proofbox{
+  \infer[\focR]{\dbox{$P$} \mid \Delta,\Lambda \dn Q}{
+    \infer[\unfoc]{\dbox{$P$} \mid \Delta \dn \dbox{$X$}}{
+      \infer[\runL]{P \mid \Delta \up X}{
+        \deduce{\L(T\mid\Gamma;P)}{\ell} &
+        \hspace{-20pt}
+        \infer[\foc]{T \mid \Gamma,\Delta \up X}{
+          \infer[\focR]{T \mid \Gamma,\Delta \dn X}{
+            \deduce{T \mid \Gamma,\Delta \dn \dbox{$X$}}{f}
+            &
+            \infer[\blurR]{X \mid ~ \rf X}{}
+          }
+        }
+      }
+    }
+    &
+    \hspace{-45pt}
+    \deduce{X \mid \Lambda \rf Q}{h}
+  }
+}
+\\[6pt]
+\proofbox{
+  \infer[\focL]{X \mid \Gamma \dn \dbox{$N$}}{
+    \infer[\blurL]{X \mid ~ \lf X}{} &
+    \infer[\unfoc]{\dbox{$X$} \mid \Gamma \dn \dbox{$N$}}{
+      \deduce{X \mid \Gamma \up N}{f}
+    }
+  }
+}
+\circeq_\dn
+\proofbox{
+  \infer[\unfoc]{X \mid \Gamma \dn \dbox{$N$}}{
+    \deduce{X \mid \Gamma \up N}{f}
+  }
+}
+\\[6pt]
+\proofbox{
+  \infer[\focL]{\dbox{$P$} \mid \Gamma \dn X}{
+    \infer[\unfoc]{\dbox{$P$} \mid \Gamma \dn \dbox{$X$}}{
+      \deduce{P \mid \Gamma \up X}{f}
+    }
+    &
+    \infer[\blurR]{X \mid ~ \rf X}{}
+  }
+}
+\circeq_\dn
+\proofbox{
+  \infer[\unfoc]{\dbox{$P$} \mid \Gamma \dn X}{
+    \deduce{P \mid \Gamma \up X}{f}
+  }
+}
+\end{array}
+\]
+\caption{Equivalence of derivations in the multi-focused sequent calculus.}
+\label{sec:app}
+\end{figure}
 \begin{theorem}\label{thmeq}
   Functions $\focus$ and $\emb$ underlie an isomorphism between the set of proofs of a sequent $S \mid \Gamma \vdash A$ quotiented by the equivalence relation $\circeq$ and the set of proofs of $S \mid \Gamma \up A$ quotiented by the equivalence relation $\circeq_\up$.
 \end{theorem}
 Details about the proof can be found in our Agda formalization.
-%The calculus of maximally multi-focused derivations introduced in the next section is designed to restrict this non-determinism.
-
-%%\niccolo{Change the next part}
-%%Multi-focusing resolves most of the permutative non-determinism in the sequent calculus. Let $\circeq'$ be the congruence generated by the equations in \Cref{fig:circeq} except the last two involving $\otR/\pass$ and $\otR/\lolliL$.
-%%\begin{proposition}
-%%  If $f \circeq' g$ then $\focus(f) = \focus(g)$. Moreover, for all $f : S \mid \Gamma \up A$, $\focus(\emb(f)) = f$.
-%%\end{proposition}
-%%Dealing with the last equation in \Cref{fig:circeq} require a shift to a calculus of maximally multi-focused derivations.
-
-%  \begin{enumerate}
-%  \item If $A$ is positive or atomic, so $A = Q$, then we continue by induction on the structure of the given derivation $f : S \mid \Gamma \up Q$. There are two interesting cases. If $f$ left-focuses, so it is of the form $\foc(\lolliL^+(\{f_j\}_j,\blurL(h)))$, we return
-%    \[\footnotesize%\small
-%      \infer[\foc]{\vec{A} \lolli P \mid \vec{\Gamma},\Lambda,\vec{\Delta} \up Q \ot \vec{B}}{
-%      \infer[\focL]{\vec{A} \lolli P \mid \vec{\Gamma},\Lambda,\vec{\Delta} \dn Q \ot \vec{B}}{
-%        \infer[\lolliL^+]{\fbox{$\vec{A} \lolli P$} \mid \vec{\Gamma}, \Lambda, \vec{\Delta} \dn Q \ot \vec{B}}{
-%          \deduce{\{ - \mid \Gamma_j \up A_j\}}{f_j}
-%          &
-%          \infer[\blurL]{\fbox{$P$} \mid \Lambda, \vec{\Delta} \dn Q \ot \vec{B}}{
-%          \infer[\unfoc]{\dbox{$P$} \mid \Lambda, \vec{\Delta} \dn Q \ot \vec{B}}{
-%            \infer[\otR^+_{\up}]{P \mid \Lambda, \vec{\Delta} \up Q \ot \vec{B}}{
-%              \deduce{P \mid \Lambda \up Q}{h}
-%      &
-%      \deduce{\{ - \mid \Delta_i \up B_i\}}{g_i}
-%        }
-%      }
-%        }
-%      }
-%    }}
-%    \]    
-%  \end{enumerate}
-%\end{proof}
 
 \section{Maximal Multi-Focusing Using Tags}\label{sec:maxfocus}
 
@@ -909,20 +1068,19 @@ Stoups are also tagged: $\green{S}$ or $\red{S}$. Tagged contexts consist of tag
           \dbox{$\green{Q}$} \mid \Delta \dnm A
           & \red{\bullet} \in \Gamma
         }
-    \qquad
-        \infer[\focL]{\green{T} \mid \Gamma , \Delta \dnm A}{
-          \green{T} \mid \green{\Gamma} \lfm \green{Q} &
-          \dbox{$\green{Q}$} \mid \Delta \dnm A
-        }
-        \\[6pt]
+     \\[4pt]
     \infer[\red{\focR}]{\dbox{$S$}_{\, b} \mid \Gamma,\Delta \dnm \red{Q}}{
       \dbox{$S$}_{\, b} \mid \Gamma \dnm \dbox{$\green{T}$}
       &
       \green{T} \mid \green{\Delta} \rfm \green{Q}
       & T = M \supset \red{\bullet} \in \Delta
     }
-    \;\;
-    \infer[\focR]{\dbox{$S$}_{\, b} \mid \Gamma,\Delta \dnm \green{Q}}{
+    \\[4pt]
+            \infer[\focL]{\green{T} \mid \Gamma , \Delta \dnm A}{
+          \green{T} \mid \green{\Gamma} \lfm \green{Q} &
+          \dbox{$\green{Q}$} \mid \Delta \dnm A
+        }\qquad
+\infer[\focR]{\dbox{$S$}_{\, b} \mid \Gamma,\Delta \dnm \green{Q}}{
       \dbox{$S$}_{\, b} \mid \Gamma \dnm \dbox{$\green{T}$}
       &
       \green{T} \mid \green{\Delta} \rfm \green{Q}
@@ -1955,188 +2113,9 @@ Uustalu et al. \cite{UVW:protsn} define a normalization procedure for \SkNMILL\ 
 \bibliographystyle{splncs04}
 \bibliography{wollic23}
 
-\appendix
-\begin{landscape}
-\section{Equivalence of Derivations in the Multi-Focused Sequent Calculus}
-\label{sec:app}
-  
-\[
-\begin{array}{rcl}
-\proofbox{
-  \infer[\focL]{T \mid \Gamma,\Delta,\Lambda \dn Q}{
-    \deduce{T \mid \Gamma \lf Q'}{h} &
-    \infer[\focR]{\dbox{$Q'$} \mid \Delta,\Lambda \dn Q}{
-      \deduce{\dbox{$Q'$} \mid \Delta \dn \dbox{$M$}}{f} &
-      \deduce{M \mid \Lambda \rf Q}{k}
-    }
-  }
-}
-& \circeq_\dn &
-\proofbox{
-  \infer[\focR]{T \mid \Gamma,\Delta,\Lambda \dn Q}{    
-    \infer[\focL]{T \mid \Gamma,\Delta \dn \dbox{$M$}}{
-      \deduce{T \mid \Gamma \lf Q'}{h} &
-      \deduce{\dbox{$Q'$} \mid \Delta \dn \dbox{$M$}}{f}      
-    }
-    &
-    \deduce{M \mid \Lambda \rf Q}{k}
-  }
-}
-\\[6pt]
-\proofbox{
-  \infer[\unfoc]{T \mid \Gamma,\Delta \dn \dbox{$\Lambda \lolli^+ Q$}}{
-    \infer[\lolliR^+]{T \mid \Gamma,\Delta \up \Lambda \lolli^+ Q}{
-      \infer[\foc]{T \mid \Gamma,\Delta,\Lambda \up Q}{
-        \infer[\focL]{T \mid \Gamma , \Delta,\Lambda \dn Q}{
-          \deduce{T \mid \Gamma \lf P}{h} &
-          \infer[\unfoc]{\dbox{$P$} \mid \Delta,\Lambda \dn Q}{
-            \deduce{P \mid \Delta,\Lambda \up Q}{f}
-          }
-        }
-      }
-    }
-  }
-}
-& \circeq_\dn &
-\proofbox{
-  \infer[\focL]{T \mid \Gamma,\Delta \dn \dbox{$\Lambda \lolli^+ Q$}}{
-    \deduce{T \mid \Gamma \lf P}{h} &
-    \infer[\unfoc]{\dbox{$P$} \mid \Delta \dn \dbox{$\Lambda \lolli^+ Q$}}{
-      \infer[\lolliR^+]{P \mid \Delta \up \Lambda \lolli^+ Q}{
-        \deduce{P \mid \Delta,\Lambda \up Q}{f}
-      }
-    }
-  }
-}
-\\[6pt]
-\proofbox{
-  \infer[\unfoc]{T \mid \Gamma,\Delta \dn \dbox{$\Lambda \lolli^+ Q$}}{
-    \infer[\lolliR^+]{T \mid \Gamma,\Delta \up \Lambda \lolli^+ Q}{
-      \infer[\foc]{T \mid \Gamma,\Delta,\Lambda \up Q}{
-        \infer[\focL]{T \mid \Gamma , \Delta,\Lambda \dn Q}{
-          \deduce{T \mid \Gamma \lf X}{h} &
-          \deduce{\dbox{$X$} \mid \Delta,\Lambda \dn Q}{f}
-        }
-      }
-    }
-  }
-}  
-& \circeq_\dn &
-\proofbox{
-  \infer[\focL]{T \mid \Gamma,\Delta \dn \dbox{$\Lambda \lolli^+ Q$}}{
-    \deduce{T \mid \Gamma \lf X}{h} &
-    \infer[\unfoc]{\dbox{$X$} \mid \Delta \dn \dbox{$\Lambda \lolli^+ Q$}}{
-      \infer[\lolliR^+]{X \mid \Delta \up \Lambda \lolli^+ Q}{
-        \infer[\foc]{X \mid \Delta,\Lambda \up Q}{
-          \infer[\focL]{X \mid \Delta,\Lambda \dn Q}{
-            \infer[\blurL]{X \mid ~ \lf X}{} &
-            \deduce{\dbox{$X$} \mid \Delta,\Lambda \dn Q}{f}
-          }
-        }
-      }
-    }
-  }
-}
-\end{array}
-\]
-\[
-%\small
-\begin{array}{rcl}
-\proofbox{
-  \infer[\unfoc]{\dbox{$P$} \mid \Delta,\Lambda \dn Q}{
-    \infer[\runL]{P \mid \Delta,\Lambda \up Q}{
-      \deduce{\L(T\mid\Gamma;P)}{\ell} &
-      \infer[\foc]{T \mid \Gamma,\Delta,\Lambda \up Q}{
-        \infer[\focR]{T \mid \Gamma,\Delta,\Lambda \dn Q}{
-          \infer[\unfoc]{T \mid \Gamma,\Delta \dn \dbox{$N$}}{
-            \deduce{T \mid \Gamma,\Delta \up N}{f}
-          }
-          &
-          \deduce{N \mid \Lambda \rf Q}{h}
-        }
-      }
-    }
-  }
-}
-& \circeq_\dn &
-\proofbox{
-  \infer[\focR]{\dbox{$P$} \mid \Delta,\Lambda \dn Q}{
-    \infer[\unfoc]{\dbox{$P$} \mid \Delta \dn \dbox{$N$}}{
-      \infer[\runL]{P \mid \Delta \up N}{
-        \deduce{\L(T\mid\Gamma;P)}{\ell} &
-        \deduce{T \mid \Gamma,\Delta \up N}{f}
-      }
-    }
-    &
-    \deduce{N \mid \Lambda \rf Q}{h}
-  }
-}
-\\[6pt]
-\proofbox{
-  \infer[\unfoc]{\dbox{$P$} \mid \Delta,\Lambda \dn Q}{
-    \infer[\runL]{P \mid \Delta,\Lambda \up Q}{
-      \deduce{\L(T\mid\Gamma;P)}{\ell} &
-      \infer[\foc]{T \mid \Gamma,\Delta,\Lambda \up Q}{
-        \infer[\focR]{T \mid \Gamma,\Delta,\Lambda \dn Q}{
-          \deduce{T \mid \Gamma,\Delta \dn \dbox{$X$}}{f}
-          &
-          \deduce{X \mid \Lambda \rf Q}{h}
-        }
-      }
-    }
-  }
-}
-& \circeq_\dn &
-\proofbox{
-  \infer[\focR]{\dbox{$P$} \mid \Delta,\Lambda \dn Q}{
-    \infer[\unfoc]{\dbox{$P$} \mid \Delta \dn \dbox{$X$}}{
-      \infer[\runL]{P \mid \Delta \up X}{
-        \deduce{\L(T\mid\Gamma;P)}{\ell} &
-        \infer[\foc]{T \mid \Gamma,\Delta \up X}{
-          \infer[\focR]{T \mid \Gamma,\Delta \dn X}{
-            \deduce{T \mid \Gamma,\Delta \dn \dbox{$X$}}{f}
-            &
-            \infer[\blurR]{X \mid ~ \rf X}{}
-          }
-        }
-      }
-    }
-    &
-    \deduce{X \mid \Lambda \rf Q}{h}
-  }
-}
-\\[6pt]
-\proofbox{
-  \infer[\focL]{X \mid \Gamma \dn \dbox{$N$}}{
-    \infer[\blurL]{X \mid ~ \lf X}{} &
-    \infer[\unfoc]{\dbox{$X$} \mid \Gamma \dn \dbox{$N$}}{
-      \deduce{X \mid \Gamma \up N}{f}
-    }
-  }
-}
-& \circeq_\dn &
-\proofbox{
-  \infer[\unfoc]{X \mid \Gamma \dn \dbox{$N$}}{
-    \deduce{X \mid \Gamma \up N}{f}
-  }
-}
-\\[6pt]
-\proofbox{
-  \infer[\focL]{\dbox{$P$} \mid \Gamma \dn X}{
-    \infer[\unfoc]{\dbox{$P$} \mid \Gamma \dn \dbox{$X$}}{
-      \deduce{P \mid \Gamma \up X}{f}
-    }
-    &
-    \infer[\blurR]{X \mid ~ \rf X}{}
-  }
-}
-& \circeq_\dn &
-\proofbox{
-  \infer[\unfoc]{\dbox{$P$} \mid \Gamma \dn X}{
-    \deduce{P \mid \Gamma \up X}{f}
-  }
-}
-\end{array}
-\]
-\end{landscape}
+%\appendix
+%\begin{landscape}
+%\section{Equivalence of Derivations in the Multi-Focused Sequent Calculus}
+
+%\end{landscape}
 \end{document}
