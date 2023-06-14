@@ -843,17 +843,6 @@ It is possible to capture the remaining non-determinism in a congruence relation
 \[
 \begin{array}{rcl}
 \proofbox{
-  \infer[\focL]{T \mid \Gamma,\Delta,\Lambda \dn Q}{
-    \deduce{T \mid \Gamma \lf Q'}{h} &
-    \infer[\focR]{\dbox{$Q'$} \mid \Delta,\Lambda \dn Q}{
-      \deduce{\dbox{$Q'$} \mid \Delta \dn \dbox{$M$}}{f} &
-      \deduce{M \mid \Lambda \rf Q}{k}
-    }
-  }
-} & \circeq_\dn 
-\\[-15pt] &&
-\hspace{-42pt}
-\proofbox{
   \infer[\focR]{T \mid \Gamma,\Delta,\Lambda \dn Q}{    
     \infer[\focL]{T \mid \Gamma,\Delta \dn \dbox{$M$}}{
       \deduce{T \mid \Gamma \lf Q'}{h} &
@@ -861,6 +850,17 @@ It is possible to capture the remaining non-determinism in a congruence relation
     }
     &
     \deduce{M \mid \Lambda \rf Q}{k}
+  }
+}   & \circeq_\dn 
+\\[-15pt] &&
+\hspace{-42pt}
+\proofbox{
+\infer[\focL]{T \mid \Gamma,\Delta,\Lambda \dn Q}{
+    \deduce{T \mid \Gamma \lf Q'}{h} &
+    \infer[\focR]{\dbox{$Q'$} \mid \Delta,\Lambda \dn Q}{
+      \deduce{\dbox{$Q'$} \mid \Delta \dn \dbox{$M$}}{f} &
+      \deduce{M \mid \Lambda \rf Q}{k}
+    }
   }
 }
 \end{array}
@@ -990,7 +990,13 @@ It is possible to capture the remaining non-determinism in a congruence relation
     \deduce{X \mid \Lambda \rf Q}{h}
   }
 }
-\\[6pt]
+\\[48pt]
+\proofbox{
+  \infer[\unfoc]{X \mid \Gamma \dn \dbox{$N$}}{
+    \deduce{X \mid \Gamma \up N}{f}
+  }
+}
+\circeq_\dn
 \proofbox{
   \infer[\focL]{X \mid \Gamma \dn \dbox{$N$}}{
     \infer[\blurL]{X \mid ~ \lf X}{} &
@@ -999,13 +1005,13 @@ It is possible to capture the remaining non-determinism in a congruence relation
     }
   }
 }
-\circeq_\dn
+\\[6pt]
 \proofbox{
-  \infer[\unfoc]{X \mid \Gamma \dn \dbox{$N$}}{
-    \deduce{X \mid \Gamma \up N}{f}
+  \infer[\unfoc]{\dbox{$P$} \mid \Gamma \dn X}{
+    \deduce{P \mid \Gamma \up X}{f}
   }
 }
-\\[6pt]
+\circeq_\dn
 \proofbox{
   \infer[\focL]{\dbox{$P$} \mid \Gamma \dn X}{
     \infer[\unfoc]{\dbox{$P$} \mid \Gamma \dn \dbox{$X$}}{
@@ -1013,12 +1019,6 @@ It is possible to capture the remaining non-determinism in a congruence relation
     }
     &
     \infer[\blurR]{X \mid ~ \rf X}{}
-  }
-}
-\circeq_\dn
-\proofbox{
-  \infer[\unfoc]{\dbox{$P$} \mid \Gamma \dn X}{
-    \deduce{P \mid \Gamma \up X}{f}
   }
 }
 \end{array}
