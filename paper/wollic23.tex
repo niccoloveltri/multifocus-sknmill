@@ -82,10 +82,10 @@
 \renewcommand{\L}{\mathsf{L}}
 \newcommand{\otd}{\ot^D}
 \newcommand{\lollid}{\;\textsuperscript{$D$}\!\!\lolli}
-\newcommand{\lfm}{\Rrightarrow_\mathsf{lfm}}
-\newcommand{\rfm}{\Rrightarrow_\mathsf{rfm}}
-\newcommand{\lf}{\Rrightarrow_\mathsf{lf}}
-\newcommand{\rf}{\Rrightarrow_\mathsf{rf}}
+\newcommand{\lfm}{\dn_\mathsf{lfm}}%{\Rrightarrow_\mathsf{lfm}}
+\newcommand{\rfm}{\dn_\mathsf{rfm}}%{\Rrightarrow_\mathsf{rfm}}
+\newcommand{\lf}{\dn_\mathsf{lf}}%{\Rrightarrow_\mathsf{lf}}
+\newcommand{\rf}{\dn_\mathsf{rf}}%{\Rrightarrow_\mathsf{rf}}
 \newcommand{\highlight}[1]{\textcolor{blue}{#1}}
 
 \newcommand{\proofbox}[1]{\begin{tabular}{l} #1 \end{tabular}}
@@ -516,14 +516,14 @@ We now present a multi-focused sequent calculus for \SkNMILL, which draws  inspi
     \\[4pt]
     \multicolumn{1}{l}{\text{\textsc{Synchronous Phase}}} \\[4pt]
         \infer[\focL]{T \mid \Gamma , \Delta \dn \dbox{$A$}_{\, b}}{
-          Q \lf T ; \Gamma &
+          T \mid \Gamma \lf Q &
           \dbox{$Q$} \mid \Delta \dn \dbox{$A$}_{\, b}
         }
     \qquad
     \infer[\focR]{\dbox{$S$}_{\, b} \mid \Gamma,\Delta \dn Q}{
       \dbox{$S$}_{\, b} \mid \Gamma \dn \dbox{$T$}
       &
-      T \rf \Delta ; Q
+      T \mid \Delta \rf Q
     }
     \\[6pt]
         \infer[\ax]{\dbox{$X$} \mid ~ \dn \dbox{$X$}}{}
@@ -540,29 +540,29 @@ We now present a multi-focused sequent calculus for \SkNMILL, which draws  inspi
     }
     \\[4pt]
     \multicolumn{1}{l}{\text{\textsc{Left-Focusing Phase}}} \\[4pt]
-    \infer[\pass]{Q \lf - ; A , \Gamma}{
-      Q \lf A ; \Gamma
+    \infer[\pass]{- \mid A , \Gamma \lf Q}{
+      A \mid \Gamma \lf Q
     }
     \qquad
-    \infer[\lolliL]{Q \lf A \lolli B ; \Gamma , \Delta}{
+    \infer[\lolliL]{A \lolli B \mid \Gamma , \Delta \lf Q}{
       - \mid \Gamma \up A
       &
-      Q \lf B ;  \Delta
+      B \mid  \Delta \lf Q
     }
     \qquad
-        \infer[\blurL]{Q \lf Q ; ~}{
+        \infer[\blurL]{Q \mid ~ \lf Q}{
       }    
     \\[4pt]
     \multicolumn{1}{l}{\text{\textsc{Right-Focusing Phase}}} \\[4pt]
-    \infer[\IR]{- \rf ~ ; \I}{}
+    \infer[\IR]{- \mid ~ \rf \I}{}
     \qquad
-    \infer[\otR]{T \rf \Gamma , \Delta ; A \ot B}{
-      T \rf \Gamma ; A
+    \infer[\otR]{T \mid \Gamma , \Delta \rf A \ot B}{
+      T \mid \Gamma \rf A
       &
       - \mid \Delta \up B
     }
     \qquad
-        \infer[\blurR]{M \rf ~ ; M}{}
+        \infer[\blurR]{M \mid ~ \rf M}{}
     \end{array}
   \]
   \caption{Multi-focused sequent calculus for \SkNMILL.} 
@@ -575,24 +575,25 @@ In this calculus, sequents can take four forms, corresponding to four distinct p
     \hline
     $S \mid \Gamma \up A$ & asynchronous (or invertible) \\
     $S \mid \Gamma \dn A$ & synchronous (or focusing) \\
-    $Q \lf S ; \Gamma$ & left synchronous \\
-    $T \lf \Gamma ; A$ & right synchronous \\
+    $S \mid \Gamma \lf Q$ & left synchronous \\
+    $T \mid \Gamma \rf A$ & right synchronous \\
  \hline
 \end{tabular}
     \end{center}
 
 Proof search starts in asynchronous phase $S \mid \Gamma \up A$. In this phase, invertible rules are repeatedly applied until both the stoup formula (when present) and the succedent formula become irreducible. We have fixed an order on invertible rules and decided to apply $\lolliR$ before $\IL$/$\otR$, which is enforced by asking the succedent formula in the left invertible rules to be positive or atomic (so we use our notation $Q$). 
 
-Proof search then progresses to the synchronous phase via the rule $\foc$. At this point we can apply the axiom rule $\ax$ or choose to focus on the stoup or succedent positions.
+Proof search then progresses to the synchronous phase via the rule $\foc$. At this point we can %apply the axiom rule $\ax$ or
+choose to focus on the stoup or succedent position.
 %Formulae on focus are surrounded by a \emph{solid} box {\small{\fbox{$A$}}}, similarly for stoups on focus. We use notation {\small{$\fbox{$A$}_{\,b}$}}, with $b$ a Boolean value, to denote a formula which is possibly under focus: {\small{$\fbox{$A$}_{\,1} = \fbox{$A$}$}} and {\small{$\fbox{$A$}_{\,0} = A$}}.
-The irreducible stoup $T$ is brought under focus with an application of rule $\focL$. At this point the context is split into two parts $\Gamma$ and $\Delta$ and left focusing phase is initiated in the first premise. A proof of $Q \lf T ; \Gamma$ consists of repeated application of left synchronous rules $\pass$ and $\lolliL$ on stoup $T$ and context $\Gamma$, until the stoup formula becomes the positive or atomic formula $Q$, at which point the left focus is \emph{blurred} by the rule $\blurL$. In synchronous phase, blurred formulae are surrounded by a \emph{dashed} box ${\small{\dbox{$A$}}}$. We use notation {\small{$\dbox{$A$}_{\,b}$}}, with $b$ a Boolean value, to denote a formula which is possibly blurred: {\small{$\dbox{$A$}_{\,1} = \dbox{$A$}$}} and {\small{$\dbox{$A$}_{\,0} = A$}}.
+The irreducible stoup $T$ is brought under focus with an application of rule $\focL$. At this point the context is split into two parts $\Gamma$ and $\Delta$ and left focusing phase is initiated in the first premise. A proof of $T \mid \Gamma \lf Q$ consists of repeated application of left synchronous rules $\pass$ and $\lolliL$ on stoup $T$ and context $\Gamma$, until the stoup formula becomes the positive or atomic formula $Q$, at which point the left focus is \emph{blurred} by the rule $\blurL$. In synchronous phase, blurred formulae are surrounded by a \emph{dashed} box ${\small{\dbox{$A$}}}$. We use notation {\small{$\dbox{$A$}_{\,b}$}}, with $b$ a Boolean value, to denote a formula which is possibly blurred: {\small{$\dbox{$A$}_{\,1} = \dbox{$A$}$}} and {\small{$\dbox{$A$}_{\,0} = A$}}. Blurred formulae are used to remember that a certain left or right synchronous phase has been performed.
 
-Proof search can also proceed by bringing the succedent formula $Q$ under focus with an application of rule $\focR$. The context is split into two parts $\Gamma$ and $\Delta$ and right focusing phase is initiated in the second premise. The right focusing phase consists of repeated applications of the right synchronous rule $\otR$. The optional formula $T$ in sequent $T \lf \Delta ; Q$ indicates whether the right focusing phase terminates when the succedent formula becomes negative or atomic (in which case $T = M$) or it terminates with an application of $\IR$ (in which case $T = -$). In the first case, the succedent formula $M$ is blurred by the rule $\blurR$. The notation $\small\dbox{$S$}_{\, b} \mid \Gamma \dn \dbox{$T$}$ is an abbreviation for: $\small\dbox{$S$}_{\, b} \mid \Gamma \dn \dbox{$M$}$, when $T = M$, while its set of proofs is a singleton if $T = -$. In other words, $\focR$ does not have a first premise in case the proof of the second premise ends with $\IR$.
+Proof search can also proceed by bringing the succedent formula $Q$ under focus with an application of rule $\focR$. The context is split into two parts $\Gamma$ and $\Delta$ and right focusing phase is initiated in the second premise. The right focusing phase consists of repeated applications of the right synchronous rule $\otR$. The optional formula $T$ in sequent $T \mid \Delta \rf Q$ indicates whether the right focusing phase terminates when the succedent formula becomes negative or atomic (in which case $T = M$) or it terminates with an application of $\IR$ (in which case $T = -$). In the first case, the succedent formula $M$ is blurred by the rule $\blurR$. The notation $\small\dbox{$S$}_{\, b} \mid \Gamma \dn \dbox{$T$}$ is an abbreviation for: $\small\dbox{$S$}_{\, b} \mid \Gamma \dn \dbox{$M$}$, when $T = M$, while its set of proofs is a singleton if $T = -$. In other words, $\focR$ does not have a first premise in case the proof of the second premise ends with $\IR$.
 
 A couple of observations on left- and right-focusing.
 A peculiarity of the sequent calculus in \Cref{fig:multi-focus}, when compared with other (multi-)focused calculi appearing in the literature, e.g. the one in \cite{chaudhuri:canonical:2008}, is that during the application of non-invertible rules in the focusing phase, one of the premises always releases the focus. In rule $\otR$, the right premise releases the focus on the succedent formula, and similarly for the  first premise in rule $\lolliL$. Without the loss of focus in these premises, the multi-focused sequent calculus would not be complete wrt. the calculus in \Cref{fig:seqcalc}, e.g. the sequent $X \mid Y  \ot Z \up X \ot (Y \ot Z)$ would not admit a derivation. This behaviour was already present in the focused sequent calculi for the $\ot$- and $(\I,\ot)$-fragments of the sequent calculus, originally studied by Zeilberger et al. \cite{zeilberger:semiassociative:19,uustalu:sequent:2021}.
 
-The design of rule $\focL$, with a whole left-focusing phase compressed in a proof of $Q \lf T ; \Gamma$, is chosen specifically for the purpose of maximal multi-focusing, where we will be interested in whether a certain left-focusing phase has happened rather than the specific left synchronous rules that have been applied. Notice also that when in the first premise $Q \lf T ; \Gamma$ of $\focL$ there is no need to keep track of the succedent formula $A$ since it is not affected by left synchronous rules, and similarly for the context $\Delta$ of the second premise. Similar observations apply to $\focR$.
+The design of rule $\focL$, with a whole left-focusing phase compressed in a proof of $T \mid \Gamma \lf Q$, is chosen specifically for the purpose of maximal multi-focusing, where we will be interested in whether a certain left-focusing phase has happened rather than the specific left synchronous rules that have been applied. Notice also that in the first premise $T \mid \Gamma \lf Q$ of $\focL$ there is no need to keep track of the succedent formula $A$ since it is not affected by left synchronous rules, similarly for the context $\Delta$ of the second premise. Analogous observations apply to $\focR$.
 
 
 When the (left-) right-focusing phase terminates, one can subsequently choose to focus on the (succedent) stoup formula. If both left- and right-focusing lead to valid derivations, they can be performed in any order, first left then right, or vice versa. When no formula is under focus anymore, we \emph{unfocus} and continue proof search in asynchronous phase. In order to unfocus, formulae that were previously under focus, which are now blurred, must have switched their polarity, which is reflected in the side condition $\UT(b,c,S,A)$ of rule $\unfoc$ ($\UT$ stands for ``unfocusing table''):
@@ -608,10 +609,10 @@ b & c & \UT(b,c,S,A) \\
   \hline
 \end{array}
 \]
-The stoup formula must be positive if it was under focus ($b=1$) but the succedent was not ($c=0$). Dually, the succedent formula must be negative is it was under focus ($c = 1$) and the stoup was not ($b = 0$). If both formulae were under focus ($b = 1 \wedge c = 1$), one of them must have changed its polarity: either the stoup formula has become positive or, if it had become (or stayed)  atomic, the succedent formula has become negative. Unfocusing also requires that at least one formula was previously under focus, hence the condition $b \vee c$ must be true.
+The stoup formula must be positive if it was under focus ($b=1$) but the succedent was not ($c=0$). Dually, the succedent formula must be negative is it was under focus ($c = 1$) and the stoup formula was not ($b = 0$). If both formulae were under focus ($b = 1 \wedge c = 1$), one of them must have changed its polarity: either the stoup formula has become positive or, if it had become (or stayed)  atomic, the succedent formula has become negative. Unfocusing also requires that at least one formula was previously under focus, hence the condition $b \vee c$ must be true.
 %The axiom rule is usable only if both stoup and succedent formulae were under focus.
 
-For a sequent with atomic stoup and positive succedent $X \mid \Gamma \up P$ (or, dually, negative stoup and atomic succedent), one can choose whether to focus on the stoup formula or not, and both choices may lead to a valid proof. For an example, consider the valid sequent $X \mid ~ \up (Y \lolli (X \ot Y)) \ot I$. An analogous situation was also present in the multi-focused calculus for classical linear logic \cite{chaudhuri:canonical:2008}, where in similar circumstances one was given the choice of focusing on negated atoms or not.
+For a sequent with atomic stoup and positive succedent $X \mid \Gamma \up P$ (or, dually, negative stoup and atomic succedent), one can choose whether to focus on the stoup formula or not, and both choices may lead to a valid proof. For an example, consider the valid sequent $X \mid ~ \up (Y \lolli (X \ot Y)) \ot I$. This situation was also present in the multi-focused calculus for classical linear logic \cite{chaudhuri:canonical:2008}, where in similar circumstances one was given the choice of focusing on negated atoms or not.
 %, e.g. there exist two distinct multi-focused proofs of $\vdash a^\bot,(a \rotatebox[origin=c]{180}{\&} \bot) \otimes \I$.
 %This form of non-determinism can be removed by forcing the focus on atomic formulae, which can be achieved by slighly modifying the side condition in the $\unfoc$ rule: if $b = 1$ then $S=P$ but also $A \not= X$ ($A$ not atomic), and if $b' = 1$ then $A = N$ but also $S \not= X$.
 
@@ -639,7 +640,7 @@ Rule $\otR$ of \Cref{fig:seqcalc}, with $\vdash$ replaced everywhere by $\up$, i
 \begin{proposition}\label{prop:otR}
   Let $\vec{\Delta} = \Delta_1,\dots,\Delta_n$ be a list of contexts and $\vec{B} = B_1,\dots,B_n$ a list of formulae, both non-empty.
   The following rule is admissible:
-  \begin{equation}\label{eq:otR}  
+  \begin{equation*}\label{eq:otR}  
   \small
   \begin{array}{c}
     \infer[\otR^+_\up]{S \mid \Gamma , \vec{\Delta} \up A \ot^+ \vec{B}}{
@@ -648,20 +649,22 @@ Rule $\otR$ of \Cref{fig:seqcalc}, with $\vdash$ replaced everywhere by $\up$, i
       \{ - \mid \Delta_i \up B_i \}_{i}
     }
   \end{array}
-  \end{equation}
+  \end{equation*}
   where $\{ - \mid \Delta_i \up B_i \}_{i}$ is a collection of premises $- \mid \Delta_i \up B_i$ for each $1 \le i \le n$.
 \end{proposition}
 \begin{proof}
   The proof proceeds by inspecting the polarity of formula $A$ and then by induction on the structure of the derivation $f : S \mid \Gamma \up A$. When $A$ is negative, we need to strengthen the statement for the induction on $f$ to succeed. So we prove the admissibility of the more general rule:
-  \begin{equation}
+  \begin{equation*}
     \label{eq:genotR}
     \footnotesize
+    \begin{array}{c}
       \infer[\otR^+_{\up N}]{S \mid \Gamma_0 , \vec{\Delta} \up (\Gamma_1 \lolli^+ A) \ot^+ \vec{B}}{
       S \mid \Gamma_0,\Gamma_1 \up A
       &
       \{ - \mid \Delta_i \up B_i \}_{i}
       }
-  \end{equation}
+    \end{array}
+  \end{equation*}
   The context $\Gamma_1$ serves as an accumulator for dealing with the case $f = \lolliR(f')$:
   \begin{equation*}\label{eq:otRlolliR}
   \scriptsize
@@ -686,7 +689,7 @@ Rule $\otR$ of \Cref{fig:seqcalc}, with $\vdash$ replaced everywhere by $\up$, i
     }
   \end{array}
   \end{equation*}
-  which makes sense since $\Gamma_1 {\lolli}^+ (A' {\lolli} B') = (\Gamma_1,A') {\lolli}^+ B'$.
+  which type checks since $\Gamma_1 {\lolli}^+ (A' {\lolli} B') = (\Gamma_1,A') {\lolli}^+ B'$.
   Another representative case is $f = \foc(f')$, where right-focusing can be immediately executed:
 %   \begin{equation}\label{eq:otR+foc}
 %     \footnotesize
@@ -719,8 +722,8 @@ Rule $\otR$ of \Cref{fig:seqcalc}, with $\vdash$ replaced everywhere by $\up$, i
         }
       }
       &
-      \infer[\otR^+]{\Gamma_1 {\lolli}^+ Q \rf \vec{\Delta};(\Gamma_1 {\lolli}^+ Q) {\ot}^+ \vec{B}}{
-        \infer[\blurR]{\Gamma_1 {\lolli}^+ Q \rf ~ ; \Gamma_1 {\lolli}^+ Q}{}
+      \infer[\otR^+]{\Gamma_1 {\lolli}^+ Q \mid \vec{\Delta} \rf (\Gamma_1 {\lolli}^+ Q) {\ot}^+ \vec{B}}{
+        \infer[\blurR]{\Gamma_1 {\lolli}^+ Q \mid ~ \rf \Gamma_1 {\lolli}^+ Q}{}
         &
         \! \{ - \mid \Delta_i \up B_i \}_{i}
       }
@@ -741,6 +744,7 @@ Rule $\otR$ of \Cref{fig:seqcalc}, with $\vdash$ replaced everywhere by $\up$, i
 %   }}
   \end{equation}
 \end{proof}
+
 We now move to the admissibility of left-synchronous rules. To this end, we introduce an inductive ternary (proof-relevant) relation $\L(S\mid\Gamma;A)$ which holds when the antecedent $S\mid \Gamma$ is obtained by repeated applications of left-invertible rules on the antecedent $A \mid ~$, where $A$ is in the stoup and the context is empty:
 \begin{equation*}\small
   \infer[\varepsilon]{\L(A\mid ~ ;A)}{}
@@ -778,7 +782,7 @@ Given a proof $\ell : \L(S\mid\Gamma;A)$, we can turn a derivation $f : S \mid \
  \end{equation}
 \begin{proposition}\label{prop:lolliL}
   The following rules are admissible:
-  \begin{equation}\label{eq:passlolliL}
+  \begin{equation*}\label{eq:passlolliL}
   \small
   \begin{array}{c}
     \infer[\pass_\up]{- \mid A,\Gamma \up C}{
@@ -790,7 +794,7 @@ Given a proof $\ell : \L(S\mid\Gamma;A)$, we can turn a derivation $f : S \mid \
       B \mid \Delta \up C
     }
   \end{array}
-  \end{equation}
+  \end{equation*}
 %  where, in the second rule, $\vec{\Gamma}$ and $\vec{A}$ have both length $n>0$.
 \end{proposition}
 \begin{proof}
@@ -808,7 +812,7 @@ Given a proof $\ell : \L(S\mid\Gamma;A)$, we can turn a derivation $f : S \mid \
   \end{array}
   \]
 %  Here $\vec{D}$ is a possibly empty list of formulae, and $\mathsf{hd}$ and $\mathsf{tl}$ are the head and tail operations on non-empty lists.
-  The additional assumption $\ell$ serves as an accumulator for dealing with the cases when $g$ is a left-invertible rule
+  The additional assumption $\ell:\L(S\mid \Delta_0;B)$ serves as an accumulator for dealing with the cases when $g$ is a left-invertible rule
   %: \L(S\mid \Delta_0;B)$ %serve as accumulators for dealing with the case in which $g$ is a left-invertible rule or passivation. These assumptions
   and it allows to state that the proof of the second premise is a subderivation of sequent $B \mid \Delta_1 \vdash C$ as depicted in (\ref{eq:runL}). A representative case is $g = \foc(g)$, where we can immediately execute left-focusing, obtaining a derivation dual to the one in (\ref{eq:otR+foc}).
   %obtained by repeated applications of left-invertible rules and passivation. More explicitly:
@@ -817,24 +821,25 @@ Given a proof $\ell : \L(S\mid\Gamma;A)$, we can turn a derivation $f : S \mid \
 %  Assuming proofs $f : S \mid \Delta_0,\Delta_1 \up C$ and $\ell : \L(S\mid \Delta_0;B)$ entails the existence of a proof of $B \mid \Delta_1 \up C$.
 \end{proof}
 
-Multi-focused proofs are not canonical wrt. to the equational theory in \Cref{fig:circeq}. During proof search, when the stoup formula is negative and the succedent is positive, we have the choice of left-focusing only, right-focusing only, or performing both left- and right-focusing, which can also be achieved in two distinct ways.
-For example, there exist three distinct proofs of the sequent $X \lolli \I \mid X , Y \up (Z \lolli Z) \ot Y$ which correspond to three $\circeq$-related derivations in the unfocused sequent calculus.
-As discussed before, in general we also have the choice of focusing on atomic formulae. %Another form of non-determinism is given by passivation and its interaction with $\otR$: when the succedent formula is a tensor and the context is non-empty, we may have the choice of first passivate and then right-focus or vice versa, and often both possibilities lead to valid derivations.
-
-It is possible to capture the remaining non-determinism in a congruence relation $\circeq_\up$ on derivations of sequents $S \mid \Gamma \up A$. This is inductively specified simultaneously with congruences $\circeq_\dn$, $\circeq_\mathsf{lf}$ and $\circeq_\mathsf{rf}$. The generators of this collection of relations are given in \Cref{sec:app}. It is possible to show that functions $\focus$ and $\emb$ respect the corresponding equivalence of derivations.
-
 The multi-focused sequent calculus in \Cref{fig:multi-focus} is sound and complete wrt. the sequent calculus in \Cref{fig:seqcalc}. 
-Let $\Prf(S \mid \Gamma \vdash A)$ be the set of proofs of the sequent $S \mid \Gamma \vdash A$, and similarly for $\Prf(S \mid \Gamma \up A)$.
+Let $\Prf(S \mid \Gamma \vdash A)$ and $\Prf(S \mid \Gamma \up A)$ be the sets of proofs of the sequent $S \mid \Gamma \vdash A$ and $S \mid \Gamma \up A$, respectively.
 \begin{theorem}\label{thm}
   There exist functions $\focus : \Prf(S \mid \Gamma \vdash A) \to \Prf(S \mid \Gamma \up A)$  and $\emb: \Prf(S \mid \Gamma \up A) \to \Prf(S \mid \Gamma \vdash A)$, turning sequent calculus derivations into multi-focused derivations, and vice versa.
 \end{theorem}
 \begin{proof}
-Function $\emb$ is obtained by erasing all phase-shifting rules and dashed boxes around blurred formulae. Function $\focus$ is defined by induction on the structure of the input derivation, noticing that each rule in \Cref{fig:seqcalc} has an admissible counterpart in the multi-focused sequent calculus.
+Function $\emb$ is obtained by erasing all phase-shifting rules and dashed boxes around blurred formulae. Function $\focus$ is defined by induction on the structure of the input derivation, noticing that each rule in \Cref{fig:seqcalc} has an admissible counterpart in the multi-focused sequent calculus, which follows from (\ref{eq:inv}) and \Cref{prop:otR,prop:lolliL}.
 \end{proof}
-It is also possible to show that the relation $\circ_\up$ is sound and complete wrt. the equivalence of derivations $\circeq$ in \Cref{fig:circeq}.
+
+Multi-focused proofs are not canonical wrt. to the equational theory in \Cref{fig:circeq}. During proof search, when the stoup formula is negative and the succedent is positive, we have the choice of left-focusing and subsequently unfocus, right-focusing and subsequently unfocus, or performing both left- and right-focusing before unfocusing, and the latter can also be achieved in two distinct ways.
+For example, there exist four distinct proofs of $X \lolli \I \mid X , Y \up (Z \lolli Z) \ot Y$ which correspond to four $\circeq$-related derivations in the unfocused sequent calculus.
+As discussed before, in general we also have the choice of whether focusing on atomic formulae or not. %Another form of non-determinism is given by passivation and its interaction with $\otR$: when the succedent formula is a tensor and the context is non-empty, we may have the choice of first passivate and then right-focus or vice versa, and often both possibilities lead to valid derivations.
+
+It is possible to capture the remaining non-determinism in a congruence relation $\circeq_\up$ on derivations of sequents $S \mid \Gamma \up A$. This is inductively specified simultaneously with congruences $\circeq_\dn$, $\circeq_\mathsf{lf}$ and $\circeq_\mathsf{rf}$. The generators of this collection of relations are given in \Cref{sec:app}. It is possible to show that functions $\focus$ and $\emb$ respect congruences $\circeq$ and $\circeq_\up$, and moreover define an equivalence between sets of proofs in the different sequent calculi, strengthening the statement of \Cref{thm}.
+%It is also possible to show that the relation $\circeq_\up$ is sound and complete wrt. the equivalence of derivations $\circeq$ in \Cref{fig:circeq}.
 \begin{theorem}\label{thmeq}
   Functions $\focus$ and $\emb$ underlie an isomorphism between the set of proofs of a sequent $S \mid \Gamma \vdash A$ quotiented by the equivalence relation $\circeq$ and the set of proofs of $S \mid \Gamma \up A$ quotiented by the equivalence relation $\circeq_\up$.
 \end{theorem}
+Details about the proof can be found in our Agda formalization.
 %The calculus of maximally multi-focused derivations introduced in the next section is designed to restrict this non-determinism.
 
 %%\niccolo{Change the next part}
@@ -900,27 +905,27 @@ Stoups are also tagged: $\green{S}$ or $\red{S}$. Tagged contexts consist of tag
     \\[6pt]
     \multicolumn{1}{l}{\text{\textsc{Synchronous Phase}}} \\[4pt]
         \infer[\red{\focL}]{\red{T} \mid \Gamma , \Delta \dn A}{
-          \green{Q} \lf \green{T} ; \green{\Gamma} &
+          \green{T} \mid \green{\Gamma} \lf \green{Q} &
           \dbox{$\green{Q}$} \mid \Delta \dn A
           & \red{\bullet} \in \Gamma
         }
     \qquad
         \infer[\focL]{\green{T} \mid \Gamma , \Delta \dn A}{
-          \green{Q} \lf \green{T} ; \green{\Gamma} &
+          \green{T} \mid \green{\Gamma} \lf \green{Q} &
           \dbox{$\green{Q}$} \mid \Delta \dn A
         }
         \\[6pt]
     \infer[\red{\focR}]{\dbox{$S$}_{\, b} \mid \Gamma,\Delta \dn \red{Q}}{
       \dbox{$S$}_{\, b} \mid \Gamma \dn \dbox{$\green{T}$}
       &
-      \green{T} \rf \green{\Delta} ; \green{Q}
+      \green{T} \mid \green{\Delta} \rf \green{Q}
       & T = M \supset \red{\bullet} \in \Delta
     }
     \;\;
     \infer[\focR]{\dbox{$S$}_{\, b} \mid \Gamma,\Delta \dn \green{Q}}{
       \dbox{$S$}_{\, b} \mid \Gamma \dn \dbox{$\green{T}$}
       &
-      \green{T} \rf \green{\Delta} ; \green{Q}
+      \green{T} \mid \green{\Delta} \rf \green{Q}
     }
     \\[4pt]
         \infer[\ax]{\dbox{$\green{X}$} \mid ~ \dn \dbox{$\green{X}$}}{}
@@ -1127,14 +1132,14 @@ Each multi-focused derivation can be normalized to a maximally multi-focused one
  turning multi-focused proofs into maximally multi-focused ones, and vice versa.
 \end{theorem}
 \begin{proof}
-  We only sketch the construction of $\mathsf{max}_\dn$. We refer the interested reader to the associated Agda formalization for the complete proof. The input derivation can either be: $(i)$ an application of $\focR$ followed by $\ax$ or $\unfoc$; $(ii)$ an application of $\focL$ followed by $\ax$ or $\unfoc$; $(iii)$ an application of both $\focL$ and $\focR$. In case $(iii)$, we can safely apply both $\focL$ and $\focR$ in the maximally multi-focused calculus. The most interesting cases are $(i)$ and $(ii$) when the focus is subsequently released. We only look at case $(i)$ when the input derivation is of the form $f = \focR(\unfoc(f'),r)$ for some $f' : S \mid \Gamma \up M$ and $r : M \rf \Delta ; Q$. To deal with this case, we prove the following rule admissible:% in the maximally multi-focused sequent calculus:
+  We only sketch the construction of $\mathsf{max}_\dn$. We refer the interested reader to the associated Agda formalization for the complete proof. The input derivation can either be: $(i)$ an application of $\focR$ followed by $\ax$ or $\unfoc$; $(ii)$ an application of $\focL$ followed by $\ax$ or $\unfoc$; $(iii)$ an application of both $\focL$ and $\focR$. In case $(iii)$, we can safely apply both $\focL$ and $\focR$ in the maximally multi-focused calculus. The most interesting cases are $(i)$ and $(ii$) when the focus is subsequently released. We only look at case $(i)$ when the input derivation is of the form $f = \focR(\unfoc(f'),r)$ for some $f' : S \mid \Gamma \up M$ and $r : M \mid \Delta \rf Q$. To deal with this case, we prove the following rule admissible:% in the maximally multi-focused sequent calculus:
   \begin{equation*}\label{eq:otmax}
     \small
     \proofbox{
     \infer[\focR_{\upm}]{\green{S} \mid \green{\Gamma},\green{\Delta} \upm \green{Q}}{
       \green{S} \mid \green{\Gamma} \upm \green{M}
       &
-      \green{M} \rf \green{\Delta} ; \green{Q}
+      \green{M} \mid \green{\Delta} \rfm \green{Q}
     }
     }
   \end{equation*}
@@ -1145,11 +1150,11 @@ Each multi-focused derivation can be normalized to a maximally multi-focused one
     \infer[\focR_{\upm N}]{\green{T} \mid \green{\Gamma_0},\green{\Delta} \upm \green{Q}}{
       \green{T} \mid \green{\Gamma_0},\green{\Gamma_1} \upm \green{A}
       &
-      \green{\green{\Gamma_1} \lolli^+ A} \rfm \green{\Delta} ; \green{Q}
+      \green{\green{\Gamma_1} \lolli^+ A} \mid \green{\Delta} \rfm \green{Q}
     }
     }
   \end{equation*}
-  We proceed by induction on the structure of the proof of the first premise $g : \green{T} \mid \green{\Gamma_0},\green{\Gamma_1} \upm \green{A}$. We look at the case $g = \foc(\focL(l,\unfoc(h)))$ for some $l : \green{P} \lfm \green{T} ; \green{\Gamma'}$ and $h : \green{P} \mid \green{\Delta'} \upm \red{A}$. In this case, we have the equality of contexts $\green{\Gamma'},\green{\Delta'} = \green{\Gamma_0},\green{\Gamma_1}$ and we check whether $\green{\Gamma_1}$ is split between $\green{\Gamma'}$ and $\green{\Delta'}$, or it is fully contained in $\green{\Delta'}$.
+  We proceed by induction on the structure of the proof of the first premise $g : \green{T} \mid \green{\Gamma_0},\green{\Gamma_1} \upm \green{A}$. We look at the case $g = \foc(\focL(l,\unfoc(h)))$ for some $l : \green{T} \mid \green{\Gamma'} \lfm \green{P}$ and $h : \green{P} \mid \green{\Delta'} \upm \red{A}$. In this case, we have the equality of contexts $\green{\Gamma'},\green{\Delta'} = \green{\Gamma_0},\green{\Gamma_1}$ and we check whether $\green{\Gamma_1}$ is split between $\green{\Gamma'}$ and $\green{\Delta'}$, or it is fully contained in $\green{\Delta'}$.
   \begin{enumerate}
   \item If $\green{\Gamma_1} = \green{\Gamma_{1}'},\green{\Delta'}$ and $\green{\Gamma'} =\green{\Gamma_0},\green{\Gamma_{1}'}$ for some non-empty $\green{\Gamma_{1}'}$, then multi-focusing on both stoup and succedent is not possible. We return:
     \[\small
@@ -1160,8 +1165,8 @@ Each multi-focused derivation can be normalized to a maximally multi-focused one
             \infer={\red{T} \mid \green{\Gamma_0},\red{\Gamma_1} \upm \green{A}}{
               \infer[\foc]{\red{T} \mid \green{\Gamma_0},\red{\Gamma'_1},\red{\Delta'}\upm \green{A}}{
                 \infer[\red{\focL}]{\red{T} \mid \green{\Gamma_0},\red{\Gamma'_1},\red{\Delta'} \dnm \green{A}}{
-                  \infer={\green{P} \lfm \green{T} ; \green{\Gamma_0},\green{\Gamma'_1}}{
-                    \green{P} \lfm \green{T} ; \green{\Gamma'}
+                  \infer={\green{T} \mid \green{\Gamma_0},\green{\Gamma'_1} \lfm \green{P}}{
+                    \green{T} \mid \green{\Gamma'} \lfm \green{P}
                   }
                   &
                   \infer[\unfoc]{\dbox{$\green{P}$} \mid \red{\Delta'} \dnm \green{A}}{
@@ -1173,7 +1178,7 @@ Each multi-focused derivation can be normalized to a maximally multi-focused one
           }
         }
         &
-        \green{\green{\Gamma_1}{\lolli}^+ A} \rfm \green{\Delta} ; \green{Q}
+        \green{\green{\Gamma_1}{\lolli}^+ A} \mid \green{\Delta} \rfm \green{Q}
       }
     }
     \]
@@ -1183,7 +1188,7 @@ Each multi-focused derivation can be normalized to a maximally multi-focused one
     \infer[\foc]{\green{T} \mid \green{\Gamma_0},\green{\Delta} \upm \green{Q}}{
       \infer={\green{T} \mid \green{\Gamma_0} ,\green{\Delta} \dnm \green{Q}}{
         \infer[\focL]{\green{T} \mid \green{\Gamma'},\green{\Gamma_{0}'},\green{\Delta} \dnm \green{Q}}{
-          \green{P} \lfm \green{T} ; \green{\Gamma'}
+          \green{T} \mid \green{\Gamma'} \lfm \green{P}
           &
           \infer[\focR]{\dbox{$\green{P}$} \mid \green{\Gamma_{0}'},\green{\Delta} \dnm \green{Q}}{
             \infer[\unfoc]{\dbox{$\green{P}$} \mid \green{\Gamma_{0}'} \dnm \dbox{$\green{\Gamma_1{\lolli}^+ A}$}}{
@@ -1194,7 +1199,7 @@ Each multi-focused derivation can be normalized to a maximally multi-focused one
               }
             }
             &
-            \green{\green{\Gamma_1}{\lolli}^+ A} \rfm \green{\Delta} ; \green{Q}
+            \green{\green{\Gamma_1}{\lolli}^+ A} \mid \green{\Delta} \rfm \green{Q}
           }
         }
       }
@@ -1956,10 +1961,10 @@ Uustalu et al. \cite{UVW:protsn} define a normalization procedure for \SkNMILL\ 
 \begin{array}{rcl}
 \proofbox{
   \infer[\focL]{T \mid \Gamma,\Delta,\Lambda \dn Q}{
-    \deduce{Q' \lf T ; \Gamma}{h} &
+    \deduce{T \mid \Gamma \lf Q'}{h} &
     \infer[\focR]{\dbox{$Q'$} \mid \Delta,\Lambda \dn Q}{
       \deduce{\dbox{$Q'$} \mid \Delta \dn \dbox{$M$}}{f} &
-      \deduce{M \rf \Lambda ; Q}{k}
+      \deduce{M \mid \Lambda \rf Q}{k}
     }
   }
 }
@@ -1967,11 +1972,11 @@ Uustalu et al. \cite{UVW:protsn} define a normalization procedure for \SkNMILL\ 
 \proofbox{
   \infer[\focR]{T \mid \Gamma,\Delta,\Lambda \dn Q}{    
     \infer[\focL]{T \mid \Gamma,\Delta \dn \dbox{$M$}}{
-      \deduce{Q' \lf T ; \Gamma}{h} &
+      \deduce{T \mid \Gamma \lf Q'}{h} &
       \deduce{\dbox{$Q'$} \mid \Delta \dn \dbox{$M$}}{f}      
     }
     &
-    \deduce{M \rf \Lambda ; Q}{k}
+    \deduce{M \mid \Lambda \rf Q}{k}
   }
 }
 \\[6pt]
@@ -1980,7 +1985,7 @@ Uustalu et al. \cite{UVW:protsn} define a normalization procedure for \SkNMILL\ 
     \infer[\lolliR^+]{T \mid \Gamma,\Delta \up \Lambda \lolli^+ Q}{
       \infer[\foc]{T \mid \Gamma,\Delta,\Lambda \up Q}{
         \infer[\focL]{T \mid \Gamma , \Delta,\Lambda \dn Q}{
-          \deduce{P \lf T ; \Gamma}{h} &
+          \deduce{T \mid \Gamma \lf P}{h} &
           \infer[\unfoc]{\dbox{$P$} \mid \Delta,\Lambda \dn Q}{
             \deduce{P \mid \Delta,\Lambda \up Q}{f}
           }
@@ -1992,7 +1997,7 @@ Uustalu et al. \cite{UVW:protsn} define a normalization procedure for \SkNMILL\ 
 & \circeq_\dn &
 \proofbox{
   \infer[\focL]{T \mid \Gamma,\Delta \dn \dbox{$\Lambda \lolli^+ Q$}}{
-    \deduce{P \lf T ; \Gamma}{h} &
+    \deduce{T \mid \Gamma \lf P}{h} &
     \infer[\unfoc]{\dbox{$P$} \mid \Delta \dn \dbox{$\Lambda \lolli^+ Q$}}{
       \infer[\lolliR^+]{P \mid \Delta \up \Lambda \lolli^+ Q}{
         \deduce{P \mid \Delta,\Lambda \up Q}{f}
@@ -2006,7 +2011,7 @@ Uustalu et al. \cite{UVW:protsn} define a normalization procedure for \SkNMILL\ 
     \infer[\lolliR^+]{T \mid \Gamma,\Delta \up \Lambda \lolli^+ Q}{
       \infer[\foc]{T \mid \Gamma,\Delta,\Lambda \up Q}{
         \infer[\focL]{T \mid \Gamma , \Delta,\Lambda \dn Q}{
-          \deduce{X \lf T ; \Gamma}{h} &
+          \deduce{T \mid \Gamma \lf X}{h} &
           \deduce{\dbox{$X$} \mid \Delta,\Lambda \dn Q}{f}
         }
       }
@@ -2016,12 +2021,12 @@ Uustalu et al. \cite{UVW:protsn} define a normalization procedure for \SkNMILL\ 
 & \circeq_\dn &
 \proofbox{
   \infer[\focL]{T \mid \Gamma,\Delta \dn \dbox{$\Lambda \lolli^+ Q$}}{
-    \deduce{X \lf T ; \Gamma}{h} &
+    \deduce{T \mid \Gamma \lf X}{h} &
     \infer[\unfoc]{\dbox{$X$} \mid \Delta \dn \dbox{$\Lambda \lolli^+ Q$}}{
       \infer[\lolliR^+]{X \mid \Delta \up \Lambda \lolli^+ Q}{
         \infer[\foc]{X \mid \Delta,\Lambda \up Q}{
           \infer[\focL]{X \mid \Delta,\Lambda \dn Q}{
-            \infer[\blurL]{X \lf X ; ~}{} &
+            \infer[\blurL]{X \mid ~ \lf X}{} &
             \deduce{\dbox{$X$} \mid \Delta,\Lambda \dn Q}{f}
           }
         }
@@ -2044,7 +2049,7 @@ Uustalu et al. \cite{UVW:protsn} define a normalization procedure for \SkNMILL\ 
             \deduce{T \mid \Gamma,\Delta \up N}{f}
           }
           &
-          \deduce{N \rf \Lambda ; Q}{h}
+          \deduce{N \mid \Lambda \rf Q}{h}
         }
       }
     }
@@ -2060,7 +2065,7 @@ Uustalu et al. \cite{UVW:protsn} define a normalization procedure for \SkNMILL\ 
       }
     }
     &
-    \deduce{N \rf \Lambda ; Q}{h}
+    \deduce{N \mid \Lambda \rf Q}{h}
   }
 }
 \\[6pt]
@@ -2072,7 +2077,7 @@ Uustalu et al. \cite{UVW:protsn} define a normalization procedure for \SkNMILL\ 
         \infer[\focR]{T \mid \Gamma,\Delta,\Lambda \dn Q}{
           \deduce{T \mid \Gamma,\Delta \dn \dbox{$X$}}{f}
           &
-          \deduce{X \rf \Lambda ; Q}{h}
+          \deduce{X \mid \Lambda \rf Q}{h}
         }
       }
     }
@@ -2088,19 +2093,19 @@ Uustalu et al. \cite{UVW:protsn} define a normalization procedure for \SkNMILL\ 
           \infer[\focR]{T \mid \Gamma,\Delta \dn X}{
             \deduce{T \mid \Gamma,\Delta \dn \dbox{$X$}}{f}
             &
-            \infer[\blurR]{X \rf ~ ; X}{}
+            \infer[\blurR]{X \mid ~ \rf X}{}
           }
         }
       }
     }
     &
-    \deduce{X \rf \Lambda ; Q}{h}
+    \deduce{X \mid \Lambda \rf Q}{h}
   }
 }
 \\[6pt]
 \proofbox{
   \infer[\focL]{X \mid \Gamma \dn \dbox{$N$}}{
-    \infer[\blurL]{X \lf X ; ~}{} &
+    \infer[\blurL]{X \mid ~ \lf X}{} &
     \infer[\unfoc]{\dbox{$X$} \mid \Gamma \dn \dbox{$N$}}{
       \deduce{X \mid \Gamma \up N}{f}
     }
@@ -2119,7 +2124,7 @@ Uustalu et al. \cite{UVW:protsn} define a normalization procedure for \SkNMILL\ 
       \deduce{P \mid \Gamma \up X}{f}
     }
     &
-    \infer[\blurR]{X \rf ~ ; X}{}
+    \infer[\blurR]{X \mid ~ \rf X}{}
   }
 }
 & \circeq_\dn &
