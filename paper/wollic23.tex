@@ -191,7 +191,10 @@ The study of \SkNMILL\ was initially motivated by its categorical semantics in t
 The paper starts with a brief introduction of \SkNMILL\ and its cut-free sequent calculus. It continues with a presentation of a sound and complete multi-focused sequent calculus. As expected, the latter does not resolve all the permutative non-determinism, but its introduction is pedagogically useful as it sets the stage for the more involved maximally multi-focused sequent calculus. The latter uses a system of \emph{tags}, or colors, similarly employed by Uustalu et al. in their calculus of normal forms \cite{UVW:protsn}, which are inspired by Scherer and R{\'e}my's saturation technique \cite{scherer:simple:2015}.
 Tags are used to keep track of new formulae appearing in context from the application of invertible rules and to decide whether multi-focusing on both the stoup and succedent formulae is admissible or not.
 
-An important contribution of this project is the formalization of the maximal multi-focusing calculus for \SkNMILL\ and the proof of its correctness in the Agda proof assistant. The code, containing all the material presented in the paper, can be found at: \url{https://github.com/niccoloveltri/multifocus-sknmill}. 
+An important contribution of this project is the formalization of the maximal multi-focusing calculus for \SkNMILL\ and the proof of its correctness in the Agda proof assistant. The code, containing all the material presented in the paper, can be found at:
+\begin{center}
+  \url{https://github.com/niccoloveltri/multifocus-sknmill}
+\end{center}
 %the definition of the normalization functions of \Cref{thm,thm2}. \Cref{thm3} has only been checked on pen and paper, its formalization is work in progress and will be discussed in an extended version of this paper.
 
 
@@ -617,10 +620,10 @@ For a sequent with atomic stoup and positive succedent $X \mid \Gamma \up P$ (or
 %, e.g. there exist two distinct multi-focused proofs of $\vdash a^\bot,(a \rotatebox[origin=c]{180}{\&} \bot) \otimes \I$.
 %This form of non-determinism can be removed by forcing the focus on atomic formulae, which can be achieved by slighly modifying the side condition in the $\unfoc$ rule: if $b = 1$ then $S=P$ but also $A \not= X$ ($A$ not atomic), and if $b' = 1$ then $A = N$ but also $S \not= X$.
 
-Invertible rules are easily proved to be admissible in the $\up$ phase (with a general formula as succedent), and similarly $\IR$ and  $\ax$:
-%\begin{proposition}
-%  The following rules are admissible:
-  \begin{equation}\label{eq:inv}
+Invertible rules are easily proved to be admissible in the $\up$ phase (with a general formula as succedent), and similarly $\IR$ and  $\ax$.
+\begin{proposition}\label{eq:inv}
+  The following rules are admissible:
+  \begin{equation*}
   \small
   \begin{array}{c}
     \infer[\otL_\up]{A \ot B \mid \Gamma \up C}{A \mid  B , \Gamma \up C}
@@ -635,8 +638,9 @@ Invertible rules are easily proved to be admissible in the $\up$ phase (with a g
     \qquad
     \infer[\ax_\up]{X \mid ~ \up X}{}    
   \end{array}
-  \end{equation}
-%\end{proposition}
+  \end{equation*}
+\end{proposition}
+
 Rule $\otR$ of \Cref{fig:seqcalc}, with $\vdash$ replaced everywhere by $\up$, is also admissible, but showing this requires more work. We prove the admissibility of a \emph{macro} inference rule corresponding to multiple application of $\otR$. To this end, given a formula $A$ and a list of formulae $\Gamma = B_1,\dots,B_n$, define $A \ot^* \Gamma = (((A \ot B_1) \ot B_2) \ot \dots) \ot B_n$, which is simply $A$ when $\Gamma$ is empty. If $\Gamma$ is non-empty, we write $A \ot^+ \Gamma$. Define also $\Gamma \lolli^* A = B_1 \lolli (B_2 \lolli (\dots \lolli (B_n \lolli A)))$ and similarly $\Gamma\lolli^+ A$ when $\Gamma$ is non-empty.
 \begin{proposition}\label{prop:otR}
   Let $\vec{\Delta} = \Delta_1,\dots,\Delta_n$ be a list of contexts and $\vec{B} = B_1,\dots,B_n$ a list of formulae, both non-empty.
@@ -828,7 +832,7 @@ Let $\Prf(S \mid \Gamma \vdash A)$ and $\Prf(S \mid \Gamma \up A)$ be the sets o
   There exist functions $\focus : \Prf(S \mid \Gamma \vdash A) \to \Prf(S \mid \Gamma \up A)$  and $\emb: \Prf(S \mid \Gamma \up A) \to \Prf(S \mid \Gamma \vdash A)$, turning sequent calculus derivations into multi-focused derivations, and vice versa.
 \end{theorem}
 \begin{proof}
-Function $\emb$ is obtained by erasing all phase-shifting rules and dashed boxes around blurred formulae. Function $\focus$ is defined by induction on the structure of the input derivation, noticing that each rule in \Cref{fig:seqcalc} has an admissible counterpart in the multi-focused sequent calculus, which follows from (\ref{eq:inv}) and \Cref{prop:otR,prop:lolliL}.
+Function $\emb$ is obtained by erasing all phase-shifting rules and dashed boxes around blurred formulae. Function $\focus$ is defined by induction on the structure of the input derivation, noticing that each rule in \Cref{fig:seqcalc} has an admissible counterpart in the multi-focused sequent calculus, which follows from Propositions \ref{eq:inv}, \ref{prop:otR} and \ref{prop:lolliL}.
 \end{proof}
 
 Multi-focused proofs are not canonical wrt. to the equational theory in \Cref{fig:circeq}. During proof search, when the stoup formula is negative and the succedent is positive, we have the choice of left-focusing and subsequently unfocus, right-focusing and subsequently unfocus, or performing both left- and right-focusing before unfocusing, and the latter can also be achieved in two distinct ways.
@@ -1376,7 +1380,7 @@ We refer the reader to our Agda formalization for details about the proofs.
   Functions $\mathsf{max}_\up\circ \focus$ and $\emb \circ \mathsf{untag}_\up$ underlie an isomorphism between the set of proofs of a sequent $S \mid \Gamma \vdash A$ quotiented by the equivalence relation $\circeq$ and the set of proofs of $\green{S} \mid \green{\Gamma} \upm \green{A}$. % in the maximally multi-focused calculus.
 \end{corollary}
 \begin{proof}
-  By putting together \Cref{thmeq} and \Cref{thm3}.
+  By \Cref{thmeq,thm3}.
 \end{proof}
 
 %%%  Four proof search phases:
