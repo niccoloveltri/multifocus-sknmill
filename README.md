@@ -6,5 +6,5 @@
 
 ---
 
-The file [Main.agda](https://github.com/niccoloveltri/multifocus-sknmill/blob/main/code/Main.agda) imports the whole development.  
+The file [code/Main.agda](https://github.com/niccoloveltri/multifocus-sknmill/blob/main/code/Main.agda) imports the whole development.  
 The code typechecks using Agda version 2.6.2.
