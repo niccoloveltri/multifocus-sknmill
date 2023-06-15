@@ -220,19 +220,19 @@ Two forms of \emph{cut} are admissible, since the cut formula can either be loca
 %\begin{proposition}
 %The following rules are admissible:
 \[
-\small
+%\small
     \infer[\mathsf{scut}]{S \mid \Gamma , \Delta \vdash C}{
       S \mid \Gamma \vdash A
       &
       A \mid \Delta \vdash C
     }
-    \qquad
+    \;\;\,
     \infer[\mathsf{ccut}]{S \mid \Delta_0 , \Gamma , \Delta_1 \vdash C}{
       - \mid \Gamma \vdash A
       &
       S \mid \Delta_0 , A , \Delta_1 \vdash C
     }
-    \qquad
+    \quad
     \infer[\ax_A]{A \mid \quad \vdash A}{}
 \]
 %\end{proposition}
@@ -507,7 +507,7 @@ We now present a multi-focused sequent calculus for \SkNMILL, which draws  inspi
 % \end{figure}
 \begin{figure}[t]
   \[
-  \small
+  %\small
 %  \def\arraystretch{2.5}
   \begin{array}{c}
     \multicolumn{1}{l}{\text{\textsc{Asynchronous Phase}}} \\[4pt]
@@ -605,7 +605,7 @@ The design of rule $\focL$, with a whole left-focusing phase compressed in a pro
 
 
 When the (left-) right-focusing phase terminates, one can subsequently choose to focus on the (succedent) stoup formula. If the execution of both left- and right-focusing lead to a valid derivation, they can be performed in any order, first left then right, or vice versa. When no formula is under focus anymore, we \emph{unfocus} and continue proof search in asynchronous phase. In order to unfocus, formulae that were previously under focus, which are now blurred, must have switched their polarity, which is reflected in the side condition $\UT(b,c,S,A)$ of rule $\unfoc$ ($\UT$ stands for ``unfocusing table''):
-\[\small
+\[
 \begin{array}{|@{\;}c@{\;}|@{\;}c@{\;}|@{\;}c@{\;}|}
   \hline
 b & c & \UT(b,c,S,A) \\
@@ -628,7 +628,7 @@ Invertible rules are easily proved to be admissible in the $\up$ phase (with a g
 \begin{proposition}\label{eq:inv}
   The following rules are admissible:
   \begin{equation*}
-  \small
+  %\small
   \begin{array}{c}
     \infer[\otL_\up]{A \ot B \mid \Gamma \up C}{A \mid  B , \Gamma \up C}
     \qquad
@@ -650,7 +650,7 @@ Rule $\otR$ of \Cref{fig:seqcalc}, with $\vdash$ replaced everywhere by $\up$, i
   Let $\vec{\Delta} = \Delta_1,\dots,\Delta_n$ be a list of contexts and $\vec{B} = B_1,\dots,B_n$ a list of formulae, both non-empty.
   The following rule is admissible:
   \begin{equation*}\label{eq:otR}  
-  \small
+  %\small
   \begin{array}{c}
     \infer[\otR^+_\up]{S \mid \Gamma , \vec{\Delta} \up A \ot^+ \vec{B}}{
       S \mid \Gamma \up A
@@ -665,7 +665,7 @@ Rule $\otR$ of \Cref{fig:seqcalc}, with $\vdash$ replaced everywhere by $\up$, i
   The proof proceeds by inspecting the polarity of formula $A$ and then by induction on the structure of the derivation $f : S \mid \Gamma \up A$. When $A$ is negative, we need to strengthen the statement for the induction on $f$ to succeed. So we prove the admissibility of the more general rule:
   \begin{equation*}
     \label{eq:genotR}
-    \footnotesize
+    %\small
     \begin{array}{c}
       \infer[\otR^+_{\up N}]{S \mid \Gamma , \vec{\Delta} \up (\Lambda \lolli^+ A) \ot^+ \vec{B}}{
       S \mid \Gamma,\Lambda \up A
@@ -676,8 +676,8 @@ Rule $\otR$ of \Cref{fig:seqcalc}, with $\vdash$ replaced everywhere by $\up$, i
   \end{equation*}
   The context $\Lambda$ serves as an accumulator for dealing with the case $f = \lolliR(f')$:
   \begin{equation*}\label{eq:otRlolliR}
-  \scriptsize
-  \begin{array}{c}
+  %\small
+  \begin{array}{l}
 %    \proofbox{
 %    \hspace{-3cm}
     \proofbox{\infer[\otR^+_{\up N}]{S \mid \Gamma , \vec{\Delta} \up (\Lambda {\lolli}^+ (A' {\lolli} B')) \ot^+ \vec{B}}{
@@ -686,9 +686,9 @@ Rule $\otR$ of \Cref{fig:seqcalc}, with $\vdash$ replaced everywhere by $\up$, i
         }
       &
       \{ - \mid \Delta_i \up B_i \}_{i}
-    }} \!\!\!\! =
-%    \\
-    %   \hspace{3cm}
+    }} =
+    \\[-5pt]
+       \hspace{5.4cm}
     \proofbox{
     \infer[\otR^+_{\up N}]{S \mid \Gamma , \vec{\Delta} \up ((\Lambda,A') {\lolli}^+ B') \ot^+ \vec{B}}{
       \deduce{S \mid \Gamma,\Lambda,A' \up B'}{f'}
@@ -719,7 +719,7 @@ Rule $\otR$ of \Cref{fig:seqcalc}, with $\vdash$ replaced everywhere by $\up$, i
 %   }}
 %   \end{equation}
   \begin{equation}\label{eq:otR+foc}
-    \footnotesize
+    \small    
     \proofbox{
   \infer[\foc]{T \mid \Gamma , \vec{\Delta} \up (\Lambda {\lolli}^+ Q) {\ot}^+ \vec{B}}{
     \infer[\focR]{T \mid \Gamma , \vec{\Delta} \dn (\Lambda {\lolli}^+ Q) {\ot}^+ \vec{B}}{
@@ -730,7 +730,7 @@ Rule $\otR$ of \Cref{fig:seqcalc}, with $\vdash$ replaced everywhere by $\up$, i
           }
         }
       }
-      &
+      & 
       \infer[\otR^+]{\Lambda {\lolli}^+ Q \mid \vec{\Delta} \rf (\Lambda {\lolli}^+ Q) {\ot}^+ \vec{B}}{
         \infer[\blurR]{\Lambda {\lolli}^+ Q \mid ~ \rf \Lambda {\lolli}^+ Q}{}
         &
@@ -755,7 +755,7 @@ Rule $\otR$ of \Cref{fig:seqcalc}, with $\vdash$ replaced everywhere by $\up$, i
 \end{proof}
 
 We now move to the admissibility of left-synchronous rules. To this end, we introduce an inductive ternary (proof-relevant) relation $S\mid\Gamma \upl A$ which holds when the antecedent $S\mid \Gamma$ is obtained by repeated applications of left-invertible rules on the antecedent $A \mid ~$, where $A$ is in the stoup and the context is empty:
-\begin{equation*}\small
+\begin{equation*}%\small
   \infer[\IL^{-1}]{-\mid\Gamma \upl A}{\I\mid\Gamma\upl A}
   \qquad
   \infer[\otL^{-1}]{A'\mid B',\Gamma \upl A}{A' \ot B'\mid \Gamma \upl A}
@@ -766,7 +766,7 @@ We now move to the admissibility of left-synchronous rules. To this end, we intr
 \end{equation*}
 Given a proof $\ell : S\mid\Gamma \upl A$, we can turn a derivation $f : S \mid \Gamma,\Delta \up C$ into a derivation $\runL(f,\ell) : A \mid \Delta \up C$:
  \begin{equation}\label{eq:runL}
-  \footnotesize
+  %\small
 %  \arraycolsep=.7cm%\def\arraystretch{3}
 %%  \begin{array}{cc}
   %    (j = 0) \;\;
@@ -792,7 +792,7 @@ Given a proof $\ell : S\mid\Gamma \upl A$, we can turn a derivation $f : S \mid 
 \begin{proposition}\label{prop:lolliL}
   The following rules are admissible:
   \begin{equation*}\label{eq:passlolliL}
-  \small
+  %\small
   \begin{array}{c}
     \infer[\pass_\up]{- \mid A,\Gamma \up C}{
       A \mid \Gamma \up C}
@@ -809,7 +809,7 @@ Given a proof $\ell : S\mid\Gamma \upl A$, we can turn a derivation $f : S \mid 
 \begin{proof}
   We only discuss $\lolliL^+$. Proving its admissibility proceeds by inspecting the polarity of formula $B$ and then by induction on the structure of the derivation $g : B \mid \Delta \up C$. When $B$ is positive, we need to strengthen the statement for the induction to succeed. We prove the admissibility of the more general rule:
   \[
-  \small
+  %\small
   \begin{array}{c}
     \infer[\lolliL^+_{\up P}]{\vec{A} \lolli^+ B \mid \vec{\Gamma} , \Delta \up C}{
       \{ - \mid \Gamma_i \up A_i \}_{i}
@@ -843,9 +843,6 @@ Multi-focused proofs are not canonical wrt. to the equational theory in \Cref{fi
 For example, there exist four distinct proofs of $X \lolli \I \mid X , Y \up (Z \lolli Z) \ot Y$ which correspond to four $\circeq$-related derivations in the unfocused sequent calculus.
 As discussed before, in general we also have the choice of whether focusing on atomic formulae or not, which further increases the amount of non-determinism. %Another form of non-determinism is given by passivation and its interaction with $\otR$: when the succedent formula is a tensor and the context is non-empty, we may have the choice of first passivate and then right-focus or vice versa, and often both possibilities lead to valid derivations.
 
-
-It is possible to fully capture this remaining non-determinism in a congruence relation $\circeq_\up$ on derivations of sequents $S \mid \Gamma \up A$. This is inductively specified simultaneously with congruences $\circeq_\dn$, $\circeq_\mathsf{lf}$ and $\circeq_\mathsf{rf}$. The generators of this collection of relations are given in \Cref{sec:app}. We can show that functions $\focus$ and $\emb$ respect congruences $\circeq$ and $\circeq_\up$, and moreover define an equivalence between sets of proofs in the different sequent calculi, strengthening the statement of \Cref{thm}.
-%It is also possible to show that the relation $\circeq_\up$ is sound and complete wrt. the equivalence of derivations $\circeq$ in \Cref{fig:circeq}.
 \begin{figure}[hbpt]
 \scriptsize 
 \[
@@ -1034,6 +1031,11 @@ It is possible to fully capture this remaining non-determinism in a congruence r
 \caption{Equivalence of derivations in the multi-focused sequent calculus.}
 \label{sec:app}
 \end{figure}
+
+It is possible to fully capture this remaining non-determinism in a congruence relation $\circeq_\up$ on derivations of sequents $S \mid \Gamma \up A$. This is inductively specified simultaneously with congruences $\circeq_\dn$, $\circeq_\mathsf{lf}$ and $\circeq_\mathsf{rf}$. The generators of this collection of relations are exhibited in \Cref{sec:app}. Notice that all these generators belong to the relation $\circeq_\dn$. This means that $\circeq_\up$ is the smallest equivalence relation which rules $\lolliR$, $\IL$ and $\otL$ respect (in the sense that they send $\circeq_\up$-related premises to $\circeq_\up$-related conclusions), and moreover $f \circeq_\dn g$ implies $\foc(f) \circeq_\up \foc(g)$.
+
+We can show that functions $\focus$ and $\emb$ respect congruences $\circeq$ and $\circeq_\up$, and moreover define an equivalence between sets of proofs in the different sequent calculi, strengthening the statement of \Cref{thm}.
+%It is also possible to show that the relation $\circeq_\up$ is sound and complete wrt. the equivalence of derivations $\circeq$ in \Cref{fig:circeq}.
 \begin{theorem}\label{thmeq}
   Functions $\focus$ and $\emb$ underlie an isomorphism between the set of proofs of a sequent $S \mid \Gamma \vdash A$ quotiented by the equivalence relation $\circeq$ and the set of proofs of $S \mid \Gamma \up A$ quotiented by the equivalence relation $\circeq_\up$.
 \end{theorem}
@@ -1050,14 +1052,16 @@ We need a mechanism for keeping track of \emph{new} formulae appearing in contex
 
 We employ a mechanism from the recent work of Uustalu et al. \cite{UVW:protsn} which was inspired by Scherer and R{\'e}my's saturation for intuitionistic logic \cite{scherer:simple:2015}. Formulae appearing in a sequent will now be decorated with a superscript Boolean value, which we call a \emph{tag}: $A^0$ or $A^1$. 
 %The mnemonic is that a red tag denotes a formula or a stoup that we should pay attention to. 
-Stoups are also tagged: $S^0$ or $S^1$. Tagged contexts consist of tagged formulae. Sequents in the maximally multi-focused sequent calculus $S \mid \Gamma \upm A$ and $S \mid \Gamma \dnm A$ are triples of a tagged stoup $S$, a tagged context $\Gamma$ and a tagged formula $A$. If in a sequent we do not want to specify the tag of a tagged formula (or stoup or context), we simply write it without superscript $A$ (or $S$ or $\Gamma$). Tags serve two purposes:
+Stoups are also tagged: $S^0$ or $S^1$. Tagged contexts consist of tagged formulae. Sequents in the maximally multi-focused sequent calculus $S \mid \Gamma \upm A$ and $S \mid \Gamma \dnm A$ are triples of a tagged stoup $S$, a tagged context $\Gamma$ and a tagged formula $A$. If in a sequent we do not want to specify the tag of a tagged formula, we simply write it without superscript $A$. Given a tagged formula $A$, we also write $A^0$ when we want to replace $A$'s tag by $0$. These conventions also apply to tagged stoups and contexts in a sequent.
+
+Tags serve two purposes:
 \begin{enumerate}
 \item They are used to remember which (if any) among left- or right-focusing was \emph{not} performed during the preceding focusing phase. If the stoup is $S^1$, only right-focusing was previously executed. Dually, if the succedent formula is $A^1$, only left-focusing took place.
 \item In case one (and only one) among the stoup and the succedent has tag 1, new formulae moved to context via the application of invertible rules are also assigned tag 1. So tags are used to remember which formulae in context are new.
 \end{enumerate}
 \begin{figure}[t]
   \[
-  \small
+  %\small
 %  \def\arraystretch{2.5}
   \begin{array}{c}
     \multicolumn{1}{l}{\text{\textsc{Asynchronous Phase}}} \\[4pt]
@@ -1303,7 +1307,7 @@ More interestingly, each multi-focused derivation can be normalized to a maximal
 \begin{proof}
   We only sketch the construction of $\mathsf{max}_\dn$, which is the most challenging function to define. We refer the interested reader to the associated Agda formalization for the complete proof. The input derivation can either be: $(i)$ an application of $\focR$ followed by $\ax$ or $\unfoc$; $(ii)$ an application of $\focL$ followed by $\ax$ or $\unfoc$; $(iii)$ an application of both $\focL$ and $\focR$. In case $(iii)$, we can safely apply both $\focL$ and $\focR$ in the maximally multi-focused calculus. The most interesting cases are $(i)$ and $(ii$) when the focus is subsequently released. We only look at case $(i)$ when the input derivation is of the form $f = \focR(\unfoc(f'),r)$ for some $f' : S \mid \Gamma \up M$ and $r : M \mid \Delta \rf Q$. To deal with this case, we prove the following rule admissible:% in the maximally multi-focused sequent calculus:
   \begin{equation*}\label{eq:otmax}
-    \small
+    %\small
     \proofbox{
     \infer[\focR_{\upm}]{\green{S} \mid \green{\Gamma},\green{\Delta} \upm \green{Q}}{
       \green{S} \mid \green{\Gamma} \upm \green{M}
@@ -1314,7 +1318,7 @@ More interestingly, each multi-focused derivation can be normalized to a maximal
   \end{equation*}
   The proof proceeds by checking whether $M$ is atomic or negative. In the latter case we further need to generalize the statement and prove the admissibility of
   \begin{equation*}\label{eq:otmaxneg}
-    \small
+    %\small
     \proofbox{
     \infer[\focR_{\upm N}]{\green{T} \mid \green{\Gamma},\green{\Delta} \upm \green{Q}}{
       \green{T} \mid \green{\Gamma},\green{\Lambda} \upm \green{A}
