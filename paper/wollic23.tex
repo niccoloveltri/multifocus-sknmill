@@ -107,9 +107,11 @@
 
 \usepackage[dvipsnames]{xcolor}
 
-\newcommand{\red}[1]{{\color{Red}#1}}
-\newcommand{\blue}[1]{{\color{Cerulean}#1}}
-\newcommand{\green}[1]{{\color{Green}#1}}
+% \newcommand{\red}[1]{{\color{Red}#1}}
+% \newcommand{\blue}[1]{{\color{Cerulean}#1}}
+% \newcommand{\green}[1]{{\color{Green}#1}}
+\newcommand{\red}[1]{{#1^1}}
+\newcommand{\green}[1]{{#1^0}}
 
 \newcommand{\UT}{\mathsf{UT}}
 
@@ -124,6 +126,10 @@
 \newcommand{\focL}{\mathsf{foc_L}}
 \newcommand{\foc}{\mathsf{foc}}
 \newcommand{\focR}{\mathsf{foc_R}}
+\newcommand{\focLgreen}{\mathsf{foc_L}}
+\newcommand{\focLred}{\mathsf{foc_L^1}}
+\newcommand{\focRred}{\mathsf{foc_R^1}}
+\newcommand{\focRgreen}{\mathsf{foc_R}}
 \newcommand{\blurL}{\mathsf{blur_L}}
 \newcommand{\blurR}{\mathsf{blur_R}}
 \newcommand{\focLR}{\mathsf{foc_{M}}}
@@ -189,7 +195,7 @@ We initiate this endeavor by considering \emph{skew non-commutative multiplicati
 
 The study of \SkNMILL\ was initially motivated by its categorical semantics in the \emph{skew monoidal closed categories} of Street \cite{street:skew-closed:2013}. These categories arise naturally in semantics of programming languages \cite{altenkirch:monads:2014}, while semi-associativity has found strong connections with combinatorial structures such as the Tamari lattice and Stasheff associahedra \cite{zeilberger:semiassociative:19,moortgat:tamari:20}. From a category-theoretic perspective, the maximal multi-focusing procedure described in this paper provides a solution to the \emph{coherence} problem for skew monoidal closed categories.
 
-The paper starts with a brief introduction of \SkNMILL\ and its cut-free sequent calculus. It continues with a presentation of a sound and complete multi-focused sequent calculus. As expected, the latter does not resolve all the permutative non-determinism, but its introduction is pedagogically useful as it sets the stage for the more involved maximally multi-focused sequent calculus. The latter uses a system of \emph{tags}, or colors, similarly employed by Uustalu et al. in their calculus of normal forms \cite{UVW:protsn}, which are inspired by Scherer and R{\'e}my's saturation technique \cite{scherer:simple:2015}.
+The paper starts with a brief introduction of \SkNMILL\ and its cut-free sequent calculus. It continues with a presentation of a sound and complete multi-focused sequent calculus. As expected, the latter does not resolve all the permutative non-determinism, but its introduction is pedagogically useful as it sets the stage for the more involved maximally multi-focused sequent calculus. The latter uses a system of \emph{tags}, similarly employed by Uustalu et al. in their calculus of normal forms \cite{UVW:protsn}, which are inspired by Scherer and R{\'e}my's saturation technique \cite{scherer:simple:2015}.
 Tags are used to keep track of new formulae appearing in context from the application of invertible rules and to decide whether multi-focusing on both the stoup and succedent formulae is admissible or not.
 
 An important contribution of this project is the formalization of the maximal multi-focusing calculus for \SkNMILL\ and the proof of its correctness in the Agda proof assistant. The code, containing all the material presented in the paper, can be found at:
@@ -1044,13 +1050,14 @@ Consider the valid sequent $X \lolli Y \mid Z \dn (X \lolli Y) \ot Z$. Attemptin
 
 Dually, consider the valid sequent $X \lolli (Y \ot Z) \mid X \dn Y \ot Z$. It is not hard to see that any attempt to focus on the succedent formula would fail. But after left-focusing and an application of $\otL$, right-focusing becomes possible and leads to a valid proof. This is because the formula $Z$, which should be sent to the second premise by $\focR$, appears in context only after executing the left-focusing phase. Another simple example is given by the valid sequent $- \mid X \ot Y \dn X \ot Y$. Again left-focusing, specifically $\pass$, must happen before right-focusing, since the formula $Y$ is not in context and cannot otherwise be sent to the second premise during right-focusing.
 
-We need a mechanism for keeping track of \emph{new} formulae appearing in context from application of invertible rules $\otL$ and $\lolliR$. In proof search, when we choose to perform left-focusing but we decide to postpone right-focusing, after releasing the focus we have to justify this decision by showing that the subsequent application of $\focR$ splits the context in-between new formulae that appeared in context only after the termination of the left-focusing phase. And dually if right-focusing strictly precedes left-focusing.
+We need a mechanism for keeping track of \emph{new} formulae appearing in context from applications of invertible rules $\otL$ and $\lolliR$. In proof search, when we choose to perform left-focusing but we decide to postpone right-focusing, after releasing the focus we have to justify this decision by showing that the subsequent application of $\focR$ splits the context in-between new formulae that appeared in context only after the termination of the left-focusing phase. And dually if right-focusing strictly precedes left-focusing.
 
-We employ a mechanism from the recent work of Uustalu et al. \cite{UVW:protsn} which was inspired by Scherer and R{\'e}my's saturation for intuitionistic logic \cite{scherer:simple:2015}. Formulae appearing in a sequent will now be decorated with a Boolean value, which we call a \emph{tag}. Visually, we use colors to represent tags: green $\green{A}$ if the tag is $0$, red $\red{A}$ if the tag is $1$.
+We employ a mechanism from the recent work of Uustalu et al. \cite{UVW:protsn} which was inspired by Scherer and R{\'e}my's saturation for intuitionistic logic \cite{scherer:simple:2015}. Formulae appearing in a sequent will now be decorated with a superscript Boolean value $A^t$, which we call a \emph{tag}: $A^0$ or $A^1$. 
 %The mnemonic is that a red tag denotes a formula or a stoup that we should pay attention to. 
-Stoups are also tagged: $\green{S}$ or $\red{S}$. Tagged contexts consist of tagged formulae. If we do not specify the color of a formula (or stoup or context) we simply write it in black color $A$ (or $S$ or $\Gamma$). Sequents in the maximally multi-focused sequent calculus $S \mid \Gamma \upm A$ and $S \mid \Gamma \dnm A$ are triples of a tagged stoup $S$, a tagged context $\Gamma$ and a tagged formula $A$. Tags serve two purposes:
+Stoups are also tagged: $S^0$ or $S^1$. Tagged contexts consist of tagged formulae. If we do not specify the tag of a tagged formula (or stoup or context) we simply write it without superscript $A$ (or $S$ or $\Gamma$). Sequents in the maximally multi-focused sequent calculus $S \mid \Gamma \upm A$ and $S \mid \Gamma \dnm A$ are triples of a tagged stoup $S$, a tagged context $\Gamma$ and a tagged formula $A$. Tags serve two purposes:
 \begin{enumerate}
-\item They are used to remember which (if any) among left- or right-focusing was \emph{not} performed during the preceding focusing phase. If the stoup is red $\red{S}$, only right-focusing was previously executed. Dually, if the succedent formula is red $\red{A}$, only left-focusing took place. \item In case one (and only one) among the stoup and the succedent is red, new formulae moved to context via the application of invertible rules become red. So tags are also used to remember which formulae in context are new.
+\item They are used to remember which (if any) among left- or right-focusing was \emph{not} performed during the preceding focusing phase. If the stoup is $S^1$, only right-focusing was previously executed. Dually, if the succedent formula is $A^1$, only left-focusing took place.
+\item In case one (and only one) among the stoup and the succedent has tag 1, new formulae moved to context via the application of invertible rules are also assigned tag 1. So tags are used to remember which formulae in context are new.
 \end{enumerate}
 \begin{figure}[t]
   \[
@@ -1058,9 +1065,9 @@ Stoups are also tagged: $\green{S}$ or $\red{S}$. Tagged contexts consist of tag
 %  \def\arraystretch{2.5}
   \begin{array}{c}
     \multicolumn{1}{l}{\text{\textsc{Asynchronous Phase}}} \\[4pt]
-      \infer[\lolliR]{\blue{S} \mid \Gamma \upm A \lolli B}{\blue{S} \mid \Gamma , \blue{A} \upm B}
+      \infer[\lolliR]{S^t \mid \Gamma \upm A \lolli B}{S^t \mid \Gamma , A^t \upm B}
     \quad
-    \infer[\otL]{A \ot B \mid \Gamma \upm \blue{Q}}{A\mid  \blue{B} , \Gamma \upm \blue{Q}}
+    \infer[\otL]{A \ot B \mid \Gamma \upm Q^t}{A\mid  B^t , \Gamma \upm Q^t}
     \quad
       \infer[\IL]{\I \mid \Gamma \upm Q}{- \mid \Gamma \upm Q}    
     \quad
@@ -1069,24 +1076,24 @@ Stoups are also tagged: $\green{S}$ or $\red{S}$. Tagged contexts consist of tag
     }
     \\[6pt]
     \multicolumn{1}{l}{\text{\textsc{Synchronous Phase}}} \\[4pt]
-        \infer[\red{\focL}]{\red{T} \mid \Gamma , \Delta \dnm A}{
+        \infer[\focLred]{T^1 \mid \Gamma , \Delta \dnm A}{
           \green{T} \mid \green{\Gamma} \lfm \green{Q} &
           \dbox{$\green{Q}$} \mid \Delta \dnm A
-          & \red{\bullet} \in \Gamma
+          & 1 \in \Gamma
         }
      \\[4pt]
-    \infer[\red{\focR}]{\dbox{$S$}_{\, b} \mid \Gamma,\Delta \dnm \red{Q}}{
+    \infer[\focRred]{\dbox{$S$}_{\, b} \mid \Gamma,\Delta \dnm Q^1}{
       \dbox{$S$}_{\, b} \mid \Gamma \dnm \dbox{$\green{T}$}
       &
       \green{T} \mid \green{\Delta} \rfm \green{Q}
-      & T = M \supset \red{\bullet} \in \Delta
+      & T = M \supset 1 \in \Delta
     }
     \\[4pt]
-            \infer[\focL]{\green{T} \mid \Gamma , \Delta \dnm A}{
+            \infer[\focLgreen]{\green{T} \mid \Gamma , \Delta \dnm A}{
           \green{T} \mid \green{\Gamma} \lfm \green{Q} &
           \dbox{$\green{Q}$} \mid \Delta \dnm A
         }\qquad
-\infer[\focR]{\dbox{$S$}_{\, b} \mid \Gamma,\Delta \dnm \green{Q}}{
+\infer[\focRgreen]{\dbox{$S$}_{\, b} \mid \Gamma,\Delta \dnm \green{Q}}{
       \dbox{$S$}_{\, b} \mid \Gamma \dnm \dbox{$\green{T}$}
       &
       \green{T} \mid \green{\Delta} \rfm \green{Q}
@@ -1178,21 +1185,21 @@ Stoups are also tagged: $\green{S}$ or $\red{S}$. Tagged contexts consist of tag
   \label{fig:max-multi-focus}
 \end{figure}
 
-Inference rules for the maximally multi-focused sequent calculus are displayed in \Cref{fig:max-multi-focus}. In rule $\lolliR$, the blue color for the stoup $\blue{S}$ and the formula $\blue{A}$ indicates that they must have the same color, both green or both red. If the stoup is red, so left-focusing did not happen in the previous synchronous phase, we track the new formula $A$ moving to the right-most end of the context by making it also red.
-Similarly for blue formulae $\blue{A}$ and $\blue{Q}$ in rule $\otL$.
+Inference rules for the maximally multi-focused sequent calculus are displayed in \Cref{fig:max-multi-focus}. In rule $\lolliR$, the stoup $S$ and the formula $A$ must have the same tag $t$: if the stoup is $S^1$, so left-focusing did not happen in the previous synchronous phase, we track the new formula $A$ moving to the right-most end of the context by assigning it tag 1.
+Similarly for tagged formulae $A^t$ and $Q^t$ in rule $\otL$.
 
-Proof search starts again in asynchronous phase, where initially the sequent is all green $\green{S} \mid \green{\Gamma} \upm \green{A}$. At this point of the search, this phase is analogous to the one in the multi-focused calculus of \Cref{fig:multi-focus}. Red color may start to appear with an application of $\unfoc$. If left-focusing was not performed, so $b = 0$, then the stoup is turned red, which in the rule is denoted $S^{\neg b}$ (remember that 0 is green and 1 is red). If right-focusing was not executed, so $c = 0$, then the succedent becomes red $A^{\neg c}$. If either the stoup or the succedent is red, new formulae moved to the context by $\lolliR$ and $\otL$ are also assigned red tag.
+Proof search starts again in asynchronous phase, where initially the sequent is $\green{S} \mid \green{\Gamma} \upm \green{A}$. At this point of the search, this phase is analogous to the one in the multi-focused calculus of \Cref{fig:multi-focus}. Tag 1 may start to appear with an application of $\unfoc$. If left-focusing was not performed, so $b = 0$, then the stoup is given tag 1, which in the rule is denoted $S^{\neg b}$. If right-focusing was not executed, so $c = 0$, then the succedent has given tag 1, so it becomes  $A^{\neg c}$. If either the stoup or the succedent has tag 1, new formulae moved to the context by $\lolliR$ and $\otL$ are also assigned tag 1.
 
-If we want to left-focus, we first inspect the color of the stoup formula. If it is red $\red{T}$, we need to justify \emph{why} left-focusing was not performed together with right-focusing in the preceding synchronous phase. This can be done by requiring a red formula to appear in $\Gamma$, as in the side condition $\red{\bullet} \in \Gamma$ in the premise of $\red{\focL}$. Proof search continues with a green stoup formula $\green{Q}$. Dually, if we want to right-focus and the succedent is red $\red{Q}$, and moreover $T$ is non-empty, we require a red formula to appear in $\Delta$ when applying $\red{\focR}$. When $T$ is empty, so the right-focusing phase terminates with $\IR$, there is no need to check whether $\Delta$ contains red formulae, since right-focusing could not have happened together with the preceding left-focusing phase. Phases $\lfm$ and $\rfm$ are omitted in \Cref{fig:max-multi-focus}, since they are the same as $\lf$ and $\rf$ in \Cref{fig:multi-focus} but with all sequents being green, and $\up$ replaced by $\upm$ in premises of $\lolliL$ and $\otR$.
+If we want to left-focus, we first inspect the tag of the stoup formula. If it is $T^1$, we need to justify \emph{why} left-focusing was not performed together with right-focusing in the preceding synchronous phase. This can be done by requiring a formula tagged with 1 to appear in $\Gamma$, which is the meaning of the side condition $1 \in \Gamma$ in the premise of $\focLred$. Proof search continues with a stoup formula $\green{Q}$. Dually, if we want to right-focus and the succedent is $Q^1$, and moreover $T$ is non-empty, we require a formula tagged with 1 to appear in $\Delta$ when applying $\focRred$. When $T$ is empty, so the right-focusing phase terminates with $\IR$, there is no need to check whether $\Delta$ contains formulae tagged with 1, since right-focusing could not have happened together with the preceding left-focusing phase. Phases $\lfm$ and $\rfm$ are omitted in \Cref{fig:max-multi-focus}, since they are the same as $\lf$ and $\rf$ in \Cref{fig:multi-focus} but with all formulae in sequents having tag 0, and $\up$ replaced by $\upm$ in premises of $\lolliL$ and $\otR$.
 
 %During the \emph{red} left-focusing phase (when we initiate left-focusing with a red stoup), we are required to use red formulae in context in a meaningful way: either by passivating a red formula via the rule $\red{\pass}$ or sending a red formula $\red{D}$ to the first premise via the rule $\red{\lolliL}$. When this happens, we have successfully motivated why left-focusing was not executable simultaneously with right-focusing in the preceding synchronous phase, and we can then turn the stoup green, meaning that we can stop caring about tracking red formulae in left-focusing phase. Notice that during red left-focusing we are forced to apply either red rules $\red{\pass}$ or $\red{\lolliL}$, since blurring the left focus now requires the stoup to be green. In the first premise of $\lolliL$ and $\red{\lolliL}$ the whole sequent is turned green.
 
 %Dually, in red right-focusing phase (when right-focusing starts with red succedent), we must  either send a red formula $\red{D}$ to the second premise via the rule $\red{\otR}$ or close the derivation using $\IR$. Again, this appropriately motivates why right-focusing was previously not performable simultaneously with left-focusing. 
 
-When releasing the focus via $\unfoc$, stoup and succedent must be green, meaning that all the reasons for ``not maximally focus'' in a preceding focusing phase must have been successfully justified. Apart from tags, there are a couple of differences with the multi-focused system in \Cref{fig:multi-focus}.
+When releasing the focus via $\unfoc$, stoup and succedent must be have tag 0, meaning that all the reasons for ``not maximally focus'' in a preceding focusing phase must have been successfully justified. Apart from tags, there are a couple of differences with the multi-focused system in \Cref{fig:multi-focus}.
 \begin{enumerate}
   \item In synchronous phase, we have the choice of first applying $\focL$ and then applying $\focR$, i.e. we remove non-determinism in the choice of left- or right-focusing when both are executable. In \Cref{fig:max-multi-focus} this can be observed in $\focL$, where succedents cannot be blurred. %, so right-focusing could not have happened immediately before.
-\item Another difference lays in the treatment of atomic formulae. The axiom rule requires $\green{X}$ to be green and blurred in both positions. More generally, %whenever an atomic formula appears in stoup or succedent position, we are required to focus on it.
+\item Another difference lays in the treatment of atomic formulae. The axiom rule requires $\green{X}$ to have tag 0 and blurred in both positions. More generally, %whenever an atomic formula appears in stoup or succedent position, we are required to focus on it.
 %\begin{proposition}
 each derivation of $X \mid \Gamma \dnm A$ necessarily focuses on the stoup and each derivation of $S \mid \Gamma \dnm X$ necessarily focuses on the succedent.
 %In fact, if $f : X \mid \Gamma \dn A$ does not focus on $X$, then it cannot be an axiom. It must exclusively focus on $A$ and successively release the focus, at which point $X$ is turned red. A future application of $\red{\focL}$ (which has to happen in order to finally close the derivation with an axiom) would necessarily fail. In left-focusing phase, $\pass$ and $\lolliL$ are not applicable since the stoup formula is atomic. The only possibility would be $\blurL$, but then the side condition of $\red{\focL}$ would require the presence of a red formula in the empty context. We can similarly argue to show that each proof of $S \mid \Gamma \dn X$ must necessarily right-focus.
@@ -1280,7 +1287,8 @@ each derivation of $X \mid \Gamma \dnm A$ necessarily focuses on the stoup and e
 % %%%  \end{enumerate}
 % \end{proof}
 % From the admissibility of all inference rules, we obtain a normalization procedure turning derivations in the sequent calculus into maximally multi-focused derivations. One can also show that this factors through the multi-focused calculus of \Cref{fig:multi-focus} via the function $\focus$ of \Cref{thm}. Moreover, it is possible to prove that proofs in the maximally multi-focused calculus are canonical wrt. the equational theory in \Cref{fig:circeq}.
-Each multi-focused derivation can be normalized to a maximally multi-focused one. %We write $\upm$, $\dnm$, $\lfm$ and $\rfm$ for the proof search phases of the maximally multi-focused sequent calculus.
+All tags from a maximally multi-focused derivation can be removed to obtain a proof in the non-maximally multi-focused sequent calculus. 
+More interestingly, each multi-focused derivation can be normalized to a maximally multi-focused one. %We write $\upm$, $\dnm$, $\lfm$ and $\rfm$ for the proof search phases of the maximally multi-focused sequent calculus.
 \begin{theorem}\label{thm2}
   There exist functions
   \[
@@ -1296,7 +1304,7 @@ Each multi-focused derivation can be normalized to a maximally multi-focused one
  for all $\odot \in \{\up,\dn,\lf,\rf \}$, turning multi-focused proofs into maximally multi-focused ones, and vice versa.
 \end{theorem}
 \begin{proof}
-  We only sketch the construction of $\mathsf{max}_\dn$, which is the most challenging one. We refer the interested reader to the associated Agda formalization for the complete proof. The input derivation can either be: $(i)$ an application of $\focR$ followed by $\ax$ or $\unfoc$; $(ii)$ an application of $\focL$ followed by $\ax$ or $\unfoc$; $(iii)$ an application of both $\focL$ and $\focR$. In case $(iii)$, we can safely apply both $\focL$ and $\focR$ in the maximally multi-focused calculus. The most interesting cases are $(i)$ and $(ii$) when the focus is subsequently released. We only look at case $(i)$ when the input derivation is of the form $f = \focR(\unfoc(f'),r)$ for some $f' : S \mid \Gamma \up M$ and $r : M \mid \Delta \rf Q$. To deal with this case, we prove the following rule admissible:% in the maximally multi-focused sequent calculus:
+  We only sketch the construction of $\mathsf{max}_\dn$, which is the most challenging function to define. We refer the interested reader to the associated Agda formalization for the complete proof. The input derivation can either be: $(i)$ an application of $\focR$ followed by $\ax$ or $\unfoc$; $(ii)$ an application of $\focL$ followed by $\ax$ or $\unfoc$; $(iii)$ an application of both $\focL$ and $\focR$. In case $(iii)$, we can safely apply both $\focL$ and $\focR$ in the maximally multi-focused calculus. The most interesting cases are $(i)$ and $(ii$) when the focus is subsequently released. We only look at case $(i)$ when the input derivation is of the form $f = \focR(\unfoc(f'),r)$ for some $f' : S \mid \Gamma \up M$ and $r : M \mid \Delta \rf Q$. To deal with this case, we prove the following rule admissible:% in the maximally multi-focused sequent calculus:
   \begin{equation*}\label{eq:otmax}
     \small
     \proofbox{
@@ -1311,30 +1319,30 @@ Each multi-focused derivation can be normalized to a maximally multi-focused one
   \begin{equation*}\label{eq:otmaxneg}
     \small
     \proofbox{
-    \infer[\focR_{\upm N}]{\green{T} \mid \green{\Gamma_0},\green{\Delta} \upm \green{Q}}{
-      \green{T} \mid \green{\Gamma_0},\green{\Gamma_1} \upm \green{A}
+    \infer[\focR_{\upm N}]{\green{T} \mid \green{\Gamma},\green{\Delta} \upm \green{Q}}{
+      \green{T} \mid \green{\Gamma},\green{\Lambda} \upm \green{A}
       &
-      \green{\green{\Gamma_1} \lolli^+ A} \mid \green{\Delta} \rfm \green{Q}
+      \green{\green{\Lambda} \lolli^+ A} \mid \green{\Delta} \rfm \green{Q}
     }
     }
   \end{equation*}
-  We proceed by induction on the structure of the proof of the first premise ${g : \green{T} \mid \green{\Gamma_0},\green{\Gamma_1} \upm \green{A}}$. We look at the case $g = \foc(\focL(l,\unfoc(h)))$ for some $l : \green{T} \mid \green{\Gamma'} \lfm \green{P}$ and $h : \green{P} \mid \green{\Delta'} \upm \red{A}$. In this case, we have the equality of contexts $\green{\Gamma'},\green{\Delta'} = \green{\Gamma_0},\green{\Gamma_1}$ and we check whether $\green{\Gamma_1}$ is split between $\green{\Gamma'}$ and $\green{\Delta'}$, or it is fully contained in $\green{\Delta'}$.
+  We proceed by induction on the structure of the proof of the first premise ${g : \green{T} \mid \green{\Gamma},\green{\Lambda} \upm \green{A}}$. We look at the case $g = \foc(\focL(l,\unfoc(h)))$ for some $l : \green{T} \mid \green{\Omega} \lfm \green{P}$ and $h : \green{P} \mid \green{\Xi} \upm A^1$. In this case, we have the equality of contexts $\Omega,\Xi = \Gamma,\Lambda$ and we check whether $\Lambda$ is split between $\Omega$ and $\Xi$, or it is fully contained in $\Xi$.
   \begin{enumerate}
-  \item If $\green{\Gamma_1} = \green{\Gamma_{1}'},\green{\Delta'}$ and $\green{\Gamma'} =\green{\Gamma_0},\green{\Gamma_{1}'}$ for some non-empty $\green{\Gamma_{1}'}$, then multi-focusing on both stoup and succedent is not possible. We return:
+  \item If $\Lambda = \Phi,\Xi$ and $\Omega =\Gamma,\Phi$ for some non-empty $\Phi$, then multi-focusing on both stoup and succedent is not possible. We return:
     \[\small
-    \infer[\foc]{\green{T} \mid \green{\Gamma_0},\green{\Delta} \upm \green{Q}}{
-      \infer[\focR]{\green{T} \mid \green{\Gamma_0},\green{\Delta} \dnm \green{Q}}{
-        \infer[\unfoc]{\green{T} \mid \green{\Gamma_0} \dnm \dbox{$\green{\Gamma_1}{\lolli}^+\green{A}$}}{
-          \infer[\lolliR^+]{\red{T} \mid \green{\Gamma_0} \upm \green{\Gamma_1}{\lolli}^+\green{A}}{
-            \infer={\red{T} \mid \green{\Gamma_0},\red{\Gamma_1} \upm \green{A}}{
-              \infer[\foc]{\red{T} \mid \green{\Gamma_0},\red{\Gamma'_1},\red{\Delta'}\upm \green{A}}{
-                \infer[\red{\focL}]{\red{T} \mid \green{\Gamma_0},\red{\Gamma'_1},\red{\Delta'} \dnm \green{A}}{
-                  \infer={\green{T} \mid \green{\Gamma_0},\green{\Gamma'_1} \lfm \green{P}}{
-                    \deduce{\green{T} \mid \green{\Gamma'} \lfm \green{P}}{l}
+    \infer[\foc]{\green{T} \mid \green{\Gamma},\green{\Delta} \upm \green{Q}}{
+      \infer[\focR]{\green{T} \mid \green{\Gamma},\green{\Delta} \dnm \green{Q}}{
+        \infer[\unfoc]{\green{T} \mid \green{\Gamma} \dnm \dbox{$\green{\Lambda}{\lolli}^+\green{A}$}}{
+          \infer[\lolliR^+]{T^1 \mid \green{\Gamma} \upm \green{\Lambda}{\lolli}^+\green{A}}{
+            \infer={T^1 \mid \green{\Gamma},\Lambda^1 \upm \green{A}}{
+              \infer[\foc]{T^1 \mid \green{\Gamma},\Phi^1,\Xi^1\upm \green{A}}{
+                \infer[\focLred]{T^1 \mid \green{\Gamma},\Phi^1,\Xi^1 \dnm \green{A}}{
+                  \infer={\green{T} \mid \green{\Gamma},\green{\Phi} \lfm \green{P}}{
+                    \deduce{\green{T} \mid \green{\Omega} \lfm \green{P}}{l}
                   }
                   &
-                  \infer[\unfoc]{\dbox{$\green{P}$} \mid \red{\Delta'} \dnm \green{A}}{
-                    \deduce{\green{P} \mid \green{\Delta'} \upm \red{A}}{h}
+                  \infer[\unfoc]{\dbox{$\green{P}$} \mid \Xi^1 \dnm \green{A}}{
+                    \deduce{\green{P} \mid \green{\Xi} \upm A^1}{h}
                   }
                 }
               }
@@ -1342,34 +1350,34 @@ Each multi-focused derivation can be normalized to a maximally multi-focused one
           }
         }
         &
-        \green{\green{\Gamma_1}{\lolli}^+ A} \mid \green{\Delta} \rfm \green{Q}
+        \green{\green{\Lambda}{\lolli}^+ A} \mid \green{\Delta} \rfm \green{Q}
       }
     }
     \]
     The double-line rule is the equality rule (we simply rewrite the contexts).    
-  \item If $\green{\Gamma_0} = \green{\Gamma'},\green{\Gamma_{0}'}$ and $\green{\Delta'} = \green{\Gamma_{0}'},\green{\Gamma_{1}'}$, then multi-focusing on both stoup and succedent is possible. We return:
+  \item If $\Gamma = \Omega,\Phi$ and $\Xi = \Phi, \Lambda$, then multi-focusing on both stoup and succedent is possible. We return:
     \[\small
-    \infer[\foc]{\green{T} \mid \green{\Gamma_0},\green{\Delta} \upm \green{Q}}{
-      \infer={\green{T} \mid \green{\Gamma_0} ,\green{\Delta} \dnm \green{Q}}{
-        \infer[\focL]{\green{T} \mid \green{\Gamma'},\green{\Gamma_{0}'},\green{\Delta} \dnm \green{Q}}{
-          \deduce{\green{T} \mid \green{\Gamma'} \lfm \green{P}}{l}
+    \infer[\foc]{\green{T} \mid \green{\Gamma},\green{\Delta} \upm \green{Q}}{
+      \infer={\green{T} \mid \green{\Gamma} ,\green{\Delta} \dnm \green{Q}}{
+        \infer[\focL]{\green{T} \mid \green{\Omega},\green{\Phi},\green{\Delta} \dnm \green{Q}}{
+          \deduce{\green{T} \mid \green{\Omega} \lfm \green{P}}{l}
           &
-          \infer[\focR]{\dbox{$\green{P}$} \mid \green{\Gamma_{0}'},\green{\Delta} \dnm \green{Q}}{
-            \infer[\unfoc]{\dbox{$\green{P}$} \mid \green{\Gamma_{0}'} \dnm \dbox{$\green{\Gamma_1{\lolli}^+ A}$}}{
-              \infer[\lolliR^+]{\green{P} \mid \green{\Gamma_{0}'} \upm \green{\Gamma_1{\lolli}^+ A}}{
-                \infer={\green{P} \mid \green{\Gamma_{0}'}, \green{\Gamma_1}\upm \green{A}}{
+          \infer[\focR]{\dbox{$\green{P}$} \mid \green{\Phi},\green{\Delta} \dnm \green{Q}}{
+            \infer[\unfoc]{\dbox{$\green{P}$} \mid \green{\Phi} \dnm \dbox{$\green{\Lambda{\lolli}^+ A}$}}{
+              \infer[\lolliR^+]{\green{P} \mid \green{\Phi} \upm \green{\Lambda{\lolli}^+ A}}{
+                \infer={\green{P} \mid \green{\Phi}, \green{\Lambda}\upm \green{A}}{
                 \deduce{\green{P} \mid \green{\Delta'}\upm \green{A}}{h'}
                 }
               }
             }
             &
-            \green{\green{\Gamma_1}{\lolli}^+ A} \mid \green{\Delta} \rfm \green{Q}
+            \green{\green{\Lambda}{\lolli}^+ A} \mid \green{\Delta} \rfm \green{Q}
           }
         }
       }
     }
     \]
-where $h'$ is obtained from $h$ by making all applications of red rules ($\red{\focL}$ and $\red{\focR}$) in $h$ black ($\focL$ and $\focR$).
+where $h'$ is obtained from $h$ by turning all applications of rules $\focLred$ and $\focRred$ in $h$ to $\focL$ and $\focR$.
   \end{enumerate}
 \end{proof}
 
