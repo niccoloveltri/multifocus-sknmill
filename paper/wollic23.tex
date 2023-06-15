@@ -115,7 +115,7 @@
 
 \newcommand{\up}{\Uparrow}
 \newcommand{\dn}{\Downarrow}
-\newcommand{\upl}{\Uparrow_{\mathsf{li}}}
+\newcommand{\upl}{\rightsquigarrow_{\mathsf{li}}}
 \newcommand{\upm}{\Uparrow_{\mathsf{m}}}
 \newcommand{\dnm}{\Downarrow_{\mathsf{m}}}
 \newcommand{\sw}{\mathsf{sw}}
@@ -146,7 +146,7 @@
 \newcommand{\emb}{\mathsf{emb}}
 
 \newcommand{\At}{\mathsf{At}}
-\newcommand{\runL}{\mathsf{runL}}
+\newcommand{\runL}{\mathsf{inv}_{\mathsf{li}}}
 \newcommand{\Prf}{\mathsf{Prf}}
 
 %% Commands for changing vertical space before and after caption in a figure
@@ -754,17 +754,17 @@ Rule $\otR$ of \Cref{fig:seqcalc}, with $\vdash$ replaced everywhere by $\up$, i
   \end{equation}
 \end{proof}
 
-We now move to the admissibility of left-synchronous rules. To this end, we introduce an inductive ternary (proof-relevant) relation $S\mid\Gamma \upl A$ which holds when the antecedent $S\mid \Gamma$ is obtained by repeated applications of left-invertible rules on the antecedent $A \mid ~$, where $A$ is in the stoup and the context is empty:
+We now move to the admissibility of left-synchronous rules. To this end, we introduce an inductive ternary (proof-relevant) relation $A \upl S\mid\Gamma$ which holds when the antecedent $S\mid \Gamma$ is obtained by repeated applications of left-invertible rules on the antecedent $A \mid ~$, where $A$ is in the stoup and the context is empty:
 \begin{equation*}%\small
-  \infer[\IL^{-1}]{-\mid\Gamma \upl A}{\I\mid\Gamma\upl A}
+  \infer[\IL^{-1}]{A \upl -\mid\Gamma}{A \upl \I\mid\Gamma}
   \qquad
-  \infer[\otL^{-1}]{A'\mid B',\Gamma \upl A}{A' \ot B'\mid \Gamma \upl A}
+  \infer[\otL^{-1}]{A \upl A'\mid B',\Gamma}{A \upl A' \ot B'\mid \Gamma}
   \qquad
-  \infer[\varepsilon]{A\mid ~ \upl A}{}
+  \infer[\varepsilon]{A \upl A\mid ~}{}
 %  \qquad
 %  \infer[\pass^{-1}]{\L(A' \mid\Gamma;A)}{\L(-\mid A',\Gamma;A)}
 \end{equation*}
-Given a proof $\ell : S\mid\Gamma \upl A$, we can turn a derivation $f : S \mid \Gamma,\Delta \up C$ into a derivation $\runL(f,\ell) : A \mid \Delta \up C$:
+Given a proof $\ell : A \upl S\mid\Gamma$, we can turn a derivation $f : S \mid \Gamma,\Delta \up C$ into a derivation $\runL(f,\ell) : A \mid \Delta \up C$:
  \begin{equation}\label{eq:runL}
   %\small
 %  \arraycolsep=.7cm%\def\arraystretch{3}
@@ -814,14 +814,14 @@ Given a proof $\ell : S\mid\Gamma \upl A$, we can turn a derivation $f : S \mid 
     \infer[\lolliL^+_{\up P}]{\vec{A} \lolli^+ B \mid \vec{\Gamma} , \Delta \up C}{
       \{ - \mid \Gamma_i \up A_i \}_{i}
       &
-      S\mid \Lambda \upl B
+      B \upl S\mid \Lambda 
       &
       S \mid \Lambda,\Delta \up C
     }
   \end{array}
   \]
 %  Here $\vec{D}$ is a possibly empty list of formulae, and $\mathsf{hd}$ and $\mathsf{tl}$ are the head and tail operations on non-empty lists.
-  The additional assumption $\ell:S\mid \Lambda \upl B$ serves as an accumulator for dealing with the cases when $g$ is a left-invertible rule
+  The additional assumption $\ell:B \upl S\mid \Lambda$ serves as an accumulator for dealing with the cases when $g$ is a left-invertible rule
   %: \L(S\mid \Delta_0;B)$ %serve as accumulators for dealing with the case in which $g$ is a left-invertible rule or passivation. These assumptions
   and it allows to state that the proof of the third premise is a subderivation of sequent $B \mid \Delta \up C$ in the sense depicted in (\ref{eq:runL}). A representative case is $g = \foc(g)$, where we can immediately execute left-focusing, obtaining a derivation dual to the one in (\ref{eq:otR+foc}).
   %obtained by repeated applications of left-invertible rules and passivation. More explicitly:
@@ -929,7 +929,7 @@ As discussed before, in general we also have the choice of whether focusing on a
 \proofbox{
   \infer[\unfoc]{\dbox{$P$} \mid \Delta,\Lambda \dn Q}{
     \infer[\runL]{P \mid \Delta,\Lambda \up Q}{
-      \deduce{T\mid\Gamma \upl P}{\ell} &
+      \deduce{P \upl T\mid\Gamma}{\ell} &
       \hspace{-20pt}
       \infer[\foc]{T \mid \Gamma,\Delta,\Lambda \up Q}{
         \infer[\focR]{T \mid \Gamma,\Delta,\Lambda \dn Q}{
@@ -944,12 +944,12 @@ As discussed before, in general we also have the choice of whether focusing on a
   }
 }
 \circeq_\dn
-\hspace{-6pt}
+\hspace{-7pt}
 \proofbox{
   \infer[\focR]{\dbox{$P$} \mid \Delta,\Lambda \dn Q}{
     \infer[\unfoc]{\dbox{$P$} \mid \Delta \dn \dbox{$N$}}{
       \infer[\runL]{P \mid \Delta \up N}{
-        \deduce{T\mid\Gamma \upl P}{\ell} &        
+        \deduce{P \upl T\mid\Gamma}{\ell} &        
         \deduce{T \mid \Gamma,\Delta \up N}{f}
       }
     }
@@ -962,7 +962,7 @@ As discussed before, in general we also have the choice of whether focusing on a
 \proofbox{
   \infer[\unfoc]{\dbox{$P$} \mid \Delta,\Lambda \dn Q}{
     \infer[\runL]{P \mid \Delta,\Lambda \up Q}{
-      \deduce{T\mid\Gamma\upl P}{\ell} &
+      \deduce{P \upl T\mid\Gamma}{\ell} &
       \hspace{-20pt}
       \infer[\foc]{T \mid \Gamma,\Delta,\Lambda \up Q}{
         \infer[\focR]{T \mid \Gamma,\Delta,\Lambda \dn Q}{
@@ -979,7 +979,7 @@ As discussed before, in general we also have the choice of whether focusing on a
   \infer[\focR]{\dbox{$P$} \mid \Delta,\Lambda \dn Q}{
     \infer[\unfoc]{\dbox{$P$} \mid \Delta \dn \dbox{$X$}}{
       \infer[\runL]{P \mid \Delta \up X}{
-        \deduce{T\mid\Gamma \upl P}{\ell} &
+        \deduce{P \upl T\mid\Gamma}{\ell} &
         \hspace{-20pt}
         \infer[\foc]{T \mid \Gamma,\Delta \up X}{
           \infer[\focR]{T \mid \Gamma,\Delta \dn X}{
