@@ -831,9 +831,9 @@ Given a proof $\ell : S\mid\Gamma \upl A$, we can turn a derivation $f : S \mid 
 \end{proof}
 
 The multi-focused sequent calculus in \Cref{fig:multi-focus} is sound and complete wrt. the sequent calculus in \Cref{fig:seqcalc}. 
-Let $\Prf(S \mid \Gamma \vdash A)$ and $\Prf(S \mid \Gamma \up A)$ be the sets of proofs of the sequent $S \mid \Gamma \vdash A$ and $S \mid \Gamma \up A$, respectively.
+In the upcoming theorem and in the rest of the paper, we also write $S \mid \Gamma \vdash A$ and $S \mid \Gamma \up A$ for the sets of proofs of the corresponding sequents.
 \begin{theorem}\label{thm}
-  There exist functions $\focus : \Prf(S \mid \Gamma \vdash A) \to \Prf(S \mid \Gamma \up A)$  and $\emb: \Prf(S \mid \Gamma \up A) \to \Prf(S \mid \Gamma \vdash A)$, turning sequent calculus derivations into multi-focused derivations, and vice versa.
+  There exist functions $\focus : S \mid \Gamma \vdash A \, \to \, S \mid \Gamma \up A$  and $\emb: S \mid \Gamma \up A \, \to \, S \mid \Gamma \vdash A$, turning sequent calculus derivations into multi-focused derivations, and vice versa.
 \end{theorem}
 \begin{proof}
 Function $\emb$ is obtained by erasing all phase-shifting rules and dashed boxes around blurred formulae. Function $\focus$ is defined by induction on the structure of the input derivation, noticing that each rule in \Cref{fig:seqcalc} has an admissible counterpart in the multi-focused sequent calculus, which follows from Propositions \ref{eq:inv}, \ref{prop:otR} and \ref{prop:lolliL}.
@@ -1052,7 +1052,19 @@ We need a mechanism for keeping track of \emph{new} formulae appearing in contex
 
 We employ a mechanism from the recent work of Uustalu et al. \cite{UVW:protsn} which was inspired by Scherer and R{\'e}my's saturation for intuitionistic logic \cite{scherer:simple:2015}. Formulae appearing in a sequent will now be decorated with a superscript Boolean value, which we call a \emph{tag}: $A^0$ or $A^1$. 
 %The mnemonic is that a red tag denotes a formula or a stoup that we should pay attention to. 
-Stoups are also tagged: $S^0$ or $S^1$. Tagged contexts consist of tagged formulae. Sequents in the maximally multi-focused sequent calculus $S \mid \Gamma \upm A$ and $S \mid \Gamma \dnm A$ are triples of a tagged stoup $S$, a tagged context $\Gamma$ and a tagged formula $A$. If in a sequent we do not want to specify the tag of a tagged formula, we simply write it without superscript $A$. Given a tagged formula $A$, we also write $A^0$ when we want to replace $A$'s tag by $0$. These conventions also apply to tagged stoups and contexts in a sequent.
+Stoups are also tagged: $S^0$ or $S^1$. Tagged contexts consist of tagged formulae. Sequents in the maximally multi-focused sequent calculus also take four forms:
+\begin{center}
+  \begin{tabular}{|@{\;}l@{\qquad}l@{\;}|}
+    \hline
+    $S \mid \Gamma \upm A$ & asynchronous\\
+    $S \mid \Gamma \dnm A$ & synchronous \\
+    $S \mid \Gamma \lfm Q$ & left synchronous \\
+    $T \mid \Gamma \rfm A$ & right synchronous \\
+ \hline
+\end{tabular}
+    \end{center}
+%$S \mid \Gamma \upm A$ and $S \mid \Gamma \dnm A$
+The above are all triples consisting of a tagged stoup $S$ (or an irreducible tagged stoup $T$ in the last case), a tagged context $\Gamma$ and a tagged formula $A$ (or an irreducible tagged formula $Q$ in the third case). If in a sequent we do not want to specify the tag of a tagged formula, we simply write it without superscript. Given a tagged formula $A$, we also write $A^0$ when we want to replace the tag of $A$ by $0$ and $A^1$ when the tag is replaced by 1. These conventions also apply to tagged stoups and contexts in a sequent.
 
 Tags serve two purposes:
 \begin{enumerate}
@@ -1188,7 +1200,7 @@ Tags serve two purposes:
 Inference rules for the maximally multi-focused sequent calculus are displayed in \Cref{fig:max-multi-focus}. In the premise of rule $\lolliR$, the stoup $S$ and the formula $A$ must have the same tag $t$: if the stoup is $S^1$ in the conclusion, so left-focusing did not happen in the previous synchronous phase, we track the new formula $A$ moving to the right-most end of the context by assigning it tag 1.
 Similarly for tagged formulae $A^t$ and $Q^t$ in the premise of rule $\otL$.
 
-Proof search starts again in asynchronous phase, where initially the sequent is $\green{S} \mid \green{\Gamma} \upm \green{A}$. At this point of the search, this phase is analogous to the one in the multi-focused calculus of \Cref{fig:multi-focus}. Tag 1 may start to appear with an application of $\unfoc$. If left-focusing was not performed, so $b = 0$, then the stoup is given tag 1, which in the rule is denoted $S^{\neg b}$. If right-focusing was not executed, so $c = 0$, then the succedent has given tag 1, so it becomes  $A^{\neg c}$. If either the stoup or the succedent has tag 1, new formulae moved to the context by $\lolliR$ and $\otL$ are also assigned tag 1.
+Proof search starts again in asynchronous phase, where initially the sequent is $\green{S} \mid \green{\Gamma} \upm \green{A}$. At this point of the search, this phase is analogous to the one in the multi-focused calculus of \Cref{fig:multi-focus}. Tag 1 may start to appear with an application of $\unfoc$. If left-focusing was not performed, so $b = 0$, then the stoup is given tag 1, which in the rule is denoted $S^{\neg b}$. If right-focusing was not executed, so $c = 0$, then the succedent has given tag 1, so it becomes  $A^{\neg c}$. If either the stoup or the succedent has tag 1, new formulae moved to the context via applications of $\lolliR$ and $\otL$ are also assigned tag 1.
 
 If we want to left-focus, we first inspect the tag of the stoup formula. If it is $T^1$, we need to justify \emph{why} left-focusing was not performed together with right-focusing in the preceding synchronous phase. This can be done by requiring a formula tagged with 1 to appear in $\Gamma$, which is the meaning of the side condition $1 \in \Gamma$ in the premise of $\focLred$. Proof search continues with a stoup formula $\green{Q}$. Dually, if we want to right-focus and the succedent is $Q^1$, and moreover $T$ is non-empty, we require a formula tagged with 1 to appear in $\Delta$ when applying $\focRred$. When $T$ is empty, so the right-focusing phase terminates with $\IR$, there is no need to check whether $\Delta$ contains formulae tagged with 1, since right-focusing could not have happened together with the preceding left-focusing phase. Phases $\lfm$ and $\rfm$ are omitted in \Cref{fig:max-multi-focus}, since they are the same as $\lf$ and $\rf$ in \Cref{fig:multi-focus} but with all formulae in sequents having tag 0, and $\up$ replaced by $\upm$ in the premises of $\lolliL$ and $\otR$.
 
@@ -1199,7 +1211,7 @@ If we want to left-focus, we first inspect the tag of the stoup formula. If it i
 When releasing the focus via $\unfoc$, stoup and succedent must have tag 0, meaning that all the reasons for ``not maximally focus'' in a preceding focusing phase must have been successfully justified. Apart from tags, there are a couple of differences with the multi-focused system in \Cref{fig:multi-focus}.
 \begin{enumerate}
   \item In synchronous phase, we have the choice of first applying $\focL$ and then applying $\focR$, i.e. we remove non-determinism in the choice of left- or right-focusing when both are executable. In \Cref{fig:max-multi-focus} this can be observed in $\focL$, where succedents cannot be blurred. %, so right-focusing could not have happened immediately before.
-\item Another difference lays in the treatment of atomic formulae. The axiom rule requires $X$ to have tag 0 and blurred in both positions. More generally, %whenever an atomic formula appears in stoup or succedent position, we are required to focus on it.
+\item Another difference lays in the treatment of atomic formulae. The axiom rule $\ax$ requires the atomic formula to have tag 0 and to be blurred in both positions. More generally, %whenever an atomic formula appears in stoup or succedent position, we are required to focus on it.
 %\begin{proposition}
 each derivation of $X \mid \Gamma \dnm A$ necessarily focuses on the stoup and each derivation of $S \mid \Gamma \dnm X$ necessarily focuses on the succedent.
 %In fact, if $f : X \mid \Gamma \dn A$ does not focus on $X$, then it cannot be an axiom. It must exclusively focus on $A$ and successively release the focus, at which point $X$ is turned red. A future application of $\red{\focL}$ (which has to happen in order to finally close the derivation with an axiom) would necessarily fail. In left-focusing phase, $\pass$ and $\lolliL$ are not applicable since the stoup formula is atomic. The only possibility would be $\blurL$, but then the side condition of $\red{\focL}$ would require the presence of a red formula in the empty context. We can similarly argue to show that each proof of $S \mid \Gamma \dn X$ must necessarily right-focus.
@@ -1294,10 +1306,10 @@ More interestingly, each multi-focused derivation can be normalized to a maximal
   There exist functions
   \[
   \begin{array}{l}%{l@{\qquad}l}
-    \mathsf{max}_\odot : \Prf(S \mid \Gamma \odot A) \to \Prf(\green{S} \mid \green{\Gamma} \odot_\mathsf{m} \green{A}) \\
+    \mathsf{max}_\odot : S \mid \Gamma \odot A \, \to \, \green{S} \mid \green{\Gamma} \odot_\mathsf{m} \green{A} \\
 %    \mathsf{max}_\dn : \Prf(S \mid \Gamma \dn A) \to \Prf(\green{S} \mid \green{\Gamma} \dnm \green{A}) \\[4pt]
     %\mathsf{max}_{\mathsf{lf}} &: Q \lf S;\Gamma \to \green{Q} \lfm \green{S} ; \green{\Gamma} \\  \mathsf{max}_{\mathsf{rf}} &: T \rf \Gamma;A \to \green{T} \rfm \green{\Gamma} ; \green{A} \\
-    \mathsf{untag}_\odot : \Prf(\green{S} \mid \green{\Gamma} \odot_{\mathsf{m}} \green{A}) \to \Prf(S \mid \Gamma \odot A) %\\
+    \mathsf{untag}_\odot : \green{S} \mid \green{\Gamma} \odot_{\mathsf{m}} \green{A} \, \to \, S \mid \Gamma \odot A %\\
 %\mathsf{untag}_\dn : \Prf(\green{S} \mid \green{\Gamma} \dnm \green{A}) \to \Prf(S \mid \Gamma \dn A)
 %\mathsf{untag}_{\mathsf{lf}} &: \green{Q} \lfm \green{S} ; \green{\Gamma} \to Q \lf S;\Gamma \\  \mathsf{untag}_{\mathsf{rf}} &: \green{T} \rfm \green{\Gamma} ; \green{A} \to T \rf \Gamma;A
   \end{array}
